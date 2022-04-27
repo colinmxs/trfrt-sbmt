@@ -30,6 +30,6 @@ jobs:
         cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-2
     - name: Build Api
       run: |
-        aws cdk deploy
+        dotnet build
       
     
