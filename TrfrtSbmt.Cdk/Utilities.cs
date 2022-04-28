@@ -17,7 +17,7 @@ public class Utilities
         do
         {
             directoryInfo = directoryInfo.Parent;
-
+            if(directoryInfo == null) throw new Exception($"Drop directory could not be found {currentDirectory}.");
             var projectDirectoryInfo = new DirectoryInfo(Path.Combine(directoryInfo.FullName, projectRelativePath));
             if (projectDirectoryInfo.Exists)
             {
