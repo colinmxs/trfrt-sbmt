@@ -41,4 +41,4 @@ jobs:
     - name: Deploy
       run: |
         cd TrfrtSbmt.Cdk/bin/Release/net6.0
-        cdk deploy ApiStack --require-approval never
+        cdk deploy TreefortSubmitApiStack --require-approval never
