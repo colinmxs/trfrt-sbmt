@@ -37,7 +37,7 @@ jobs:
     - name: Zip Main
       run: |
         Get-ChildItem -Path TrfrtSbmt.Api/bin/Release/net6.0/publish |
-        Compress-Archive -DestinationPath ../../../../TrfrtSbmt.Cdk/bin/Release/net6.0/TrfrtSbmt.Api/publish.zip           
+        Compress-Archive -DestinationPath TrfrtSbmt.Api/publish.zip           
     - name: Deploy
       run: |
         cd TrfrtSbmt.Cdk/bin/Release/net6.0

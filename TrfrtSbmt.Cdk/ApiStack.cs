@@ -44,7 +44,7 @@ public class ApiStack : Stack
 
         var lambdaFunction = new Function(this, "LambdaFunction", new FunctionProps
         {
-            Code = new AssetCode("TrfrtSbmt.Api/publish.zip"),
+            Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.Api")}/publish.zip"),
             Handler = "TrfrtSbmt.Api",
             Runtime = Runtime.DOTNET_6,
             Timeout = Duration.Seconds(10),
