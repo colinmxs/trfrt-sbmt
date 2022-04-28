@@ -4,12 +4,12 @@ using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
 public class ApiStack : Stack
 {
-    public record ApiStackProps
+    public class ApiStackProps : StackProps
     {
         public string Name { get; init; } = "TreefortSubmitApi";
     }
     
-    public ApiStack(ApiStackProps props)
+    public ApiStack(Constructs.Construct scope, string id, ApiStackProps props) : base(scope, id, props)
     {
         var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
