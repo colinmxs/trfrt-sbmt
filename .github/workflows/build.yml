@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  pipeline:
+  build-and-deploy:
     runs-on: windows-latest
     steps:
     - uses: actions/checkout@v3
