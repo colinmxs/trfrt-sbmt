@@ -28,8 +28,17 @@ jobs:
     - name: Bootstrap CDK
       run: |
         cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-2
-    - name: Build Api
-      run: |
-        dotnet build
-      
-    
+    - name: Build CDK
+        run: |
+          dotnet publish TrfrtSbmt.Cdk/TrfrtSbmt.Cdk.csproj --configuration Release                
+      - name: Build Main
+        run: |
+          dotnet publish TrfrtSbmt.Api/TrfrtSbmt.Api.csproj --configuration Release
+      - name: Zip Main
+        run: |
+          Get-ChildItem -Path TrfrtSbmt.Api/bin/Release/net6.0/publish |
+            Compress-Archive -DestinationPath TrfrtSbmt.Api/publish.zip           
+      - name: Deploy
+        run: |
+          cd TrfrtSbmt.Cdk/bin/Release/net6.0
+          cdk deploy ApiStack --require-approval never
