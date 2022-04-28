@@ -62,6 +62,10 @@ public class ApiStack : Stack
 
         var restApi = new LambdaRestApi(this, "RestApi", new LambdaRestApiProps
         {
+            DeployOptions = new StageOptions
+            {
+                StageName = "v1"
+            },
             Handler = lambdaFunction,
             Proxy = true,
             Deploy = true,
