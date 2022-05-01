@@ -29,7 +29,10 @@ app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(
 app.UseSwagger();
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/swagger/v1/swagger.json", "v1");
+    var url = appSettings.EnvironmentName == "Development"
+    ? "/swagger/v1/swagger.json"
+    : "v1/swagger/v1/swagger.json";
+    options.SwaggerEndpoint(url, "v1");
     options.RoutePrefix = string.Empty;
 });
 
