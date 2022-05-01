@@ -1,5 +1,6 @@
 ﻿namespace TrfrtSbmt.Cdk;
 using Amazon.CDK.AWS.APIGateway;
+using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
 public class ApiStack : Stack
@@ -9,7 +10,7 @@ public class ApiStack : Stack
         public string Name { get; init; } = "TreefortSubmitApi";
     }
     
-    public ApiStack(Constructs.Construct scope, string id, ApiStackProps props) : base(scope, id, props)
+    public ApiStack(Construct scope, string id, ApiStackProps props) : base(scope, id, props)
     {
         var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
@@ -86,5 +87,7 @@ public class ApiStack : Stack
         });
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");
         Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+
+        
     }
 }

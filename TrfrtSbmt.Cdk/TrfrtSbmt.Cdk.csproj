@@ -12,7 +12,7 @@
   </ItemGroup>
 
 	<ItemGroup>
-		<Using Include="TrfrtSbmt.Cdk"/>
+		<Using Include="TrfrtSbmt.Cdk" />
 	</ItemGroup>
 
   <ItemGroup>
@@ -21,17 +21,16 @@
     </Content>
   </ItemGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Amazon.CDK" Version="1.153.1" />
-    <PackageReference Include="Amazon.CDK.AWS.APIGateway" Version="1.153.1" />
-    <PackageReference Include="Amazon.CDK.AWS.Events.Targets" Version="1.153.1" />
-    <PackageReference Include="Amazon.CDK.AWS.IAM" Version="1.153.1" />
-    <PackageReference Include="Amazon.CDK.AWS.Lambda" Version="1.153.1" />
-    <PackageReference Include="Amazon.CDK.AWS.S3" Version="1.153.1" />
-  </ItemGroup>
-
 	<ItemGroup>
 		<Using Include="Amazon.CDK" />
+		<Using Include="Constructs" />
+	</ItemGroup>
+	<ItemGroup>
+		<!-- CDK Construct Library dependencies -->
+		<PackageReference Include="Amazon.CDK.Lib" Version="2.22.0" />
+		<PackageReference Include="Constructs" Version="[10.0.0,11.0.0)" />
+		<!-- jsii Roslyn analyzers (un-comment to obtain compile-time checks for missing required props 
+        <PackageReference Include="Amazon.Jsii.Analyzers" Version="*" PrivateAssets="all" /> -->
 	</ItemGroup>
 
 </Project>

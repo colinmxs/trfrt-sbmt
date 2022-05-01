@@ -1,3 +1,5 @@
+using Microsoft.OpenApi.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
 
@@ -15,6 +17,11 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(opts => 
 {
+    opts.SwaggerDoc("v1", new OpenApiInfo()
+    {
+        Title = "Submit API",
+        Version = "v1"
+    });
     opts.OperationFilter<SwaggerCustomizations.CustomHeaderSwaggerAttribute>();
 });
 
@@ -38,6 +45,6 @@ app.UseSwaggerUI(options =>
 });
 
 // endpoints
-app.MapGet("/healthcheck", () => "Treefort Submit Api!").RequireAuthorization();
+app.MapGet("/healthcheck", () => "Submit Api!").RequireAuthorization();
 
 app.Run();
