@@ -1,5 +1,4 @@
 ﻿namespace TrfrtSbmt.Api;
-using System.Collections.Generic;
 
 public class AppSettings
 {
@@ -8,14 +7,11 @@ public class AppSettings
 
     public AppSettings(ConfigurationManager config)
     {
-        config.GetSection("AppSettings").Bind(this);
+        var appSettings = config.GetSection("AppSettings");
+        CognitoSettings = new Cognito(appSettings["CognitoSettings:ResponseType"], appSettings["CognitoSettings:MetadataAddress"], appSettings["CognitoSettings:ClientId"]);
         var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
         ArgumentNullException.ThrowIfNull(environment, "ASPNETCORE_ENVIRONMENT");
         EnvironmentName = environment;
-        CognitoSettings = new Cognito(
-            config["Authentication:Cognito:ResponseType"], 
-            config["Authentication:Cognito:MetadataAddress"], 
-            config["Authentication:Cognito:ClientId"]);
     }
     public record Cognito(string ResponseType, string MetadataAddress, string ClientId);
 

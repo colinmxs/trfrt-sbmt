@@ -34,6 +34,6 @@ app.UseSwaggerUI(options =>
 });
 
 // endpoints
-app.MapGet("/", () => "Treefort Submit Api!").RequireAuthorization();
+app.MapGet("/healthcheck", () => "Treefort Submit Api!").RequireAuthorization();
 
 app.Run();
