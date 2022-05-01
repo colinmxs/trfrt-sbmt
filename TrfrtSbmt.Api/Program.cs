@@ -13,7 +13,10 @@ builder.Services.AddAWSLambdaHosting(LambdaEventSource.RestApi);
 
 // add swagger
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opts => 
+{
+    opts.OperationFilter<SwaggerCustomizations.CustomHeaderSwaggerAttribute>();
+});
 
 
 // configure auth

@@ -13,8 +13,8 @@ public static class Auth
         var validationParameters = new TokenValidationParameters
         {
             ValidateAudience = false,
-            ValidateIssuer = true,
-            ValidateLifetime = true,
+            ValidateIssuer = false,
+            ValidateLifetime = true,            
             IssuerSigningKeys = config.SigningKeys
         };
         return services
