@@ -93,7 +93,7 @@ public class ApiStack : Stack
             },
             DomainName = new DomainNameOptions
             {
-                Certificate = Certificate.FromCertificateArn(this, "uswest2privatecert", $"arn:aws:acm:us-west-2:{accountId}:certificate/{sslCertId}"),
+                Certificate = Certificate.FromCertificateArn(this, "uswest2privatecert", $"arn:aws:acm:us-east-1:{accountId}:certificate/{sslCertId}"),
                 DomainName = "sbmt-api.com",
                 EndpointType = EndpointType.EDGE,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
