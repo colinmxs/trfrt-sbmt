@@ -21,7 +21,6 @@ public class ApiStack : Stack
     {
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
         var accountId = (string)scope.Node.TryGetContext("accountid");
-        var sslCertId = (string)scope.Node.TryGetContext("sslcertid");
         var domain = (string)scope.Node.TryGetContext("domain");
 
         var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
@@ -98,7 +97,7 @@ public class ApiStack : Stack
             },
             DomainName = new DomainNameOptions
             {
-                Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:us-east-1:{accountId}:certificate/{sslCertId}"),
+                Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:us-east-1:{accountId}:certificate/{props.CertId}"),
                 DomainName = domain,
                 EndpointType = EndpointType.REGIONAL,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
