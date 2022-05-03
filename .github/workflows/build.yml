@@ -38,6 +38,7 @@ jobs:
       env:
         ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
         SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID }}
+        DOMAIN: ${{ secrets.DOMAIN }}
     - name: Build CDK
       run: |
         dotnet publish TrfrtSbmt.Cdk/TrfrtSbmt.Cdk.csproj --configuration Release                
