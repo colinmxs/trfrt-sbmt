@@ -13,6 +13,7 @@ public class ApiStack : Stack
     {
         public string Name { get; init; } = "TreefortSubmitApi";
         public string Region { get; init; } = "us-east-1";
+        public string CertId { get; init; }
         public string[] OtherRegions { get; init; } = new string[] { "us-west-2" };
     }
     
@@ -97,9 +98,9 @@ public class ApiStack : Stack
             },
             DomainName = new DomainNameOptions
             {
-                Certificate = Certificate.FromCertificateArn(this, "uswest2privatecert", $"arn:aws:acm:us-east-1:{accountId}:certificate/{sslCertId}"),
+                Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:us-east-1:{accountId}:certificate/{sslCertId}"),
                 DomainName = domain,
-                EndpointType = EndpointType.EDGE,
+                EndpointType = EndpointType.REGIONAL,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
             }
         });

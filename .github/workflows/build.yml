@@ -37,7 +37,8 @@ jobs:
         files: '**/TrfrtSbmt.Cdk/cdk.json'
       env:
         ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
-        SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID }}
+        USWEST1SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_1 }}
+        USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
         DOMAIN: ${{ secrets.DOMAIN }}
     - name: Build CDK
       run: |

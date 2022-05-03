@@ -16,11 +16,14 @@ _ = new DbStack(app, "DbStack", new StackProps
 }, regions.Except(new List<string> { "use-west-2" }).ToArray());
 foreach (var region in regions)
 {
+    var regionConfig = (Dictionary<string, string>)app.Node.TryGetContext(region);
+    var certId = regionConfig["sslcertid"];
     var otherRegions = regions.Except(new List<string> { region });
     _ = new ApiStack(app, $"SubmitApiStack-{region}", new ApiStack.ApiStackProps
     {
         Env = new Amazon.CDK.Environment { Region = region, Account = accountId },
         Name = $"SubmitApiStack-{region}",
+        CertId = certId,
         Region = region,
         OtherRegions = otherRegions.ToArray()
     });
