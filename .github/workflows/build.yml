@@ -28,6 +28,15 @@ jobs:
     - name: Bootstrap CDK
       run: |
         cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-2
+    - name: Replace tokens
+      uses: cschleiden/replace-tokens@v1.1
+      with:
+        tokenPrefix: '#{'
+        tokenSuffix: '}#'
+        files: '**/TrfrtSbmt.Cdk/cdk.json'
+      env:
+        ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
+        SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID }}
     - name: Build CDK
       run: |
         dotnet publish TrfrtSbmt.Cdk/TrfrtSbmt.Cdk.csproj --configuration Release                
