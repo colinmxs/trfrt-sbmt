@@ -97,7 +97,7 @@ public class ApiStack : Stack
             },
             DomainName = new DomainNameOptions
             {
-                Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:us-east-1:{accountId}:certificate/{props.CertId}"),
+                Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:{props.Region}:{accountId}:certificate/{props.CertId}"),
                 DomainName = domain,
                 EndpointType = EndpointType.REGIONAL,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
