@@ -91,7 +91,7 @@ public class ApiStack : Stack
             {
                 Types = new EndpointType[]
                 {
-                    EndpointType.EDGE
+                    EndpointType.REGIONAL
                 }
             },
             DomainName = new DomainNameOptions
@@ -112,7 +112,7 @@ public class ApiStack : Stack
             Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
             {
                 DomainName = domain
-            }),
+            }),            
             Target = RecordTarget.FromAlias(new ApiGateway(restApi))
         });
 
