@@ -20,7 +20,6 @@ public class ApiStack : Stack
     {
         var accountId = (string)scope.Node.TryGetContext("accountid");
         var sslCertId = (string)scope.Node.TryGetContext("sslcertid");
-        
 
         var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
