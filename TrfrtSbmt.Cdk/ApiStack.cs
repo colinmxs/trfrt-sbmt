@@ -104,28 +104,7 @@ public class ApiStack : Stack
             }
         });
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");
-        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
-
-        var table = new Table(this, "DynamoTable", new TableProps
-        {
-            BillingMode = BillingMode.PAY_PER_REQUEST,
-            PartitionKey = new Attribute
-            {
-                Name = "PartitionKey",
-                Type = AttributeType.STRING
-            },
-            SortKey = new Attribute
-            {
-                Name = "SortKey",
-                Type = AttributeType.STRING
-            },
-            RemovalPolicy = RemovalPolicy.DESTROY,
-            TableName = $"Submissions",
-            ReplicationRegions = props.OtherRegions
-        });
-
-        Amazon.CDK.Tags.Of(table).Add("Name", "Submissions");
-        Amazon.CDK.Tags.Of(table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());        
 
         var route53 = new RecordSet(this, "customdomain", new RecordSetProps
         {
