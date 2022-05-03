@@ -13,7 +13,7 @@ var accountId = (string)app.Node.TryGetContext("accountid");
 _ = new DbStack(app, "DbStack", new StackProps
 {
     Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-}, regions.Except(new List<string> { "use-west-2" }).ToArray());
+}, regions.Except(new List<string> { "us-west-2" }).ToArray());
 foreach (var region in regions)
 {
     var regionConfig = (Dictionary<string, string>)app.Node.TryGetContext(region);
