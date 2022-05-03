@@ -20,6 +20,7 @@ public class ApiStack : Stack
     {
         var accountId = (string)scope.Node.TryGetContext("accountid");
         var sslCertId = (string)scope.Node.TryGetContext("sslcertid");
+        var domain = (string)scope.Node.TryGetContext("domain");
 
         var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
@@ -96,7 +97,7 @@ public class ApiStack : Stack
             DomainName = new DomainNameOptions
             {
                 Certificate = Certificate.FromCertificateArn(this, "uswest2privatecert", $"arn:aws:acm:us-east-1:{accountId}:certificate/{sslCertId}"),
-                DomainName = "sbmt-api.com",
+                DomainName = domain,
                 EndpointType = EndpointType.EDGE,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
             }
@@ -127,16 +128,16 @@ public class ApiStack : Stack
 
         var route53 = new RecordSet(this, "customdomain", new RecordSetProps
         {
-            RecordName = "sbmt-api.com",
+            RecordName = domain,
             RecordType = RecordType.A,
             Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
             {
-                DomainName = "sbmt-api.com"
+                DomainName = domain
             }),
             Target = RecordTarget.FromAlias(new ApiGateway(restApi))
         });
 
-        Amazon.CDK.Tags.Of(route53).Add("Name", "sbmt-api.com");
+        Amazon.CDK.Tags.Of(route53).Add("Name", domain);
         Amazon.CDK.Tags.Of(route53).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
     }
 }

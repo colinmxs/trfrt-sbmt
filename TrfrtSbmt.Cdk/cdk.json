@@ -2,6 +2,7 @@
   "app": "TrfrtSbmt.Cdk.exe",
   "context": {
     "accountid": "#{ACCOUNTID}#",
-    "sslcertid": "#{SSLCERTID}#"
+    "sslcertid": "#{SSLCERTID}#",
+    "domain": "#{DOMAIN}#"
   }
 }
