@@ -1,7 +1,6 @@
 ﻿namespace TrfrtSbmt.Cdk;
 using Amazon.CDK.AWS.APIGateway;
 using Amazon.CDK.AWS.CertificateManager;
-using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
 using Amazon.CDK.AWS.Route53;
@@ -109,7 +108,7 @@ public class ApiStack : Stack
         var route53 = new RecordSet(this, "customdomain", new RecordSetProps
         {
             RecordName = domain,
-            RecordType = RecordType.A,
+            RecordType = RecordType.CNAME,
             Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
             {
                 DomainName = domain
