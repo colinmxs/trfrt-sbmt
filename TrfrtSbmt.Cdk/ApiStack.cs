@@ -18,6 +18,7 @@ public class ApiStack : Stack
     
     public ApiStack(Construct scope, string id, ApiStackProps props) : base(scope, id, props)
     {
+        Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
         var accountId = (string)scope.Node.TryGetContext("accountid");
         var sslCertId = (string)scope.Node.TryGetContext("sslcertid");
         var domain = (string)scope.Node.TryGetContext("domain");
