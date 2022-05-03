@@ -1,5 +1,6 @@
 ﻿namespace TrfrtSbmt.Cdk;
 using Amazon.CDK.AWS.APIGateway;
+using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
@@ -14,6 +15,10 @@ public class ApiStack : Stack
     
     public ApiStack(Construct scope, string id, ApiStackProps props) : base(scope, id, props)
     {
+        var accountId = (string)scope.Node.TryGetContext("accountid");
+        var sslCertId = (string)scope.Node.TryGetContext("sslcertid");
+        
+
         var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
             AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
@@ -85,6 +90,13 @@ public class ApiStack : Stack
                 {
                     EndpointType.EDGE
                 }
+            },
+            DomainName = new DomainNameOptions
+            {
+                Certificate = Certificate.FromCertificateArn(this, "uswest2privatecert", $"arn:aws:acm:us-west-2:{accountId}:certificate/{sslCertId}"),
+                DomainName = "sbmt-api.com",
+                EndpointType = EndpointType.EDGE,
+                SecurityPolicy = SecurityPolicy.TLS_1_2
             }
         });
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");

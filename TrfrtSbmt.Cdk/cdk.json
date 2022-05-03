@@ -1,3 +1,7 @@
 ﻿{
-  "app": "TrfrtSbmt.Cdk.exe"
+  "app": "TrfrtSbmt.Cdk.exe",
+  "context": {
+    "accountid": "#{ACCOUNTID}#",
+    "sslcertid": "#{SSLCERTID}#"
+  }
 }
