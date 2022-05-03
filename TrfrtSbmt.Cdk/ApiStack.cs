@@ -4,6 +4,9 @@ using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.Lambda;
+using Amazon.CDK.AWS.Route53;
+using Amazon.CDK.AWS.Route53.Targets;
+
 public class ApiStack : Stack
 {
     public class ApiStackProps : StackProps
@@ -122,5 +125,19 @@ public class ApiStack : Stack
 
         Amazon.CDK.Tags.Of(table).Add("Name", "Submissions");
         Amazon.CDK.Tags.Of(table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+
+        var route53 = new RecordSet(this, "customdomain", new RecordSetProps
+        {
+            RecordName = "sbmt-api.com",
+            RecordType = RecordType.A,
+            Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
+            {
+                DomainName = "sbmt-api.com"
+            }),
+            Target = RecordTarget.FromAlias(new ApiGateway(restApi))
+        });
+
+        Amazon.CDK.Tags.Of(route53).Add("Name", "sbmt-api.com");
+        Amazon.CDK.Tags.Of(route53).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
     }
 }
