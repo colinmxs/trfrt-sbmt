@@ -21,6 +21,7 @@ public class ApiStack : Stack
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
         var accountId = (string)scope.Node.TryGetContext("accountid");
         var domain = (string)scope.Node.TryGetContext("domain");
+        var subdomain = (string)scope.Node.TryGetContext("subdomain");
 
         var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
@@ -97,7 +98,7 @@ public class ApiStack : Stack
             DomainName = new DomainNameOptions
             {
                 Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:{props.Region}:{accountId}:certificate/{props.CertId}"),
-                DomainName = domain,
+                DomainName = $"{subdomain}.{domain}",
                 EndpointType = EndpointType.REGIONAL,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
             }
@@ -105,9 +106,10 @@ public class ApiStack : Stack
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");
         Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
-        var route53 = new ARecord(this, "customdomain", new ARecordProps
+        var route53 = new RecordSet(this, "customdomain", new RecordSetProps
         {
-            RecordName = domain,            
+            RecordName = $"{subdomain}.{domain}",       
+            RecordType = RecordType.CNAME,
             Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
             {
                 DomainName = domain
