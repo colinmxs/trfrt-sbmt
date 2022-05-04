@@ -45,6 +45,6 @@ app.UseSwaggerUI(options =>
 });
 
 // endpoints
-app.MapGet("/healthcheck", () => "Submit Api!").RequireAuthorization();
+app.MapGet("/healthcheck", () => "Submit Api!");
 
 app.Run();
