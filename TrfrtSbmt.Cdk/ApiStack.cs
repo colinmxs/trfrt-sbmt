@@ -104,20 +104,6 @@ public class ApiStack : Stack
             }
         });
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");
-        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
-
-        var route53 = new RecordSet(this, "customdomain", new RecordSetProps
-        {
-            RecordName = $"{subdomain}.{domain}",       
-            RecordType = RecordType.CNAME,
-            Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
-            {
-                DomainName = domain
-            }),
-            Target = RecordTarget.FromAlias(new ApiGateway(restApi))
-        });
-
-        Amazon.CDK.Tags.Of(route53).Add("Name", domain);
-        Amazon.CDK.Tags.Of(route53).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());        
     }
 }
