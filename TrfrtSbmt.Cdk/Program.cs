@@ -1,7 +1,6 @@
 ﻿// specify regions to deploy to
 var regions = new string[]
 {  
-    "us-west-1",
     "us-west-2"
 };
 

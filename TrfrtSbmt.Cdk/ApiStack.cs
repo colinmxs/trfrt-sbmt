@@ -88,13 +88,10 @@ public class ApiStack : Stack
                 AllowHeaders = Cors.DEFAULT_HEADERS
             },
             RestApiName = $"{props.Name}RestApi",
-            EndpointConfiguration = new EndpointConfiguration
+            EndpointTypes = new EndpointType[]
             {
-                Types = new EndpointType[]
-                {
-                    EndpointType.REGIONAL
-                }
-            },
+                EndpointType.REGIONAL
+            },            
             DomainName = new DomainNameOptions
             {
                 Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:{props.Region}:{accountId}:certificate/{props.CertId}"),
@@ -104,6 +101,20 @@ public class ApiStack : Stack
             }
         });
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");
-        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());        
+        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+
+        var route53 = new RecordSet(this, "customdomain", new RecordSetProps
+        {
+            RecordName = $"{subdomain}.{domain}",
+            RecordType = RecordType.A,
+            Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
+            {
+                DomainName = domain
+            }),
+            Target = RecordTarget.FromAlias(new ApiGateway(restApi))
+        });
+
+        Amazon.CDK.Tags.Of(route53).Add("Name", domain);
+        Amazon.CDK.Tags.Of(route53).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
     }
 }
