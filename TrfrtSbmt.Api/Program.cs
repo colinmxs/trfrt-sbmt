@@ -1,4 +1,5 @@
 using Microsoft.OpenApi.Models;
+using TrfrtSbmt.Api.Features;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
@@ -46,5 +47,7 @@ app.UseSwaggerUI(options =>
 
 // endpoints
 app.MapGet("/healthcheck", () => "Submit Api!");
+app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
+app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
 
 app.Run();
