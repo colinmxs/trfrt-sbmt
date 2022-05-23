@@ -49,5 +49,6 @@ app.UseSwaggerUI(options =>
 app.MapGet("/healthcheck", () => "Submit Api!");
 app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
 app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
+app.MapPost("/define-submission-grouping", async (DefineSubmissionGrouping.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
 
 app.Run();

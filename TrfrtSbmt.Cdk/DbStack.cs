@@ -15,11 +15,6 @@ public class DbStack : Stack
                 Name = "PartitionKey",
                 Type = AttributeType.STRING
             },
-            SortKey = new Attribute
-            {
-                Name = "SortKey",
-                Type = AttributeType.STRING
-            },
             RemovalPolicy = RemovalPolicy.DESTROY,
             TableName = $"Submissions",
             ReplicationRegions = replicateRegions
@@ -27,5 +22,20 @@ public class DbStack : Stack
 
         Amazon.CDK.Tags.Of(table).Add("Name", "Submissions");
         Amazon.CDK.Tags.Of(table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+
+        table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        {
+            IndexName = "Gsi1",
+            PartitionKey = new Attribute
+            {
+                Name = "SearchTerm",
+                Type = AttributeType.STRING
+            },
+            SortKey = new Attribute
+            {
+                Name = "EntityType",
+                Type = AttributeType.STRING
+            }
+        });
     }
 }

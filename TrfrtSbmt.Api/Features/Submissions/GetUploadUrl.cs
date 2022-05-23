@@ -2,7 +2,7 @@
 using Amazon.S3;
 using Amazon.S3.Model;
 
-namespace TrfrtSbmt.Api.Features;
+namespace TrfrtSbmt.Api.Features.Submissions;
 
 public class GetUploadUrl
 {
