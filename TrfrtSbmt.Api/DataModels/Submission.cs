@@ -6,7 +6,7 @@ public class Submission : BaseEntity
 {
     public Submission(Dictionary<string, AttributeValue> values) : base(values) { }
 
-    public Submission() : base("","","")
+    public Submission() : base("","","", "")
     {
         throw new NotImplementedException();
 

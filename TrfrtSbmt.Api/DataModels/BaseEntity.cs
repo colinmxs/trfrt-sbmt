@@ -10,18 +10,22 @@ public abstract class BaseEntity
     {
         _attributes = values;
     }
-    public BaseEntity(string partitionKey, string searchTerm, string entityType)
+    
+    public BaseEntity(string? partitionKey, string sortKey, string searchTerm, string entityType, string? entityId = null)
     {
         _attributes = new Dictionary<string, AttributeValue>
         {
+            [nameof(EntityId)] = new AttributeValue(entityId ?? Guid.NewGuid().ToString()),
             [nameof(PartitionKey)] = new AttributeValue { S = partitionKey },
-            [nameof(SearchTerm)] = new AttributeValue { S = searchTerm },
+            [nameof(SortKey)] = new AttributeValue { S = sortKey },
+            [nameof(SearchTerm)] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
             [nameof(EntityType)] = new AttributeValue { S = entityType }
         };
 
     }
-    
+    protected internal string EntityId => _attributes[nameof(EntityId)].S;
     protected internal string PartitionKey => _attributes[nameof(PartitionKey)].S;
+    protected internal string SortKey => _attributes[nameof(SortKey)].S;
     protected string EntityType => _attributes[nameof(EntityType)].S;
     protected string SearchTerm => _attributes[nameof(SearchTerm)].S;
 

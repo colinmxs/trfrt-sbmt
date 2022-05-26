@@ -15,6 +15,11 @@ public class DbStack : Stack
                 Name = "PartitionKey",
                 Type = AttributeType.STRING
             },
+            SortKey = new Attribute
+            {
+                Name = "SortKey",
+                Type = AttributeType.STRING
+            },
             RemovalPolicy = RemovalPolicy.DESTROY,
             TableName = $"Submissions",
             ReplicationRegions = replicateRegions
@@ -34,6 +39,16 @@ public class DbStack : Stack
             SortKey = new Attribute
             {
                 Name = "EntityType",
+                Type = AttributeType.STRING
+            }
+        });
+        
+        table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        {
+            IndexName = "EntityIdIndex",
+            PartitionKey = new Attribute
+            {
+                Name = "EntityId",
                 Type = AttributeType.STRING
             }
         });

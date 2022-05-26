@@ -1,5 +1,8 @@
+using Amazon.DynamoDBv2;
 using Microsoft.OpenApi.Models;
 using TrfrtSbmt.Api.Features;
+using TrfrtSbmt.Api.Features.Groupings;
+using TrfrtSbmt.Api.Features.Submissions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
@@ -9,6 +12,7 @@ var appSettings = new AppSettings(builder.Configuration);
 builder.Services.AddSingleton(appSettings);
 
 // Add other services to the container.
+builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddMediatR(typeof(Program));
 
 // Add AWS Lambda support.

@@ -14,9 +14,9 @@ public class ListSubmissionGroupings
         public Result(List<Grouping> groupings) : this(groupings.Select(g => new Model(g)).ToList()) {}
     }
 
-    public record Model(string GroupingName, List<string> SubGroupings, string Guidelines, DateTime StartDateTime, DateTime EndDateTime)
+    public record Model(string GroupingName, string Guidelines, DateTime StartDateTime, DateTime EndDateTime)
     {
-        public Model(Grouping grouping) : this(grouping.GroupingName, grouping.SubGroupings, grouping.Guidelines, grouping.StartDateTime, grouping.EndDateTime) {}
+        public Model(Grouping grouping) : this(grouping.Name, grouping.Guidelines, grouping.StartDateTime, grouping.EndDateTime) {}
     }
 
     public class QueryHandler : IRequestHandler<Query, Result>

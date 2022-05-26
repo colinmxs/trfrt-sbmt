@@ -5,7 +5,7 @@ namespace TrfrtSbmt.Api.DataModels;
 public class Tag : BaseEntity
 {
     private const string PartitionKeyValuePrefix = "Tag-";
-    public Tag(string name, List<string> targets) : base($"{PartitionKeyValuePrefix}{name}", name, nameof(Tag)) 
+    public Tag(string name, List<string> targets) : base($"{PartitionKeyValuePrefix}{name}", name, nameof(Tag), "") 
     {
         _attributes[nameof(Name)] = new AttributeValue { S = name };
         _attributes[nameof(Targets)] = new AttributeValue { SS = targets };
