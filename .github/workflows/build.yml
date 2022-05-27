@@ -53,5 +53,6 @@ jobs:
         Compress-Archive -DestinationPath TrfrtSbmt.Api/publish.zip           
     - name: Deploy
       run: |
+      
         cd TrfrtSbmt.Cdk/bin/Release/net6.0
         cdk deploy * --require-approval never
