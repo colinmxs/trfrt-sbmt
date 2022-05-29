@@ -1,5 +1,7 @@
 using System.Runtime.CompilerServices;
 using Amazon.DynamoDBv2;
+using Amazon.S3;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using TrfrtSbmt.Api.Features.Festivals;
 using TrfrtSbmt.Api.Features.Forts;
@@ -16,6 +18,7 @@ builder.Services.AddSingleton(appSettings);
 
 // Add other services to the container.
 builder.Services.AddAWSService<IAmazonDynamoDB>();
+builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddMediatR(typeof(Program));
 
 // Add AWS Lambda support.
@@ -30,7 +33,31 @@ builder.Services.AddSwaggerGen(opts =>
         Title = "Submit API",
         Version = "v1"
     });
-    opts.OperationFilter<SwaggerCustomizations.CustomHeaderSwaggerAttribute>();
+    opts.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        In = ParameterLocation.Header,
+        Description = "Please enter a valid token",
+        Name = "Authorization",
+        Type = SecuritySchemeType.Http,
+        BearerFormat = "JWT",
+        Scheme = "Bearer"
+    });
+    opts.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type=ReferenceType.SecurityScheme,
+                    Id="Bearer"
+                }
+            },
+            new string[]{}
+        }
+    });
+
+    //opts.OperationFilter<SwaggerCustomizations.CustomHeaderSwaggerAttribute>();
 });
 
 
@@ -62,7 +89,7 @@ app.MapGet("/healthcheck", () => "Submit Api!").RequireAuthorization();
 app.MapGet("/festivals", async (bool activeOnly, [FromServices] IMediator mediator) => await mediator.Send(new ListFestivals.Query(activeOnly))).RequireAuthorization();
 app.MapPost("/festivals", async (AddFestival.Command command, [FromServices] IMediator mediator) => await mediator.Send(command)).RequireAuthorization("admin");
 
-app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
-app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
+//app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
+//app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
 
 app.Run();

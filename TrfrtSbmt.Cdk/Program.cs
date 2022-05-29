@@ -1,31 +1,34 @@
-﻿// specify regions to deploy to
-var regions = new string[]
-{  
-    "us-west-2"
-};
+﻿using Amazon.CDK.AWS.IAM;
 
 var app = new App(null);
+var region = "us-west-2";
 Tags.Of(app).Add("Owner", "smith.colin00@gmail.com");
 Tags.Of(app).Add("Application", "Submit Api");
-
+Tags.Of(app).Add("Billing", "Treefort");
 var accountId = (string)app.Node.TryGetContext("accountid");
-_ = new DbStack(app, "DbStack", new StackProps
+
+var regionConfig = (Dictionary<string, object>)app.Node.TryGetContext(region);
+var certId = (string)regionConfig["sslcertid"];
+var api = new ApiStack(app, $"SubmitApiStack-{region}", new ApiStack.ApiStackProps
+{
+    Env = new Amazon.CDK.Environment { Region = region, Account = accountId },
+    Name = $"SubmitApiStack-{region}",
+    CertId = certId,
+    Region = region,
+});
+
+var dbs = new DbStack(app, "DbStack", new StackProps
+{
+    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId }
+});
+
+var iam = new IamStack(app, "IamStack", new IamStack.IamStackProps
 {
     Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-}, regions.Except(new List<string> { "us-west-2" }).ToArray());
-foreach (var region in regions)
-{
-    var regionConfig = (Dictionary<string, object>)app.Node.TryGetContext(region);
-    var certId = (string)regionConfig["sslcertid"];
-    var otherRegions = regions.Except(new List<string> { region });
-    _ = new ApiStack(app, $"SubmitApiStack-{region}", new ApiStack.ApiStackProps
-    {
-        Env = new Amazon.CDK.Environment { Region = region, Account = accountId },
-        Name = $"SubmitApiStack-{region}",
-        CertId = certId,
-        Region = region,
-        OtherRegions = otherRegions.ToArray()
-    });
-}
+    Role = api.LambdaExecutionRole,
+    Table = dbs.Table,
+    TestTable = dbs.TestTable
+});
+
 
 app.Synth();

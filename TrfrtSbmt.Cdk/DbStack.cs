@@ -5,10 +5,12 @@ namespace TrfrtSbmt.Cdk;
 
 public class DbStack : Stack
 {
-    public DbStack(Construct scope, string id, StackProps props, string[] replicateRegions) : base(scope, id, props)
+    public Table Table { get; }
+    public Table TestTable { get; }
+    public DbStack(Construct scope, string id, StackProps props, string[]? replicateRegions = null) : base(scope, id, props)
     {
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
-        var table = new Table(this, "DynamoTable", new TableProps
+        Table = new Table(this, "DynamoTable", new TableProps
         {
             BillingMode = BillingMode.PAY_PER_REQUEST,
             PartitionKey = new Attribute
@@ -23,13 +25,46 @@ public class DbStack : Stack
             },
             RemovalPolicy = RemovalPolicy.DESTROY,
             TableName = $"Submissions",
-            ReplicationRegions = replicateRegions
+            //ReplicationRegions = replicateRegions
+        });
+        
+        Amazon.CDK.Tags.Of(Table).Add("Name", "Submissions");
+        Amazon.CDK.Tags.Of(Table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+
+        Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps 
+        {
+            IndexName = "StateIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "State",
+                Type = AttributeType.STRING
+            }            
         });
 
-        Amazon.CDK.Tags.Of(table).Add("Name", "Submissions");
-        Amazon.CDK.Tags.Of(table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
+        {
+            IndexName = "RankIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "Rank",
+                Type = AttributeType.STRING
+            }
+        });
 
-        table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
+        {
+            IndexName = "StateRankIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "StateRank",
+                Type = AttributeType.STRING
+            }
+        });
+
+        Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
             IndexName = "Gsi1",
             PartitionKey = new Attribute
@@ -43,8 +78,8 @@ public class DbStack : Stack
                 Type = AttributeType.STRING
             }
         });
-        
-        table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+
+        Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
             IndexName = "EntityIdIndex",
             PartitionKey = new Attribute
@@ -54,7 +89,7 @@ public class DbStack : Stack
             }
         });
 
-        var testTable = new Table(this, "DynamoTestTable", new TableProps
+        TestTable = new Table(this, "DynamoTestTable", new TableProps
         {
             BillingMode = BillingMode.PAY_PER_REQUEST,
             PartitionKey = new Attribute
@@ -71,10 +106,10 @@ public class DbStack : Stack
             TableName = $"Submissions-Tests"
         });
 
-        Amazon.CDK.Tags.Of(table).Add("Name", "Submissions-Tests");
-        Amazon.CDK.Tags.Of(table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        Amazon.CDK.Tags.Of(TestTable).Add("Name", "Submissions-Tests");
+        Amazon.CDK.Tags.Of(TestTable).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
-        testTable.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        TestTable.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
             IndexName = "Gsi1",
             PartitionKey = new Attribute
@@ -89,7 +124,7 @@ public class DbStack : Stack
             }
         });
 
-        testTable.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        TestTable.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
             IndexName = "EntityIdIndex",
             PartitionKey = new Attribute

@@ -12,10 +12,12 @@ public class ApiStack : Stack
     {
         public string Name { get; init; } = "TreefortSubmitApi";
         public string Region { get; init; } = "us-east-1";
-        public string CertId { get; init; }
-        public string[] OtherRegions { get; init; } = new string[] { "us-west-2" };
+        public string CertId { get; init; } = string.Empty;
+        //public string[] OtherRegions { get; init; } = new string[] { "us-west-2" };
     }
     
+    public Role LambdaExecutionRole { get; init; }
+
     public ApiStack(Construct scope, string id, ApiStackProps props) : base(scope, id, props)
     {
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
@@ -23,7 +25,7 @@ public class ApiStack : Stack
         var domain = (string)scope.Node.TryGetContext("domain");
         var subdomain = (string)scope.Node.TryGetContext("subdomain");
 
-        var lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
+        LambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
             AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
             RoleName = $"{props.Name}LambdaExecutionRole",
@@ -51,8 +53,8 @@ public class ApiStack : Stack
                 }
             }
         });
-        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Name", $"{props.Name}LambdaExecutionRole");
-        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        Amazon.CDK.Tags.Of(LambdaExecutionRole).Add("Name", $"{props.Name}LambdaExecutionRole");
+        Amazon.CDK.Tags.Of(LambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         var lambdaFunction = new Function(this, "LambdaFunction", new FunctionProps
         {
@@ -63,14 +65,14 @@ public class ApiStack : Stack
             FunctionName = $"{props.Name}LambdaFunction",            
             MemorySize = 256,
             RetryAttempts = 1,
-            Role = lambdaExecutionRole,
+            Role = LambdaExecutionRole,
             Environment = new Dictionary<string, string>
             {
                 ["ASPNETCORE_ENVIRONMENT"] = "Production" 
             }
         });
         Amazon.CDK.Tags.Of(lambdaFunction).Add("Name", $"{props.Name}LambdaFunction");
-        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        Amazon.CDK.Tags.Of(lambdaFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         var restApi = new LambdaRestApi(this, "RestApi", new LambdaRestApiProps
         {
@@ -101,7 +103,7 @@ public class ApiStack : Stack
             }
         });
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");
-        Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        Amazon.CDK.Tags.Of(restApi).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         var route53 = new RecordSet(this, "customdomain", new RecordSetProps
         {
