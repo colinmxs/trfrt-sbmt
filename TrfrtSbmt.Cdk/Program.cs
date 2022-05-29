@@ -9,20 +9,20 @@ var accountId = (string)app.Node.TryGetContext("accountid");
 
 var regionConfig = (Dictionary<string, object>)app.Node.TryGetContext(region);
 var certId = (string)regionConfig["sslcertid"];
-var api = new ApiStack(app, $"SubmitApiStack-{region}", new ApiStack.ApiStackProps
+var api = new ApiStack(app, $"TrfrtSbmt-ApiStack-{region}", new ApiStack.ApiStackProps
 {
     Env = new Amazon.CDK.Environment { Region = region, Account = accountId },
-    Name = $"SubmitApiStack-{region}",
+    Name = $"TrfrtSbmt-{region}",
     CertId = certId,
     Region = region,
 });
 
-var dbs = new DbStack(app, "DbStack", new StackProps
+var dbs = new DbStack(app, "TrfrtSbmt-DbStack", new StackProps
 {
     Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId }
 });
 
-var iam = new IamStack(app, "IamStack", new IamStack.IamStackProps
+var iam = new IamStack(app, "TrfrtSbmt-IamStack", new IamStack.IamStackProps
 {
     Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
     Role = api.LambdaExecutionRole,
