@@ -2,11 +2,11 @@
 
 public class AppSettings
 {
-    public string EnvironmentName { get; init; }
-    public Cognito CognitoSettings { get; init; }
-    public string BucketName { get; init; }
-    public string TableName { get; init; }
-    public string SubmissionGrouping { get; init; }
+    public string EnvironmentName { get; init; } = "Development";
+    public Cognito? CognitoSettings { get; init; } = null;
+    public string BucketName { get; init; } = string.Empty;
+    public string TableName { get; init; } = string.Empty;
+    public string SubmissionGrouping { get; init; } = string.Empty;
 
     public AppSettings(ConfigurationManager config)
     {
@@ -19,6 +19,7 @@ public class AppSettings
         TableName = appSettings["TableName"];
         SubmissionGrouping = appSettings["SubmissionGrouping"];
     }
+    public AppSettings() { }
     public record Cognito(string ResponseType, string MetadataAddress, string ClientId);
 }
 

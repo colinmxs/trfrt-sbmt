@@ -21,7 +21,7 @@ public class Submit
         }
         protected override async Task Handle(Command request, CancellationToken cancellationToken)
         {
-            await _db.PutItemAsync(new PutItemRequest(_settings.TableName, new Submission().ToDictionary()));
+            //await _db.PutItemAsync(new PutItemRequest(_settings.TableName, new Submission().ToDictionary()));
         }
     }
 }

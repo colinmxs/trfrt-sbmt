@@ -4,9 +4,11 @@ namespace TrfrtSbmt.Api.DataModels;
 
 public class Submission : BaseEntity
 {
+    protected override string SortKeyPrefix => $"{nameof(Submission)}-";
+
     public Submission(Dictionary<string, AttributeValue> values) : base(values) { }
 
-    public Submission() : base("","","", "")
+    public Submission(string festivalId, string name) : base(festivalId, name, name)
     {
         throw new NotImplementedException();
 

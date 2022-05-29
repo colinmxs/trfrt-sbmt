@@ -1,8 +1,11 @@
+using System.Runtime.CompilerServices;
 using Amazon.DynamoDBv2;
 using Microsoft.OpenApi.Models;
-using TrfrtSbmt.Api.Features;
-using TrfrtSbmt.Api.Features.Groupings;
+using TrfrtSbmt.Api.Features.Festivals;
+using TrfrtSbmt.Api.Features.Forts;
 using TrfrtSbmt.Api.Features.Submissions;
+
+[assembly: InternalsVisibleTo("TrfrtSbmt.Tests")]
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCors();
@@ -32,7 +35,11 @@ builder.Services.AddSwaggerGen(opts =>
 
 
 // configure auth
-builder.Services.AddAuthorization()
+builder.Services.AddAuthorization(opts =>
+{
+    // add auth policy called admin
+    opts.AddPolicy("admin", policy => policy.RequireClaim("cognito:groups", "admin"));
+})
     .ConfigureCognitoAuth(appSettings);
 
 var app = builder.Build();
@@ -51,8 +58,11 @@ app.UseSwaggerUI(options =>
 
 // endpoints
 app.MapGet("/healthcheck", () => "Submit Api!").RequireAuthorization();
+
+app.MapGet("/festivals", async (bool activeOnly, [FromServices] IMediator mediator) => await mediator.Send(new ListFestivals.Query(activeOnly))).RequireAuthorization();
+app.MapPost("/festivals", async (AddFestival.Command command, [FromServices] IMediator mediator) => await mediator.Send(command)).RequireAuthorization("admin");
+
 app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
 app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
-app.MapPost("/define-submission-grouping", async (DefineSubmissionGrouping.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
 
 app.Run();

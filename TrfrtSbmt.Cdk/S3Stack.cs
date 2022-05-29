@@ -11,6 +11,7 @@ public class S3Stack : Stack
     }
     public S3Stack(Construct scope, string id, S3StackProps props) : base(scope, id, props)
     {
+        Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
         var bucket = new Bucket(this, "Bucket", new BucketProps
         {
             BucketName = "sbmt-api-1",

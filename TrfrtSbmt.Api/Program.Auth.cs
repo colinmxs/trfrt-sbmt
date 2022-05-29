@@ -8,6 +8,10 @@ public static class Auth
 {
     public static AuthenticationBuilder ConfigureCognitoAuth(this IServiceCollection services, AppSettings appSettings, string scheme = JwtBearerDefaults.AuthenticationScheme)
     {
+        if (appSettings.CognitoSettings == null)
+        {
+            throw new Exception("CognitoSettings not found in appsettings");
+        }
         var configManager = new ConfigurationManager<OpenIdConnectConfiguration>(appSettings.CognitoSettings.MetadataAddress, new OpenIdConnectConfigurationRetriever());
         var config = configManager.GetConfigurationAsync(CancellationToken.None).Result;
         var validationParameters = new TokenValidationParameters
