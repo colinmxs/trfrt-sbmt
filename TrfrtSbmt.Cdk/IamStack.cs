@@ -7,15 +7,10 @@ public class IamStack : Stack
 {
     public IamStack(Construct scope, string id, IamStackProps props) : base(scope, id, props) 
     {
-        var localUser = new User(this, "local-user", new UserProps
-        {
-            UserName = "sbmt-api-local"
-        });
         var policy = new Policy(this, "table-access-policy", new PolicyProps 
         {
             PolicyName = "table-access-policy",
             Roles = new Role[] { props.Role },
-            Users = new User[] { localUser },
             Statements = new PolicyStatement[]
             {
                 new PolicyStatement(new PolicyStatementProps
