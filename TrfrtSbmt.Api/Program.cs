@@ -86,8 +86,11 @@ app.UseSwaggerUI(options =>
 // endpoints
 app.MapGet("/healthcheck", () => "Submit Api!").RequireAuthorization();
 
-app.MapGet("/festivals", async (bool activeOnly, [FromServices] IMediator mediator) => await mediator.Send(new ListFestivals.Query(activeOnly))).RequireAuthorization();
-app.MapPost("/festivals", async (AddFestival.Command command, [FromServices] IMediator mediator) => await mediator.Send(command)).RequireAuthorization("admin");
+app.MapGet("/festivals", async (bool activeOnly, [FromServices] IMediator mediator) => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly))).RequireAuthorization();
+app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromServices] IMediator mediator) => await mediator.Send(command)).RequireAuthorization("admin");
+
+app.MapGet("/forts", async (string festivalId, [FromServices] IMediator mediator) => await mediator.Send(new ListForts.ListFortsQuery(festivalId))).RequireAuthorization();
+app.MapPost("/forts", async (AddFort.AddFortCommand command, [FromServices] IMediator mediator) => await mediator.Send(command)).RequireAuthorization("admin");
 
 //app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
 //app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));

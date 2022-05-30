@@ -1,6 +1,7 @@
 namespace TrfrtSbmt.Api.Features.Festivals;
 
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
 using TrfrtSbmt.Api.DataModels;
 
 public class AddFestival
@@ -12,9 +13,10 @@ public class AddFestival
     /// <param name="Guidelines">Submission guidelines for the festival.</param>
     /// <param name="StartDateTime">DateTime to start accepting submissions.</param>
     /// <param name="EndDateTime">DateTime to stop accepting submissions.</param>
-    public record Command(string Name, string Guidelines, DateTime StartDateTime, DateTime EndDateTime) : IRequest;
+    /// <param name="Id">Id of the festival. Leave null if creating a new festival. Provide if updating an existing festival.</param>
+    public record AddFestivalCommand(string Name, string Guidelines, DateTime StartDateTime, DateTime EndDateTime, string? Id = null) : IRequest;
     
-    public class CommandHandler : AsyncRequestHandler<Command>
+    public class CommandHandler : AsyncRequestHandler<AddFestivalCommand>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
@@ -25,10 +27,30 @@ public class AddFestival
             _settings = settings;
         }
 
-        protected override async Task Handle(Command request, CancellationToken cancellationToken)
+        protected override async Task Handle(AddFestivalCommand request, CancellationToken cancellationToken)
         {
-            var grouping = new Festival(request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
-            await _db.PutItemAsync(_settings.TableName, grouping.ToDictionary(), cancellationToken);
+            Festival festival;
+            if (request.Id != null) 
+            {
+                var result = await _db.QueryAsync(new QueryRequest(_settings.TableName)
+                {
+                    KeyConditionExpression = $"{nameof(BaseEntity.EntityId)} = :id",
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+                    {
+                        {":id", new AttributeValue(request.Id)}
+                    },
+                    IndexName = BaseEntity.Gsi2
+                });
+                var singleOrDefault = result.Items.SingleOrDefault();
+                if (singleOrDefault == null)
+                {
+                    throw new Exception($"Festival not found: {request.Id}");
+                }
+                festival = new Festival(singleOrDefault);
+                festival.Update(request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
+            }
+            else festival = new Festival(request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
+            await _db.PutItemAsync(_settings.TableName, festival.ToDictionary(), cancellationToken);
         }
     }
 }

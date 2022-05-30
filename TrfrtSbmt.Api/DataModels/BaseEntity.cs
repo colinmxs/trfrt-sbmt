@@ -7,6 +7,7 @@ public abstract class BaseEntity
     protected abstract string SortKeyPrefix { get; }
     
     internal const string Gsi1 = "Gsi1";
+    internal const string Gsi2 = "EntityIdIndex";
     protected readonly Dictionary<string, AttributeValue> _attributes;
     public BaseEntity(Dictionary<string, AttributeValue> values) 
     {

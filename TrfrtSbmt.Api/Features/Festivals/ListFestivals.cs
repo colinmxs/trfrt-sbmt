@@ -10,14 +10,14 @@ public class ListFestivals
     /// Get festivals from the database.
     /// </summary>
     /// <param name="ActiveOnly">If true, only return festivals accepting submissions.</param>
-    public record Query(bool ActiveOnly = false, int PageSize = 20, string? PaginationKey = null) : IRequest<Result>;
-    public record Result(List<FestivalViewModel> Festivals, int PageSize, string? PaginationKey);
+    public record ListFestivalsQuery(bool ActiveOnly = false, int PageSize = 20, string? PaginationKey = null) : IRequest<ListFestivalsResult>;
+    public record ListFestivalsResult(IEnumerable<FestivalViewModel> Festivals, int PageSize, string? PaginationKey);
     public record FestivalViewModel(string Id, string Name, string Guidelines, DateTime StartDateTime, DateTime EndDateTime)
     {
         public FestivalViewModel(Festival grouping) : this(grouping.EntityId, grouping.Name, grouping.Guidelines, grouping.StartDateTime, grouping.EndDateTime) { }
     }
 
-    public class QueryHandler : IRequestHandler<Query, Result>
+    public class QueryHandler : IRequestHandler<ListFestivalsQuery, ListFestivalsResult>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
@@ -28,7 +28,7 @@ public class ListFestivals
             _settings = settings;
         }
 
-        public async Task<Result> Handle(Query request, CancellationToken cancellationToken)
+        public async Task<ListFestivalsResult> Handle(ListFestivalsQuery request, CancellationToken cancellationToken)
         {
             var pkSymbol = ":partitionKey";
             var queryResult = await _db.QueryAsync(new QueryRequest(_settings.TableName)
@@ -37,23 +37,23 @@ public class ListFestivals
                 KeyConditionExpression = $"{nameof(BaseEntity.SearchTerm)} = {pkSymbol}",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    [pkSymbol] = new AttributeValue { S = nameof(DataModels.Festival).ToUpperInvariant() }
+                    [pkSymbol] = new AttributeValue { S = nameof(Festival).ToUpperInvariant() }
                 },
                 Limit = request.PageSize,
                 ExclusiveStartKey = GetLastEvaluatedKey(request),
 
             });
-            if (queryResult.Items == null) return new Result(new List<FestivalViewModel>(), request.PageSize, null);
+            if (queryResult.Items == null) return new ListFestivalsResult(new List<FestivalViewModel>(), request.PageSize, null);
             var festivals = queryResult.Items.Select(i => new Festival(i));
             if (request.ActiveOnly)
             {
                 festivals = festivals.Where(f => f.StartDateTime <= DateTime.UtcNow && DateTime.UtcNow <= f.EndDateTime).ToList();
             }
 
-            return new Result(festivals.Select(f => new FestivalViewModel(f)).ToList(), request.PageSize, $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}");
+            return new ListFestivalsResult(festivals.Select(f => new FestivalViewModel(f)), request.PageSize, $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}");
         }
 
-        private static Dictionary<string, AttributeValue>? GetLastEvaluatedKey(Query request)
+        private static Dictionary<string, AttributeValue>? GetLastEvaluatedKey(ListFestivalsQuery request)
         {
             return request.PaginationKey != null ? 
                 new Dictionary<string, AttributeValue> 

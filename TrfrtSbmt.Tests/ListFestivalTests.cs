@@ -15,7 +15,7 @@ public class ListFestivalTests
     public async Task SmokeTest()
     {
         // arrange
-        var query = new ListFestivals.Query();
+        var query = new ListFestivals.ListFestivalsQuery();
 
         // act
         var result = await SendAsync(query);
@@ -31,7 +31,7 @@ public class ListFestivalTests
     {
         // arrange
         var pageSize = 20;
-        var query = new ListFestivals.Query
+        var query = new ListFestivals.ListFestivalsQuery
         {
             PageSize = pageSize
         };
@@ -40,7 +40,7 @@ public class ListFestivalTests
         var result = await SendAsync(query);
 
         // assert
-        result.Festivals.Count.ShouldBe(pageSize);
+        result.Festivals.Count().ShouldBe(pageSize);
         result.PageSize.ShouldBe(pageSize);
         result.PaginationKey.ShouldNotBeNullOrEmpty();
         result.PaginationKey.ShouldContain('|');
@@ -51,9 +51,9 @@ public class ListFestivalTests
     {
         // arrange
         var pageSize = 20;
-        var tempQuery = new ListFestivals.Query { PageSize = pageSize };
+        var tempQuery = new ListFestivals.ListFestivalsQuery { PageSize = pageSize };
         var tempResult = await SendAsync(tempQuery);
-        var query = new ListFestivals.Query
+        var query = new ListFestivals.ListFestivalsQuery
         {
             PageSize = pageSize,
             PaginationKey = tempResult.PaginationKey
@@ -63,7 +63,7 @@ public class ListFestivalTests
         var result = await SendAsync(query);
 
         // assert
-        result.Festivals.Count.ShouldBe(pageSize);
+        result.Festivals.Count().ShouldBe(pageSize);
         result.PageSize.ShouldBe(pageSize);
 #pragma warning disable CS8602 // Dereference of a possibly null reference.
         result.Festivals.Any(f => f.Id == query.PaginationKey.Split('|')[0]).ShouldBeFalse();
