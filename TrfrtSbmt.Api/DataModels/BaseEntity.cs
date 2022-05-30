@@ -44,7 +44,7 @@ public abstract class BaseEntity
     protected internal string EntityId => _attributes[nameof(EntityId)].S;
     protected internal string PartitionKey => _attributes[nameof(PartitionKey)].S;
     protected internal string SortKey => _attributes[nameof(SortKey)].S;
-    protected string EntityType => _attributes[nameof(EntityType)].S;
+    protected internal string EntityType => _attributes[nameof(EntityType)].S;
     protected internal string SearchTerm => _attributes[nameof(SearchTerm)].S;
 
     internal Dictionary<string, AttributeValue> ToDictionary()

@@ -1,6 +1,6 @@
 ﻿namespace TrfrtSbmt.Api.Features.Forts
 {
-    public class List
+    public class ListForts
     {
     }
 }
