@@ -50,7 +50,17 @@ public class ListFestivals
                 festivals = festivals.Where(f => f.StartDateTime <= DateTime.UtcNow && DateTime.UtcNow <= f.EndDateTime).ToList();
             }
 
-            return new ListFestivalsResult(festivals.Select(f => new FestivalViewModel(f)), request.PageSize, $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}");
+            string? paginationKey = GetPaginationKey(queryResult);
+            return new ListFestivalsResult(festivals.Select(f => new FestivalViewModel(f)), request.PageSize, paginationKey);
+        }
+
+        private static string? GetPaginationKey(QueryResponse queryResult)
+        {
+            if (queryResult.LastEvaluatedKey == null) return null;
+            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
+            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
+
+            return $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}";
         }
 
         private static Dictionary<string, AttributeValue>? GetLastEvaluatedKey(ListFestivalsQuery request)
