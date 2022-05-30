@@ -86,10 +86,10 @@ app.UseSwaggerUI(options =>
 // endpoints
 app.MapGet("/healthcheck", () => "Submit Api!").RequireAuthorization();
 
-app.MapGet("/festivals", async (bool activeOnly, [FromServices] IMediator mediator) => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly))).RequireAuthorization();
+app.MapGet("/festivals", async (bool activeOnly, int pageSize, string? paginationKey, [FromServices] IMediator mediator) => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly, pageSize, paginationKey))).RequireAuthorization();
 app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromServices] IMediator mediator) => await mediator.Send(command)).RequireAuthorization("admin");
 
-app.MapGet("/forts", async (string festivalId, [FromServices] IMediator mediator) => await mediator.Send(new ListForts.ListFortsQuery(festivalId))).RequireAuthorization();
+app.MapGet("/forts", async (string festivalId, int pageSize, string ? paginationKey,[FromServices] IMediator mediator) => await mediator.Send(new ListForts.ListFortsQuery(festivalId, pageSize, paginationKey))).RequireAuthorization();
 app.MapPost("/forts", async (AddFort.AddFortCommand command, [FromServices] IMediator mediator) => await mediator.Send(command)).RequireAuthorization("admin");
 
 //app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
