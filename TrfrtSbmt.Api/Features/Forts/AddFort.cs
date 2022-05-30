@@ -5,7 +5,10 @@ namespace TrfrtSbmt.Api.Features.Forts;
 
 public class AddFort
 {
-    public record AddFortCommand(string FestivalId, string Name) : IRequest;
+    public record AddFortCommand(string Name) : IRequest 
+    {
+        public string? FestivalId { get; internal set; }
+    }
 
     public class CommandHandler : AsyncRequestHandler<AddFortCommand>
     {

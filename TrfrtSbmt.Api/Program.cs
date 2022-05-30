@@ -84,7 +84,8 @@ app.UseSwaggerUI(options =>
 });
 
 // health check
-app.MapGet("/healthcheck", () => "Submit Api!").RequireAuthorization();
+app.MapGet("/healthcheck", () => "Submit Api!")
+    .RequireAuthorization();
 
 // festivals
 app.MapGet("/festivals", async (bool activeOnly, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
@@ -95,17 +96,28 @@ app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromSe
     => await mediator.Send(command))
     .RequireAuthorization("admin");
 
+app.MapDelete("/festivals/{festivalId}", async (string festivalId, [FromServices] IMediator mediator)
+    => await mediator.Send(new DeleteFestival.DeleteFestivalCommand(festivalId)))
+    .RequireAuthorization("admin");
+
 // forts
-app.MapGet("/forts", async (string festivalId, int pageSize, string ? paginationKey,[FromServices] IMediator mediator)
+app.MapGet("/festivals/{festivalId}/forts", async (string festivalId, int pageSize, string ? paginationKey,[FromServices] IMediator mediator)
     => await mediator.Send(new ListForts.ListFortsQuery(festivalId, pageSize, paginationKey)))
     .RequireAuthorization();
 
-app.MapPost("/forts", async (AddFort.AddFortCommand command, [FromServices] IMediator mediator)
-    => await mediator.Send(command))
+app.MapPost("/festivals/{festivalId}/forts", async (string festivalId, AddFort.AddFortCommand command, [FromServices] IMediator mediator) =>    
+{
+    command.FestivalId = festivalId;
+    await mediator.Send(command);
+})
+    .RequireAuthorization("admin");
+
+app.MapDelete("/festivals/{festivalId}/forts/{fortId}", async (string fortId, [FromServices] IMediator mediator)
+    => await mediator.Send(new DeleteFort.DeleteFortCommand(fortId)))
     .RequireAuthorization("admin");
 
 // submissions
-//app.MapPost("/submit", async (Submit.Command command, [FromServices] IMediator mediator) => await mediator.Send(command));
+//app.MapPost("/festivals/{festivalId}/forts/{fortId}/submissions", async (AddSubmission.AddSubmissionCommand command, [FromServices] IMediator mediator) => await mediator.Send(command));
 //app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
 
 app.Run();

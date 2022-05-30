@@ -1,3 +1,4 @@
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 
 namespace TrfrtSbmt.Api.DataModels;
@@ -41,6 +42,8 @@ public abstract class BaseEntity
             [nameof(EntityType)] = new AttributeValue { S = typeName }
         };
     }
+
+    public abstract Task DeleteAsync(IAmazonDynamoDB db, string tableName);
     public string Name => _attributes[nameof(Name)].S;
     protected internal string EntityId => _attributes[nameof(EntityId)].S;
     protected internal string PartitionKey => _attributes[nameof(PartitionKey)].S;

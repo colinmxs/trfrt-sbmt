@@ -1,3 +1,4 @@
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 
 namespace TrfrtSbmt.Api.DataModels;
@@ -12,4 +13,9 @@ public class Tag : BaseEntity
     public Tag(Dictionary<string, AttributeValue> values) : base(values) { }
 
     public List<string> Targets => _attributes[nameof(Targets)].SS;
+
+    public override Task DeleteAsync(IAmazonDynamoDB db, string tableName)
+    {
+        throw new NotImplementedException();
+    }
 }
