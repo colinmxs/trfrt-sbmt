@@ -29,6 +29,7 @@ public class AddSubmission
             ArgumentNullException.ThrowIfNull(request.FortId, nameof(request.FortId));
             await _db.PutItemAsync(new PutItemRequest(_settings.TableName, 
                 new Submission(
+                    request.FestivalId,
                     request.FortId, 
                     request.Name, 
                     request.State, 

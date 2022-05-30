@@ -9,8 +9,9 @@ public class Submission : BaseEntity
 
     public Submission(Dictionary<string, AttributeValue> values) : base(values) { }
 
-    public Submission(string fortId, string name, string state, string city, string country, string description, string image, string website, string genre, string links, string contactInfo) : base(fortId, name, name)
+    public Submission(string festivalId, string fortId, string name, string state, string city, string country, string description, string image, string website, string genre, string links, string contactInfo) : base(fortId, name, name)
     {
+        _attributes[nameof(FestivalId)] = new AttributeValue { S = festivalId };
         _attributes[nameof(State)] = new AttributeValue { S = state };
         _attributes[nameof(City)] = new AttributeValue { S = city };
         _attributes[nameof(Country)] = new AttributeValue { S = country };
@@ -22,6 +23,7 @@ public class Submission : BaseEntity
         _attributes[nameof(ContactInfo)] = new AttributeValue { S = contactInfo };
     }
 
+    public string FestivalId => _attributes[nameof(FestivalId)].S;
     public string State => _attributes[nameof(State)].S;
     public string City => _attributes[nameof(City)].S;
     public string Country => _attributes[nameof(Country)].S;
