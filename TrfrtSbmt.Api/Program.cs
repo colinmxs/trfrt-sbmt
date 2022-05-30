@@ -92,9 +92,10 @@ app.MapGet("/festivals", async (bool activeOnly, int pageSize, string? paginatio
     => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly, pageSize, paginationKey)))
     .RequireAuthorization();
 
-app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromServices] IMediator mediator) 
+app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromServices] IMediator mediator)
     => await mediator.Send(command))
     .RequireAuthorization("admin");
+    
 
 app.MapDelete("/festivals/{festivalId}", async (string festivalId, [FromServices] IMediator mediator)
     => await mediator.Send(new DeleteFestival.DeleteFestivalCommand(festivalId)))
@@ -112,12 +113,18 @@ app.MapPost("/festivals/{festivalId}/forts", async (string festivalId, AddFort.A
 })
     .RequireAuthorization("admin");
 
-app.MapDelete("/festivals/{festivalId}/forts/{fortId}", async (string fortId, [FromServices] IMediator mediator)
+app.MapDelete("/festivals/{festivalId}/forts/{fortId}", async (string festivalId, string fortId, [FromServices] IMediator mediator)
     => await mediator.Send(new DeleteFort.DeleteFortCommand(fortId)))
     .RequireAuthorization("admin");
 
 // submissions
-//app.MapPost("/festivals/{festivalId}/forts/{fortId}/submissions", async (AddSubmission.AddSubmissionCommand command, [FromServices] IMediator mediator) => await mediator.Send(command));
+app.MapPost("/festivals/{festivalId}/forts/{fortId}/submissions", async (string festivalId, string fortId, AddSubmission.AddSubmissionCommand command, [FromServices] IMediator mediator) => 
+{
+    command.FestivalId = festivalId;
+    command.FortId = fortId;
+    await mediator.Send(command); 
+})
+    .RequireAuthorization();
 //app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
 
 app.Run();

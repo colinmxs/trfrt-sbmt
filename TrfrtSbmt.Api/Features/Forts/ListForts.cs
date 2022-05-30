@@ -42,7 +42,18 @@ public class ListForts
             });
             if (queryResult.Items == null) return new ListFortsResult(request.FestivalId, new List<FortViewModel>(), request.PageSize, null);
             var forts = queryResult.Items.Select(i => new Fort(i));
-            return new ListFortsResult(request.FestivalId, forts.Select(f => new FortViewModel(f.EntityId, f.Name)), request.PageSize, $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}");
+
+            string? paginationKey = GetPaginationKey(queryResult);
+            return new ListFortsResult(request.FestivalId, forts.Select(f => new FortViewModel(f.EntityId, f.Name)), request.PageSize, paginationKey);
+        }
+
+        private static string? GetPaginationKey(QueryResponse queryResult)
+        {
+            if (queryResult.LastEvaluatedKey == null) return null;
+            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
+            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
+
+            return $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}";
         }
 
         private Dictionary<string, AttributeValue> GetLastEvaluatedKey(ListFortsQuery request)

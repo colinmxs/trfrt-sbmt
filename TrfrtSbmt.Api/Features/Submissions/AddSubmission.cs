@@ -7,7 +7,11 @@ using TrfrtSbmt.Api.DataModels;
 
 public class AddSubmission
 {
-    public record AddSubmissionCommand(string FortId, string Name, string State, string City, string Country, string Description, string Image, string Website, string Genre, SocialLinksVm Links, ContactInfoVm ContactInfo) : IRequest;
+    public record AddSubmissionCommand(string Name, string State, string City, string Country, string Description, string Image, string Website, string Genre, SocialLinksVm Links, ContactInfoVm ContactInfo) : IRequest 
+    {
+        public string? FestivalId { get; internal set; }
+        public string? FortId { get; internal set; }
+    };
     public record SocialLinksVm(string Spotify, string AppleMusic, string Bandcamp, string Soundcloud, string[] Videos, string Facebook, string Twitter, string Instagram, string TikTok);    
     public record ContactInfoVm(string Name, string PhoneNumber, string Email, string Relationship, string ManagementContact, string AgentContact, string PublicityContact, string LabelContact);
     public class CommandHandler : AsyncRequestHandler<AddSubmissionCommand>
@@ -21,6 +25,8 @@ public class AddSubmission
         }
         protected override async Task Handle(AddSubmissionCommand request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request.FestivalId, nameof(request.FestivalId));
+            ArgumentNullException.ThrowIfNull(request.FortId, nameof(request.FortId));
             await _db.PutItemAsync(new PutItemRequest(_settings.TableName, 
                 new Submission(
                     request.FortId, 
