@@ -12,10 +12,6 @@ public class ListFestivals
     /// <param name="ActiveOnly">If true, only return festivals accepting submissions.</param>
     public record ListFestivalsQuery(bool ActiveOnly = false, int PageSize = 20, string? PaginationKey = null) : IRequest<ListFestivalsResult>;
     public record ListFestivalsResult(IEnumerable<FestivalViewModel> Festivals, int PageSize, string? PaginationKey);
-    public record FestivalViewModel(string Id, string Name, string Guidelines, DateTime StartDateTime, DateTime EndDateTime)
-    {
-        public FestivalViewModel(Festival grouping) : this(grouping.EntityId, grouping.Name, grouping.Guidelines, grouping.StartDateTime, grouping.EndDateTime) { }
-    }
 
     public class QueryHandler : IRequestHandler<ListFestivalsQuery, ListFestivalsResult>
     {

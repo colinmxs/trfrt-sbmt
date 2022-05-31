@@ -12,8 +12,6 @@ public class ListForts
 
     public record ListFortsResult(string FestivalId, IEnumerable<FortViewModel> Forts, int PageSize, string? PaginationKey);
 
-    public record FortViewModel(string Id, string Name);
-
     public class QueryHandler : IRequestHandler<ListFortsQuery, ListFortsResult>
     {
         private readonly IAmazonDynamoDB _db;

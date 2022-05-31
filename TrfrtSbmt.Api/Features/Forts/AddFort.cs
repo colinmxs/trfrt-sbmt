@@ -5,12 +5,12 @@ namespace TrfrtSbmt.Api.Features.Forts;
 
 public class AddFort
 {
-    public record AddFortCommand(string Name) : IRequest 
+    public record AddFortCommand(string Name) : IRequest<FortViewModel>
     {
         public string? FestivalId { get; internal set; }
     }
 
-    public class CommandHandler : AsyncRequestHandler<AddFortCommand>
+    public class CommandHandler : IRequestHandler<AddFortCommand, FortViewModel>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
@@ -20,11 +20,13 @@ public class AddFort
             _db = db;
             _settings = settings;
         }
-        
-        protected override async Task Handle(AddFortCommand request, CancellationToken cancellationToken)
+
+        public async Task<FortViewModel> Handle(AddFortCommand request, CancellationToken cancellationToken)
         {
+            ArgumentNullException.ThrowIfNull(request.FestivalId);
             var fort = new Fort(request.FestivalId, request.Name);
             await _db.PutItemAsync(_settings.TableName, fort.ToDictionary(), cancellationToken);
+            return new FortViewModel(fort);
         }
     }
 }
