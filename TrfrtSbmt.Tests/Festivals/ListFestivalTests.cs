@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using Shouldly;
 using System.Linq;
 
-namespace TrfrtSbmt.Tests;
+namespace TrfrtSbmt.Tests.Festivals;
 
 [TestClass]
 public class ListFestivalTests

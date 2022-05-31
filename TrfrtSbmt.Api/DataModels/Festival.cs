@@ -55,12 +55,12 @@ public class Festival : BaseEntity
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
                 {
                     { pkSymbol, new AttributeValue(PartitionKey) },
-                    { skSymbol, new AttributeValue(SortKeyPrefix) }
+                    { skSymbol, new AttributeValue(nameof(Fort)) }
                 },
                 ExclusiveStartKey = fortsResult?.LastEvaluatedKey
             });
             forts.AddRange(fortsResult.Items.Select(i => new Fort(i)));
-        } while (fortsResult.LastEvaluatedKey != null);
+        } while (fortsResult.LastEvaluatedKey.Count() != 0);
         return forts;
     }
 }

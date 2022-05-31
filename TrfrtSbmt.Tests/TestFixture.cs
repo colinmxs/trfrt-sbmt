@@ -11,7 +11,7 @@ using TrfrtSbmt.Api;
 internal static class TestFixture
 {
     public static IServiceScopeFactory? ScopeFactory { get; }
-    public static Generator Generator { get; } = new Generator(" ", Casing.PascalCase, WordBank.Verbs, WordBank.Nouns );
+    public static Generator NameGenerator { get; } = new Generator(" ", Casing.PascalCase, WordBank.Verbs, WordBank.Nouns );
     public static string Lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
     public static Random Rand = new Random();
 

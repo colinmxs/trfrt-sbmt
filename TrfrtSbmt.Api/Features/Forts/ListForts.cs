@@ -56,6 +56,7 @@ public class ListForts
 
         private Dictionary<string, AttributeValue> GetLastEvaluatedKey(ListFortsQuery request)
         {
+            if (string.IsNullOrEmpty(request.PaginationKey)) return null;
             return new Dictionary<string, AttributeValue> 
             {
                 [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[0] },
