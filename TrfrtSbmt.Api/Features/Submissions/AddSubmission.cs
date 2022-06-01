@@ -12,8 +12,8 @@ public class AddSubmission
         public string? FestivalId { get; internal set; }
         public string? FortId { get; internal set; }
     };
-    public record SocialLinksVm(string Spotify, string AppleMusic, string Bandcamp, string Soundcloud, string[] Videos, string Facebook, string Twitter, string Instagram, string TikTok);    
-    public record ContactInfoVm(string Name, string PhoneNumber, string Email, string Relationship, string ManagementContact, string AgentContact, string PublicityContact, string LabelContact);
+    public record SocialLinksVm(string? Spotify, string? AppleMusic, string? Bandcamp, string? Soundcloud, string[]? Videos, string? Facebook, string? Twitter, string? Instagram, string? TikTok);    
+    public record ContactInfoVm(string? Name, string? PhoneNumber, string? Email, string? Relationship, string? ManagementContact, string? AgentContact, string? PublicityContact, string? LabelContact);
     public class CommandHandler : AsyncRequestHandler<AddSubmissionCommand>
     {
         private readonly IAmazonDynamoDB _db;
