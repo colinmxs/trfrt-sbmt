@@ -1,16 +1,66 @@
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.Model;
+using TrfrtSbmt.Api.DataModels;
+
 namespace TrfrtSbmt.Api.Features.Submissions;
 
 public class ListSubmissions
 {
-    public record ListSubmissionQuery(string FortId) : IRequest<Result>;    
+    public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListSubmissionsResult>;
 
-    public record Result;
-
-    public class QueryHandler : IRequestHandler<ListSubmissionQuery, Result>
+    public record ListSubmissionsResult(string FestivalId, string FortId, List<SubmissionViewModel> Submissions, int PageSize = 20, string? PaginationKey = null);
+    public record SubmissionViewModel(string FestivalId, string FortId, string Name, string State, string City, string Country, string Description, string Image, string Website, string Genre, string Links, string ContactInfo);
+    
+    public class QueryHandler : IRequestHandler<ListSubmissionsQuery, ListSubmissionsResult>
     {
-        public Task<Result> Handle(ListSubmissionQuery request, CancellationToken cancellationToken)
+        private readonly IAmazonDynamoDB _db;
+        private readonly AppSettings _settings;
+
+        public QueryHandler(IAmazonDynamoDB db, AppSettings settings)
         {
-            throw new NotImplementedException();
+            _db = db;
+            _settings = settings;
+        }
+        public async Task<ListSubmissionsResult> Handle(ListSubmissionsQuery request, CancellationToken cancellationToken)
+        {
+            var pkSymbol = ":partitionKey";
+            var skSymbol = ":sortKey";
+            var queryResult = await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            {
+                KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = {pkSymbol} and begins_with({nameof(BaseEntity.SortKey)}, {skSymbol})",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    [pkSymbol] = new AttributeValue { S = request.FortId },
+                    [skSymbol] = new AttributeValue { S = $"{nameof(Submission)}-"}
+                },
+                Limit = request.PageSize,
+                ExclusiveStartKey = GetLastEvaluatedKey(request),
+
+            });
+            if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<SubmissionViewModel>(), request.PageSize, null);
+            var submissions = queryResult.Items.Select(i => new Submission(i));
+
+            string? paginationKey = GetPaginationKey(queryResult);
+            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(f => new SubmissionViewModel(f.EntityId, f.Name)), request.PageSize, paginationKey);
+        ,
+
+        private static string? GetPaginationKey(QueryResponse queryResult)
+        {
+            if (queryResult.LastEvaluatedKey == null) return null;
+            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
+            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
+
+            return $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}";
+        }
+
+        private Dictionary<string, AttributeValue> GetLastEvaluatedKey(ListSubmissionsQuery request)
+        {
+            if (string.IsNullOrEmpty(request.PaginationKey)) return null;
+            return new Dictionary<string, AttributeValue> 
+            {
+                [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[0] },
+                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[1] }
+            };
         }
     }
 }
