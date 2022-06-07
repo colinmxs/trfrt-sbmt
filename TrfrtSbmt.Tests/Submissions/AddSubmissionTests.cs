@@ -33,24 +33,28 @@ public class AddSubmissionTests
         fort = await SendAsync(command);
     }
 
-    
+    [TestCleanup]
+    public async Task Cleanup()
+    {
+        var deleteFest1 = new DeleteFestival.DeleteFestivalCommand(festival.Id);
+        await SendAsync(deleteFest1);
+
+        NameGenerator.SetParts(WordBank.Verbs, WordBank.Nouns);
+        NameGenerator.EndsWith = string.Empty;
+    }
 
     [TestMethod]
     public async Task SmokeTest() 
     {
         // arrange
-        for (int i = 0; i < 400; i++)
+        var command = new AddSubmission.AddSubmissionCommand(GenerateName(), GenerateState(), GenerateCity(), GenerateCountry(), Lorem, GeneratePictureUrl(), "https://reddit.com/", GenerateGenre(), new AddSubmission.SocialLinksVm(null, null, null, null, null, null, null, null, null), new AddSubmission.ContactInfoVm(null, null, null, null, null, null, null, null))
         {
-            var command = new AddSubmission.AddSubmissionCommand(GenerateName(), GenerateState(), GenerateCity(), GenerateCountry(), Lorem, GeneratePictureUrl(), "https://reddit.com/", GenerateGenre(), new AddSubmission.SocialLinksVm(null, null, null, null, null, null, null, null, null), new AddSubmission.ContactInfoVm(null, null, null, null, null, null, null, null))
-            {
-                FestivalId = festival.Id,
-                FortId = fort.Id
-            };
+            FestivalId = festival.Id,
+            FortId = fort.Id
+        };
 
-            // act
-            await SendAsync(command);            
-        }
-        
+        // act
+        await SendAsync(command);
 
         // assert
         //submission.Id.IsNotNull();
