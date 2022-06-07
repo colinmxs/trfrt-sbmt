@@ -11,14 +11,14 @@ namespace TrfrtSbmt.Tests.Festivals;
 [TestClass]
 public class AddFestivalTests
 {
-    FestivalViewModel tempFest1;
-    FestivalViewModel tempFest2;
+    FestivalViewModel? tempFest1;
+    FestivalViewModel? tempFest2;
 
     [TestInitialize]
     public async Task Initialize()
     {
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
-        var addFest = new AddFestival.AddFestivalCommand(NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+        var addFest = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
         tempFest2 = await SendAsync(addFest);
     }
 
@@ -43,7 +43,7 @@ public class AddFestivalTests
     {
         // arrange
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
-        var command = new AddFestival.AddFestivalCommand(NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+        var command = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
 
         // act
         tempFest1 = await SendAsync(command);
@@ -56,7 +56,7 @@ public class AddFestivalTests
     public async Task UpdateExisting()
     {
         // arrange
-        var command = new AddFestival.AddFestivalCommand(NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3), tempFest2.Id);
+        var command = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3), tempFest2.Id);
 
         // act
         await SendAsync(command);

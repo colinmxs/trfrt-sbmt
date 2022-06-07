@@ -10,7 +10,7 @@ public class ListFestivals
     /// Get festivals from the database.
     /// </summary>
     /// <param name="ActiveOnly">If true, only return festivals accepting submissions.</param>
-    public record ListFestivalsQuery(bool ActiveOnly = false, int PageSize = 20, string? PaginationKey = null) : IRequest<ListFestivalsResult>;
+    public record ListFestivalsQuery(bool ActiveOnly = false, bool SubmissionsOpen = false, int PageSize = 20, string? PaginationKey = null) : IRequest<ListFestivalsResult>;
     public record ListFestivalsResult(IEnumerable<FestivalViewModel> Festivals, int PageSize, string? PaginationKey);
 
     public class QueryHandler : IRequestHandler<ListFestivalsQuery, ListFestivalsResult>
@@ -43,7 +43,12 @@ public class ListFestivals
             var festivals = queryResult.Items.Select(i => new Festival(i));
             if (request.ActiveOnly)
             {
-                festivals = festivals.Where(f => f.StartDateTime <= DateTime.UtcNow && DateTime.UtcNow <= f.EndDateTime).ToList();
+                festivals = festivals.Where(f => f.IsActive).ToList();
+            }
+
+            if (request.SubmissionsOpen)
+            {
+                festivals = festivals.Where(f => f.StartDateTime <= DateTime.UtcNow && f.EndDateTime >= DateTime.UtcNow).ToList();
             }
 
             string? paginationKey = GetPaginationKey(queryResult);

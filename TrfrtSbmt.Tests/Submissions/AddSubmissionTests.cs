@@ -21,7 +21,7 @@ public class AddSubmissionTests
     public async Task Initialize()
     {
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
-        var addFestivalCommand = new AddFestival.AddFestivalCommand(NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+        var addFestivalCommand = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
         festival = await SendAsync(addFestivalCommand);
 
         NameGenerator.SetParts(WordBank.Nouns);

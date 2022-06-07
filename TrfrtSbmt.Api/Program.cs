@@ -88,8 +88,8 @@ app.MapGet("/healthcheck", () => "Submit Api!")
     .RequireAuthorization();
 
 // festivals
-app.MapGet("/festivals", async (bool activeOnly, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
-    => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly, pageSize, paginationKey)))
+app.MapGet("/festivals", async (bool activeOnly, bool submissionsOpen, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
+    => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly, submissionsOpen, pageSize, paginationKey)))
     .RequireAuthorization();
 
 app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromServices] IMediator mediator)

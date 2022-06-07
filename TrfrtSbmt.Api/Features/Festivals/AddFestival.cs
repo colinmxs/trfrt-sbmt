@@ -14,7 +14,7 @@ public class AddFestival
     /// <param name="StartDateTime">DateTime to start accepting submissions.</param>
     /// <param name="EndDateTime">DateTime to stop accepting submissions.</param>
     /// <param name="Id">Id of the festival. Leave null if creating a new festival. Provide if updating an existing festival.</param>
-    public record AddFestivalCommand(string Name, string Guidelines, DateTime StartDateTime, DateTime EndDateTime, string? Id = null) : IRequest<FestivalViewModel>;
+    public record AddFestivalCommand(bool IsActive, string Name, string Guidelines, DateTime StartDateTime, DateTime EndDateTime, string? Id = null) : IRequest<FestivalViewModel>;
     
     public class CommandHandler : IRequestHandler<AddFestivalCommand, FestivalViewModel>
     {
@@ -46,9 +46,9 @@ public class AddFestival
                     throw new Exception($"Festival not found: {request.Id}");
                 }
                 festival = new Festival(singleOrDefault);
-                festival.Update(request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
+                festival.Update(request.IsActive, request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
             }
-            else festival = new Festival(request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
+            else festival = new Festival(request.IsActive, request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
             await _db.PutItemAsync(_settings.TableName, festival.ToDictionary(), cancellationToken);
             return new FestivalViewModel(festival);
         }
