@@ -43,12 +43,12 @@ public class ListSubmissions
                 KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = {pkSymbol} and begins_with({nameof(BaseEntity.SortKey)}, {skSymbol})",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    [pkSymbol] = new AttributeValue { S = request.FortId },
-                    [skSymbol] = new AttributeValue { S = $"{nameof(Submission)}-"}
+                    [pkSymbol] = new AttributeValue { S = request.FortId }
                 },
                 Limit = request.PageSize,
                 ExclusiveStartKey = GetLastEvaluatedKey(request),
-
+                IndexName = "SubmissionDateIndex",
+                ScanIndexForward = false
             });
             if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<SubmissionViewModel>(), request.PageSize, null);
             var submissions = queryResult.Items.Select(i => new Submission(i));
