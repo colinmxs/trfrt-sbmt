@@ -46,8 +46,7 @@ public class ListSubmissions
                 },
                 Limit = request.PageSize,
                 ExclusiveStartKey = GetLastEvaluatedKey(request),
-                IndexName = "SubmissionDateIndex",
-                ScanIndexForward = false
+                IndexName = "SubmissionDateIndex"
             });
             if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<SubmissionViewModel>(), request.PageSize, null);
             var submissions = queryResult.Items.Select(i => new Submission(i));
