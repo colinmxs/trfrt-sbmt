@@ -88,8 +88,8 @@ app.MapGet("/healthcheck", () => "Submit Api!")
     .RequireAuthorization();
 
 // festivals
-app.MapGet("/festivals", async (bool activeOnly, bool submissionsOpen, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
-    => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly, submissionsOpen, pageSize, paginationKey)))
+app.MapGet("/festivals", async (bool activeOnly, bool? submissionsOpen, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
+    => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly, submissionsOpen ?? false, pageSize, paginationKey)))
     .RequireAuthorization();
 
 app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromServices] IMediator mediator)
@@ -129,7 +129,7 @@ app.MapPost("/festivals/{festivalId}/forts/{fortId}/submissions", async (string 
 app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions", async (string festivalId, string fortId, int pageSize, string? paginationKey, [FromServices] IMediator mediator)
     => await mediator.Send(new ListSubmissions.ListSubmissionsQuery(festivalId, fortId, pageSize, paginationKey)))
     .RequireAuthorization();
-    
+
 //app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
 
 app.Run();
