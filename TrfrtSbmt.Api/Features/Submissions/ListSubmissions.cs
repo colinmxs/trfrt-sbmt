@@ -37,10 +37,9 @@ public class ListSubmissions
         public async Task<ListSubmissionsResult> Handle(ListSubmissionsQuery request, CancellationToken cancellationToken)
         {
             var pkSymbol = ":partitionKey";
-            var skSymbol = ":sortKey";
             var queryResult = await _db.QueryAsync(new QueryRequest(_settings.TableName)
             {
-                KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = {pkSymbol} and begins_with({nameof(BaseEntity.SortKey)}, {skSymbol})",
+                KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = {pkSymbol}",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
                     [pkSymbol] = new AttributeValue { S = request.FortId }
