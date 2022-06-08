@@ -10,7 +10,19 @@ public class ListSubmissions
     public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListSubmissionsResult>;
 
     public record ListSubmissionsResult(string FestivalId, string FortId, List<SubmissionViewModel> Submissions, int PageSize = 20, string? PaginationKey = null);
-    public record SubmissionViewModel(string FestivalId, string FortId, string Name, string State, string City, string Country, string Description, string Image, string Website, string Genre, object Links, object ContactInfo);
+    public record SubmissionViewModel(string FestivalId,
+                                      string FortId,
+                                      string SubmissionDate,
+                                      string Name,
+                                      string State,
+                                      string City,
+                                      string Country,
+                                      string Description,
+                                      string Image,
+                                      string Website,
+                                      string Genre,
+                                      object Links,
+                                      object ContactInfo);
     
     public class QueryHandler : IRequestHandler<ListSubmissionsQuery, ListSubmissionsResult>
     {
@@ -42,7 +54,7 @@ public class ListSubmissions
             var submissions = queryResult.Items.Select(i => new Submission(i));
 
             string? paginationKey = GetPaginationKey(queryResult);
-            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(f => new SubmissionViewModel(request.FestivalId, request.FortId, f.Name, f.State, f.City, f.Country, f.Description, f.Image, f.Website, f.Genre, JsonSerializer.Deserialize<object>(f.Links), JsonSerializer.Deserialize<object>(f.ContactInfo))).ToList(), request.PageSize, paginationKey);
+            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(f => new SubmissionViewModel(request.FestivalId, request.FortId, f.SubmissionDate, f.Name, f.State, f.City, f.Country, f.Description, f.Image, f.Website, f.Genre, JsonSerializer.Deserialize<object>(f.Links), JsonSerializer.Deserialize<object>(f.ContactInfo))).ToList(), request.PageSize, paginationKey);
         }
 
         private static string? GetPaginationKey(QueryResponse queryResult)

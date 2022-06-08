@@ -11,6 +11,7 @@ public class Submission : BaseEntity
 
     public Submission(string festivalId, string fortId, string name, string state, string city, string country, string description, string image, string website, string genre, string links, string contactInfo) : base(fortId, name, name)
     {
+        _attributes[nameof(SubmissionDate)] = new AttributeValue { S = DateTime.UtcNow.ToString() };
         _attributes[nameof(FestivalId)] = new AttributeValue { S = festivalId };
         _attributes[nameof(State)] = new AttributeValue { S = state };
         _attributes[nameof(City)] = new AttributeValue { S = city };
@@ -22,7 +23,7 @@ public class Submission : BaseEntity
         _attributes[nameof(Links)] = new AttributeValue { S = links };
         _attributes[nameof(ContactInfo)] = new AttributeValue { S = contactInfo };
     }
-
+    public string SubmissionDate => _attributes[nameof(SubmissionDate)].S;
     public string FestivalId => _attributes[nameof(FestivalId)].S;
     public string State => _attributes[nameof(State)].S;
     public string City => _attributes[nameof(City)].S;

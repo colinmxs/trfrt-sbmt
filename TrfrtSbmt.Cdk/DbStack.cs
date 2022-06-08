@@ -64,6 +64,17 @@ public class DbStack : Stack
             }
         });
 
+        Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
+        {
+            IndexName = "SubmissionDateIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "SubmissionDate",
+                Type = AttributeType.STRING
+            }
+        });
+
         Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
             IndexName = "Gsi1",
