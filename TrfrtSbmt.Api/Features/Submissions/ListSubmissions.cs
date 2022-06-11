@@ -1,5 +1,6 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using System.Text;
 using System.Text.Json;
 using TrfrtSbmt.Api.DataModels;
 
@@ -65,17 +66,19 @@ public class ListSubmissions
             if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
             if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(Submission.SubmissionDate))) return null;
 
-            return $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}|{queryResult.LastEvaluatedKey[nameof(Submission.SubmissionDate)].S}";
+            var paginationKey = $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}|{queryResult.LastEvaluatedKey[nameof(Submission.SubmissionDate)].S}";
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(paginationKey));
         }
 
         private Dictionary<string, AttributeValue> GetLastEvaluatedKey(ListSubmissionsQuery request)
         {
             if (string.IsNullOrEmpty(request.PaginationKey)) return null;
+            var paginationKey = Encoding.UTF8.GetString(Convert.FromBase64String(request.PaginationKey));
             return new Dictionary<string, AttributeValue> 
             {
-                [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[0] },
-                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[1] },
-                [nameof(Submission.SubmissionDate)] = new AttributeValue { S = request.PaginationKey?.Split('|')[2] }
+                [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = paginationKey?.Split('|')[0] },
+                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = paginationKey?.Split('|')[1] },
+                [nameof(Submission.SubmissionDate)] = new AttributeValue { S = paginationKey?.Split('|')[2] }
             };
         }
     }
