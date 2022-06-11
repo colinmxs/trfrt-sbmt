@@ -40,7 +40,7 @@ public class ListSubmissions
             var submissions = queryResult.Items.Select(i => new Submission(i));
 
             string? paginationKey = GetPaginationKey(queryResult);
-            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(f => new SubmissionViewModel(request.FestivalId, request.FortId, f.SubmissionDate, f.Name, f.State, f.City, f.Country, f.Description, f.Image, f.Website, f.Genre, JsonSerializer.Deserialize<SocialLinksVm>(f.Links), JsonSerializer.Deserialize<ContactInfoVm>(f.ContactInfo))).ToList(), request.PageSize, paginationKey);
+            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(s => new SubmissionViewModel(request.FestivalId, request.FortId, s.EntityId, s.SubmissionDate, s.Name, s.State, s.City, s.Country, s.Description, s.Image, s.Website, s.Genre, JsonSerializer.Deserialize<SocialLinksVm>(s.Links), JsonSerializer.Deserialize<ContactInfoVm>(s.ContactInfo))).ToList(), request.PageSize, paginationKey);
         }
 
         private static string? GetPaginationKey(QueryResponse queryResult)

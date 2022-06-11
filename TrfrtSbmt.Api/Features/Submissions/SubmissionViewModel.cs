@@ -5,6 +5,7 @@ namespace TrfrtSbmt.Api.Features.Submissions;
 
 public record SubmissionViewModel(string FestivalId,
                                       string FortId,
+                                      string Id,
                                       string SubmissionDate,
                                       string Name,
                                       string State,
@@ -17,7 +18,7 @@ public record SubmissionViewModel(string FestivalId,
                                       SocialLinksVm Links,
                                       ContactInfoVm ContactInfo)
 {
-    public SubmissionViewModel(Submission submission) : this(submission.FestivalId, submission.PartitionKey, submission.SubmissionDate, submission.Name, submission.State, submission.City, submission.Country, submission.Description, submission.Image, submission.Website, submission.Genre, JsonSerializer.Deserialize<SocialLinksVm>(submission.Links), JsonSerializer.Deserialize<ContactInfoVm>(submission.ContactInfo)) { }
+    public SubmissionViewModel(Submission submission) : this(submission.FestivalId, submission.PartitionKey, submission.EntityId, submission.SubmissionDate, submission.Name, submission.State, submission.City, submission.Country, submission.Description, submission.Image, submission.Website, submission.Genre, JsonSerializer.Deserialize<SocialLinksVm>(submission.Links), JsonSerializer.Deserialize<ContactInfoVm>(submission.ContactInfo)) { }
 }
 
 public record SocialLinksVm(string? Spotify, string? AppleMusic, string? Bandcamp, string? Soundcloud, string[]? Videos, string? Facebook, string? Twitter, string? Instagram, string? TikTok);
