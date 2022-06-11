@@ -120,6 +120,50 @@ public class DbStack : Stack
         Amazon.CDK.Tags.Of(TestTable).Add("Name", "Submissions-Tests");
         Amazon.CDK.Tags.Of(TestTable).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
+        TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
+        {
+            IndexName = "StateIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "State",
+                Type = AttributeType.STRING
+            }
+        });
+
+        TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
+        {
+            IndexName = "RankIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "Rank",
+                Type = AttributeType.STRING
+            }
+        });
+
+        TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
+        {
+            IndexName = "StateRankIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "StateRank",
+                Type = AttributeType.STRING
+            }
+        });
+
+        TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
+        {
+            IndexName = "SubmissionDateIndex",
+            ProjectionType = ProjectionType.ALL,
+            SortKey = new Attribute
+            {
+                Name = "SubmissionDate",
+                Type = AttributeType.STRING
+            }
+        });
+
         TestTable.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
             IndexName = "Gsi1",

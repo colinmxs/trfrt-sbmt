@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using TrfrtSbmt.Api.Features.Festivals;
 using TrfrtSbmt.Api.Features.Forts;
+using TrfrtSbmt.Api.Features.Labels;
 using TrfrtSbmt.Api.Features.Submissions;
 
 [assembly: InternalsVisibleTo("TrfrtSbmt.Tests")]

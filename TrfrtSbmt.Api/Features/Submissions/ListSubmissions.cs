@@ -22,8 +22,11 @@ public class ListSubmissions
                                       string Website,
                                       string Genre,
                                       object Links,
-                                      object ContactInfo);
-    
+                                      object ContactInfo)
+    {
+        public SubmissionViewModel(Submission submission) : this(submission.FestivalId, submission.PartitionKey, submission.SubmissionDate, submission.Name, submission.State, submission.City, submission.Country, submission.Description, submission.Image, submission.Website, submission.Genre, JsonSerializer.Deserialize<object>(submission.Links), JsonSerializer.Deserialize<object>(submission.ContactInfo)) { }
+    }
+
     public class QueryHandler : IRequestHandler<ListSubmissionsQuery, ListSubmissionsResult>
     {
         private readonly IAmazonDynamoDB _db;
@@ -60,8 +63,9 @@ public class ListSubmissions
             if (queryResult.LastEvaluatedKey == null) return null;
             if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
             if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
+            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(Submission.SubmissionDate))) return null;
 
-            return $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}";
+            return $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}|{queryResult.LastEvaluatedKey[nameof(Submission.SubmissionDate)].S}";
         }
 
         private Dictionary<string, AttributeValue> GetLastEvaluatedKey(ListSubmissionsQuery request)
@@ -70,7 +74,8 @@ public class ListSubmissions
             return new Dictionary<string, AttributeValue> 
             {
                 [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[0] },
-                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[1] }
+                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[1] },
+                [nameof(Submission.SubmissionDate)] = new AttributeValue { S = request.PaginationKey?.Split('|')[2] }
             };
         }
     }

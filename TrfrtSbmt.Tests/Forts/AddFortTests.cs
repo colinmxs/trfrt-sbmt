@@ -7,6 +7,7 @@ using System.Linq;
 using TrfrtSbmt.Api.DataModels;
 using TrfrtSbmt.Api.Features.Festivals;
 using CodenameGenerator;
+using TrfrtSbmt.Api.Features.Labels;
 
 namespace TrfrtSbmt.Tests.Forts;
 

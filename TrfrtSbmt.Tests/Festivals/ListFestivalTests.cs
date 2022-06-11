@@ -5,12 +5,34 @@ using static TrfrtSbmt.Tests.TestFixture;
 using System.Threading.Tasks;
 using Shouldly;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace TrfrtSbmt.Tests.Festivals;
 
 [TestClass]
 public class ListFestivalTests
 {
+    List<FestivalViewModel> festivals = new List<FestivalViewModel>();
+    [TestInitialize]
+    public async Task Init()
+    {
+        NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
+        for (int i = 0; i < 100; i++)
+        {
+            var addFest = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+            festivals.Add(await SendAsync(addFest));
+        }
+    }
+
+    [TestCleanup]
+    public async Task Cleanup()
+    {
+        foreach (var fest in festivals)
+        {
+            var deleteCommand = new DeleteFestival.DeleteFestivalCommand(fest.Id);
+            await SendAsync(deleteCommand);
+        }
+    }
     [TestMethod]
     public async Task SmokeTest()
     {
