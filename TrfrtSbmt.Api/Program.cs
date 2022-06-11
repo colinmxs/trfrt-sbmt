@@ -129,7 +129,11 @@ app.MapPost("/festivals/{festivalId}/forts/{fortId}/submissions", async (string 
     .RequireAuthorization();
 
 app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions", async (string festivalId, string fortId, int pageSize, string? paginationKey, [FromServices] IMediator mediator)
-    => await mediator.Send(new ListSubmissions.ListSubmissionsQuery(festivalId, fortId, pageSize, HttpUtility.UrlDecode(paginationKey))))
+    => await mediator.Send(new ListSubmissions.ListSubmissionsQuery(festivalId, fortId, pageSize, paginationKey)))
+    .RequireAuthorization();
+
+app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions/{submissionId}", async (string festivalId, string fortId, string submissionId, [FromServices] IMediator mediator)
+    => await mediator.Send(new GetSubmission.GetSubmissionQuery(festivalId, fortId, submissionId)))
     .RequireAuthorization();
 
 //app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
