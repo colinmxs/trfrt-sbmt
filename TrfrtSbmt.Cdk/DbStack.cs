@@ -114,10 +114,10 @@ public class DbStack : Stack
                 Type = AttributeType.STRING
             },
             RemovalPolicy = RemovalPolicy.DESTROY,
-            TableName = $"Submissions-Tests"
+            TableName = $"Submissions-Tests1"
         });
 
-        Amazon.CDK.Tags.Of(TestTable).Add("Name", "Submissions-Tests");
+        Amazon.CDK.Tags.Of(TestTable).Add("Name", "Submissions-Tests1");
         Amazon.CDK.Tags.Of(TestTable).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
