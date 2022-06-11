@@ -30,12 +30,12 @@ public static class GeneratorMethods
         NameGenerator.EndsWith = string.Empty;
         return NameGenerator.Generate();
     }
-    public static AddSubmission.ContactInfoVm GenerateContactInfo()
+    public static ContactInfoVm GenerateContactInfo()
     {
         NameGenerator.SetParts(WordBank.FirstNames, WordBank.LastNames);
         var name = NameGenerator.Generate();
         var email = $"{name.Replace(" ", "")}@gfail.com";
-        return new AddSubmission.ContactInfoVm(name, $"{Rand.Next(100, 999)}-{Rand.Next(100, 999)}-{Rand.Next(1000, 9999)}", email, "Friend", null, null, null, null);
+        return new ContactInfoVm(name, $"{Rand.Next(100, 999)}-{Rand.Next(100, 999)}-{Rand.Next(1000, 9999)}", email, "Friend", null, null, null, null);
     }
 
     public static string GenerateCountry()
