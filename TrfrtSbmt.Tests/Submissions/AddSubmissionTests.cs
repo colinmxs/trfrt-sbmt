@@ -31,15 +31,15 @@ public partial class AddSubmissionTests
         fort = await SendAsync(command);
     }
 
-    //[TestCleanup]
-    //public async Task Cleanup()
-    //{
-    //    var deleteFest1 = new DeleteFestival.DeleteFestivalCommand(festival.Id);
-    //    await SendAsync(deleteFest1);
+    [TestCleanup]
+    public async Task Cleanup()
+    {
+        var deleteFest1 = new DeleteFestival.DeleteFestivalCommand(festival.Id);
+        await SendAsync(deleteFest1);
 
-    //    NameGenerator.SetParts(WordBank.Verbs, WordBank.Nouns);
-    //    NameGenerator.EndsWith = string.Empty;
-    //}
+        NameGenerator.SetParts(WordBank.Verbs, WordBank.Nouns);
+        NameGenerator.EndsWith = string.Empty;
+    }
 
     [TestMethod]
     public async Task SmokeTest() 
