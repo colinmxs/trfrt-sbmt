@@ -77,7 +77,7 @@ public class DbStack : Stack
 
         Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
-            IndexName = "Gsi1",
+            IndexName = "SearchTermIndex",
             PartitionKey = new Attribute
             {
                 Name = "SearchTerm",
