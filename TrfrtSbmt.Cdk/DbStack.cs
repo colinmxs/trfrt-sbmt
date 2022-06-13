@@ -75,20 +75,20 @@ public class DbStack : Stack
             }
         });
 
-        //Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
-        //{
-        //    IndexName = "SearchTermIndex",
-        //    PartitionKey = new Attribute
-        //    {
-        //        Name = "SearchTerm",
-        //        Type = AttributeType.STRING
-        //    },
-        //    SortKey = new Attribute
-        //    {
-        //        Name = "EntityType",
-        //        Type = AttributeType.STRING
-        //    }
-        //});
+        Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        {
+            IndexName = "SearchTermIndex",
+            PartitionKey = new Attribute
+            {
+                Name = "SearchTerm",
+                Type = AttributeType.STRING
+            },
+            SortKey = new Attribute
+            {
+                Name = "EntityType",
+                Type = AttributeType.STRING
+            }
+        });
 
         Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
         {
