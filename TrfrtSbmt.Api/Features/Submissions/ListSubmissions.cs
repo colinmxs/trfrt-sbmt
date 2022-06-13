@@ -9,8 +9,9 @@ public class ListSubmissions
 {
     public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListSubmissionsResult>;
 
-    public record ListSubmissionsResult(string FestivalId, string FortId, List<SubmissionViewModel> Submissions, int PageSize = 20, string? PaginationKey = null);
+    public record ListSubmissionsResult(string FestivalId, string FortId, List<ViewModel> Submissions, int PageSize = 20, string? PaginationKey = null);
     
+    public record ViewModel(string Id, string Name, string State, string City, string Image);
 
     public class QueryHandler : IRequestHandler<ListSubmissionsQuery, ListSubmissionsResult>
     {
@@ -36,11 +37,11 @@ public class ListSubmissions
                 ExclusiveStartKey = GetLastEvaluatedKey(request),
                 IndexName = "SubmissionDateIndex"
             });
-            if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<SubmissionViewModel>(), request.PageSize, null);
+            if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<ViewModel>(), request.PageSize, null);
             var submissions = queryResult.Items.Select(i => new Submission(i));
 
             string? paginationKey = GetPaginationKey(queryResult);
-            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(s => new SubmissionViewModel(request.FestivalId, request.FortId, s.EntityId, s.SubmissionDate, s.Name, s.State, s.City, s.Country, s.Description, s.Image, s.Website, s.Genre, JsonSerializer.Deserialize<SocialLinksVm>(s.Links), JsonSerializer.Deserialize<ContactInfoVm>(s.ContactInfo))).ToList(), request.PageSize, paginationKey);
+            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(s => new ViewModel(s.EntityId, s.Name, s.State, s.City, s.Image)).ToList(), request.PageSize, paginationKey);
         }
 
         private static string? GetPaginationKey(QueryResponse queryResult)
