@@ -30,13 +30,13 @@ public class DeleteLabel
                 {
                     {":id", new AttributeValue(request.Id)}
                 },
-                IndexName = BaseEntity.Gsi2
+                IndexName = BaseEntity.EntityIdIndex
             });
             var singleOrDefault = fortResult.Items.SingleOrDefault();
             if (singleOrDefault == null) throw new Exception("Festival not found");
 
             var fort = new Fort(singleOrDefault);
-            await fort.DeleteAsync(_db, _settings.TableName);
+            //await fort.DeleteAsync(_db, _settings.TableName);
         }
     }
 }

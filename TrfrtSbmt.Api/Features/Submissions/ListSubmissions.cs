@@ -1,17 +1,49 @@
+namespace TrfrtSbmt.Api.Features.Submissions;
+
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System.Text;
-using System.Text.Json;
 using TrfrtSbmt.Api.DataModels;
 
-namespace TrfrtSbmt.Api.Features.Submissions;
 public class ListSubmissions
 {
-    public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListSubmissionsResult>;
+    public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListSubmissionsResult>
+    {
+        internal Dictionary<string, AttributeValue>? ExclusiveStartKey => GetLastEvaluatedKey(PaginationKey);
+        private Dictionary<string, AttributeValue>? GetLastEvaluatedKey(string? paginationKey)
+        {
+            if (string.IsNullOrEmpty(paginationKey)) return null;
+            paginationKey = Encoding.UTF8.GetString(Convert.FromBase64String(paginationKey));
+            return new Dictionary<string, AttributeValue>
+            {
+                [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = paginationKey?.Split('|')[0] },
+                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = paginationKey?.Split('|')[1] },
+                [nameof(Submission.SubmissionDate)] = new AttributeValue { S = paginationKey?.Split('|')[2] }
+            };
+        }
+    }
 
-    public record ListSubmissionsResult(string FestivalId, string FortId, List<ViewModel> Submissions, int PageSize = 20, string? PaginationKey = null);
-    
-    public record ViewModel(string Id, string Name, string State, string City, string Image);
+    public record ListSubmissionsResult(string FestivalId, string FortId, List<ViewModel> Submissions, int PageSize = 20, string? PaginationKey = null)
+    {
+        public ListSubmissionsResult(string festivalId, string fortId, IEnumerable<Submission> submissions, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey) :
+        this(festivalId, fortId, submissions.Select(s => new ViewModel(s)).ToList(), pageSize, GetPaginationKey(lastEvaluatedKey))
+        { }
+        private static string? GetPaginationKey(Dictionary<string, AttributeValue>? lastEvaluatedKey)
+        {
+            if (lastEvaluatedKey == null) return null;
+            if (!lastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
+            if (!lastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
+            if (!lastEvaluatedKey.ContainsKey(nameof(Submission.SubmissionDate))) return null;
+
+            var paginationKey = $"{lastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{lastEvaluatedKey[nameof(BaseEntity.SortKey)].S}|{lastEvaluatedKey[nameof(Submission.SubmissionDate)].S}";
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes(paginationKey));
+        }
+    }
+
+    public record ViewModel(string Id, string Name, string State, string City, string Image)
+    {
+        public ViewModel(Submission s) : this(s.EntityId, s.Name, s.State, s.City, s.Image) { }
+    }
 
     public class QueryHandler : IRequestHandler<ListSubmissionsQuery, ListSubmissionsResult>
     {
@@ -25,46 +57,27 @@ public class ListSubmissions
         }
         public async Task<ListSubmissionsResult> Handle(ListSubmissionsQuery request, CancellationToken cancellationToken)
         {
+            QueryResponse queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
+            if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<ViewModel>(), request.PageSize, null);
+            var submissions = queryResult.Items.Select(i => new Submission(i));
+
+            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.ToList(), request.PageSize, queryResult.LastEvaluatedKey);
+        }
+
+        private static async Task<QueryResponse> SubmissionDateIndexQuery(IAmazonDynamoDB db, AppSettings settings, string id, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)
+        {
             var pkSymbol = ":partitionKey";
-            var queryResult = await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            return await db.QueryAsync(new QueryRequest(settings.TableName)
             {
                 KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = {pkSymbol}",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
-                    [pkSymbol] = new AttributeValue { S = request.FortId }
+                    [pkSymbol] = new AttributeValue { S = id }
                 },
-                Limit = request.PageSize,
-                ExclusiveStartKey = GetLastEvaluatedKey(request),
+                Limit = pageSize,
+                ExclusiveStartKey = exclusiveStartKey,
                 IndexName = "SubmissionDateIndex"
             });
-            if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<ViewModel>(), request.PageSize, null);
-            var submissions = queryResult.Items.Select(i => new Submission(i));
-
-            string? paginationKey = GetPaginationKey(queryResult);
-            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.Select(s => new ViewModel(s.EntityId, s.Name, s.State, s.City, s.Image)).ToList(), request.PageSize, paginationKey);
-        }
-
-        private static string? GetPaginationKey(QueryResponse queryResult)
-        {
-            if (queryResult.LastEvaluatedKey == null) return null;
-            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
-            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
-            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(Submission.SubmissionDate))) return null;
-
-            var paginationKey = $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}|{queryResult.LastEvaluatedKey[nameof(Submission.SubmissionDate)].S}";
-            return Convert.ToBase64String(Encoding.UTF8.GetBytes(paginationKey));
-        }
-
-        private Dictionary<string, AttributeValue> GetLastEvaluatedKey(ListSubmissionsQuery request)
-        {
-            if (string.IsNullOrEmpty(request.PaginationKey)) return null;
-            var paginationKey = Encoding.UTF8.GetString(Convert.FromBase64String(request.PaginationKey));
-            return new Dictionary<string, AttributeValue> 
-            {
-                [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = paginationKey?.Split('|')[0] },
-                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = paginationKey?.Split('|')[1] },
-                [nameof(Submission.SubmissionDate)] = new AttributeValue { S = paginationKey?.Split('|')[2] }
-            };
         }
     }
 }

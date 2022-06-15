@@ -18,7 +18,7 @@ public class AddFestivalTests
     public async Task Initialize()
     {
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
-        var addFest = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+        var addFest = new AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
         tempFest2 = await SendAsync(addFest);
     }
 
@@ -28,12 +28,12 @@ public class AddFestivalTests
         NameGenerator.EndsWith = string.Empty;
         if (tempFest1 != null) 
         {
-            var deleteFest1 = new DeleteFestival.DeleteFestivalCommand(tempFest1.Id);
+            var deleteFest1 = new DeleteFestivalCommand(tempFest1.Id);
             await SendAsync(deleteFest1);
         }
         if(tempFest2 != null)
         {
-            var deleteFest2 = new DeleteFestival.DeleteFestivalCommand(tempFest2.Id);
+            var deleteFest2 = new DeleteFestivalCommand(tempFest2.Id);
             await SendAsync(deleteFest2);
         }
     }
@@ -43,7 +43,7 @@ public class AddFestivalTests
     {
         // arrange
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
-        var command = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+        var command = new AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
 
         // act
         tempFest1 = await SendAsync(command);
@@ -56,7 +56,7 @@ public class AddFestivalTests
     public async Task UpdateExisting()
     {
         // arrange
-        var command = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3), tempFest2.Id);
+        var command = new AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3), tempFest2.Id);
 
         // act
         await SendAsync(command);

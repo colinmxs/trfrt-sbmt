@@ -1,6 +1,5 @@
 namespace TrfrtSbmt.Api.DataModels;
 
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 
 public class Submission : BaseEntity
@@ -34,10 +33,4 @@ public class Submission : BaseEntity
     public string Genre => _attributes[nameof(Genre)].S;
     public string Links => _attributes[nameof(Links)].S;
     public string ContactInfo => _attributes[nameof(ContactInfo)].S;
-
-
-    public override Task DeleteAsync(IAmazonDynamoDB db, string tableName)
-    {
-        throw new NotImplementedException();
-    }
 }

@@ -1,4 +1,3 @@
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 
 namespace TrfrtSbmt.Api.DataModels;
@@ -7,8 +6,7 @@ public abstract class BaseEntity
 {
     protected abstract string SortKeyPrefix { get; }
     
-    internal const string Gsi1 = "SearchTermIndex";
-    internal const string Gsi2 = "EntityIdIndex";
+    internal const string EntityIdIndex = "EntityIdIndex";
     protected readonly Dictionary<string, AttributeValue> _attributes;
     public BaseEntity(Dictionary<string, AttributeValue> values) 
     {
@@ -43,7 +41,6 @@ public abstract class BaseEntity
         };
     }
 
-    public abstract Task DeleteAsync(IAmazonDynamoDB db, string tableName);
     public string Name => _attributes[nameof(Name)].S;
     protected internal string EntityId => _attributes[nameof(EntityId)].S;
     protected internal string PartitionKey => _attributes[nameof(PartitionKey)].S;

@@ -4,7 +4,6 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System.Text.Json;
 using TrfrtSbmt.Api.DataModels;
-using static TrfrtSbmt.Api.Features.Submissions.ListSubmissions;
 
 public class AddSubmission
 {

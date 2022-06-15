@@ -20,7 +20,7 @@ public class ListFortTests
     public async Task Initialize()
     {
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
-        var addFestivalCommand = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+        var addFestivalCommand = new AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
         festival = await SendAsync(addFestivalCommand);
 
         NameGenerator.SetParts(WordBank.Nouns);
@@ -38,7 +38,7 @@ public class ListFortTests
     [TestCleanup]
     public async Task Cleanup()
     {
-        var deleteFest1 = new DeleteFestival.DeleteFestivalCommand(festival.Id);
+        var deleteFest1 = new DeleteFestivalCommand(festival.Id);
         await SendAsync(deleteFest1);
 
         NameGenerator.SetParts(WordBank.Verbs, WordBank.Nouns);
@@ -77,7 +77,6 @@ public class ListFortTests
         result.Forts.Count().ShouldBe(pageSize);
         result.PageSize.ShouldBe(pageSize);
         result.PaginationKey.ShouldNotBeNullOrEmpty();
-        result.PaginationKey.ShouldContain('|');
     }
 
     [TestMethod]
@@ -99,8 +98,5 @@ public class ListFortTests
         // assert
         result.Forts.Count().ShouldBe(pageSize);
         result.PageSize.ShouldBe(pageSize);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        result.Forts.Any(f => f.Id == query.PaginationKey.Split('|')[0]).ShouldBeFalse();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 }

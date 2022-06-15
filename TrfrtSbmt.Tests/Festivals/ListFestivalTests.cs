@@ -19,7 +19,7 @@ public class ListFestivalTests
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
         for (int i = 0; i < 100; i++)
         {
-            var addFest = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+            var addFest = new AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
             festivals.Add(await SendAsync(addFest));
         }
     }
@@ -29,7 +29,7 @@ public class ListFestivalTests
     {
         foreach (var fest in festivals)
         {
-            var deleteCommand = new DeleteFestival.DeleteFestivalCommand(fest.Id);
+            var deleteCommand = new DeleteFestivalCommand(fest.Id);
             await SendAsync(deleteCommand);
         }
     }
@@ -37,7 +37,7 @@ public class ListFestivalTests
     public async Task SmokeTest()
     {
         // arrange
-        var query = new ListFestivals.ListFestivalsQuery();
+        var query = new ListFestivalsQuery();
 
         // act
         var result = await SendAsync(query);
@@ -53,7 +53,7 @@ public class ListFestivalTests
     {
         // arrange
         var pageSize = 20;
-        var query = new ListFestivals.ListFestivalsQuery
+        var query = new ListFestivalsQuery
         {
             PageSize = pageSize
         };
@@ -65,7 +65,6 @@ public class ListFestivalTests
         result.Festivals.Count().ShouldBe(pageSize);
         result.PageSize.ShouldBe(pageSize);
         result.PaginationKey.ShouldNotBeNullOrEmpty();
-        result.PaginationKey.ShouldContain('|');
     }
 
     [TestMethod]
@@ -73,9 +72,9 @@ public class ListFestivalTests
     {
         // arrange
         var pageSize = 20;
-        var tempQuery = new ListFestivals.ListFestivalsQuery { PageSize = pageSize };
+        var tempQuery = new ListFestivalsQuery { PageSize = pageSize };
         var tempResult = await SendAsync(tempQuery);
-        var query = new ListFestivals.ListFestivalsQuery
+        var query = new ListFestivalsQuery
         {
             PageSize = pageSize,
             PaginationKey = tempResult.PaginationKey
@@ -87,8 +86,5 @@ public class ListFestivalTests
         // assert
         result.Festivals.Count().ShouldBe(pageSize);
         result.PageSize.ShouldBe(pageSize);
-#pragma warning disable CS8602 // Dereference of a possibly null reference.
-        result.Festivals.Any(f => f.Id == query.PaginationKey.Split('|')[0]).ShouldBeFalse();
-#pragma warning restore CS8602 // Dereference of a possibly null reference.
     }
 }

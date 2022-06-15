@@ -23,20 +23,22 @@ public class DeleteFort
 
         protected override async Task Handle(DeleteFortCommand request, CancellationToken cancellationToken)
         {
-            var fortResult = await _db.QueryAsync(new QueryRequest(_settings.TableName)
-            {
-                KeyConditionExpression = $"{nameof(BaseEntity.EntityId)} = :id",
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-                {
-                    {":id", new AttributeValue(request.Id)}
-                },
-                IndexName = BaseEntity.Gsi2
-            });
+            var fortResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.Id, 1, null);
             var singleOrDefault = fortResult.Items.SingleOrDefault();
-            if (singleOrDefault == null) throw new Exception("Festival not found");
-            
-            var fort = new Fort(singleOrDefault);
-            await fort.DeleteAsync(_db, _settings.TableName);
+            if (singleOrDefault != null)
+            {
+                var fort = new Fort(singleOrDefault);
+                List<Dictionary<string, AttributeValue>> items = new();                
+
+                var submissionsResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(fort.EntityId);
+
+                foreach (var item in submissionsResult.Items)
+                {
+                    items.Add(item);
+                }
+                items.Add(fort.ToDictionary());
+                await new DynamoDbQueries.DeleteBatch(_db, _settings).ExecuteAsync(items);
+            }
         }
     }
 }

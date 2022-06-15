@@ -91,16 +91,16 @@ app.MapGet("/healthcheck", () => "Submit Api!")
 
 // festivals
 app.MapGet("/festivals", async (bool activeOnly, bool? submissionsOpen, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
-    => await mediator.Send(new ListFestivals.ListFestivalsQuery(activeOnly, submissionsOpen ?? false, pageSize, paginationKey)))
+    => await mediator.Send(new ListFestivalsQuery(activeOnly, submissionsOpen ?? false, pageSize, paginationKey)))
     .RequireAuthorization();
 
-app.MapPost("/festivals", async (AddFestival.AddFestivalCommand command, [FromServices] IMediator mediator)
+app.MapPost("/festivals", async (AddFestivalCommand command, [FromServices] IMediator mediator)
     => await mediator.Send(command))
     .RequireAuthorization("admin");
     
 
 app.MapDelete("/festivals/{festivalId}", async (string festivalId, [FromServices] IMediator mediator)
-    => await mediator.Send(new DeleteFestival.DeleteFestivalCommand(festivalId)))
+    => await mediator.Send(new DeleteFestivalCommand(festivalId)))
     .RequireAuthorization("admin");
 
 // forts

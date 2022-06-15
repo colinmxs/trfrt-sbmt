@@ -20,7 +20,7 @@ public class DeleteFortTests
     public async Task Initialize()
     {
         NameGenerator.EndsWith = $" Festival 20{Rand.Next(10, 30)}!";
-        var addFest = new AddFestival.AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
+        var addFest = new AddFestivalCommand(true, NameGenerator.Generate(), Lorem, DateTime.UtcNow.AddMonths(-3), DateTime.UtcNow.AddMonths(3));
         fest = await SendAsync(addFest);
         
         NameGenerator.SetParts(WordBank.Nouns);
@@ -35,7 +35,7 @@ public class DeleteFortTests
     [TestCleanup]
     public async Task Cleanup()
     {
-        var deleteFest1 = new DeleteFestival.DeleteFestivalCommand(fest.Id);
+        var deleteFest1 = new DeleteFestivalCommand(fest.Id);
         await SendAsync(deleteFest1);
         
         NameGenerator.SetParts(WordBank.Verbs, WordBank.Nouns);
