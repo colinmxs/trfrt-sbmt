@@ -1,15 +1,21 @@
 ﻿using TrfrtSbmt.Api.Features.Submissions;
 using static TrfrtSbmt.Tests.TestFixture;
 using CodenameGenerator;
+using System.Collections.Generic;
 
 namespace TrfrtSbmt.Tests.Submissions;
 
 public static class GeneratorMethods
 {
-    public static string GenerateGenre()
+    public static IEnumerable<string> GenerateGenre()
     {
         var genres = new string[] { "Rock", "Country", "Rap", "Metal", "Indie", "Folk", "Pop", "Jazz", "Hip-Hop", "Electronic", "Blues", "Classical", "Reggae", "Soul", "R&B", "Dance", "Alternative", "Disco", "House", "Techno", "Other" };
-        return genres[Rand.Next(0, genres.Length)];
+
+        // return 3 random genres
+        for (int i = 0; i < 3; i++)
+        {
+            yield return genres[Rand.Next(0, genres.Length)];
+        }
     }
 
     public static string GenerateCity()

@@ -7,10 +7,11 @@ using TrfrtSbmt.Api.DataModels;
 
 public class AddSubmission
 {
-    public record AddSubmissionCommand(string Name, string State, string City, string Country, string Description, string Image, string Website, string Genre, SocialLinksVm Links, ContactInfoVm ContactInfo) : IRequest<SubmissionViewModel>
+    public record AddSubmissionCommand(string Name, string State, string City, string Country, string Description, string Image, string Website, IEnumerable<string> Genres, string Statement, SocialLinksVm Links, ContactInfoVm ContactInfo) : IRequest<SubmissionViewModel>
     {
         public string? FestivalId { get; internal set; }
         public string? FortId { get; internal set; }
+        
     };
     
     public class CommandHandler : IRequestHandler<AddSubmissionCommand, SubmissionViewModel>
@@ -37,7 +38,8 @@ public class AddSubmission
                     request.Description,
                     request.Image,
                     request.Website,
-                    request.Genre,
+                    request.Genres,
+                    request.Statement,
                     JsonSerializer.Serialize(request.Links),
                     JsonSerializer.Serialize(request.ContactInfo));
             await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);

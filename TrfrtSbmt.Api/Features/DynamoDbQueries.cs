@@ -104,6 +104,19 @@ public class DynamoDbQueries
                 }
             });
         }
+
+        public async Task<QueryResponse> ExecuteAsync(string partitionKey, string sortKey)
+        {
+            return await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            {
+                KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = :pk AND {nameof(BaseEntity.SortKey)} = :sk",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+                {
+                    {":pk", new AttributeValue(partitionKey)},
+                    {":sk", new AttributeValue(sortKey)}
+                }
+            });
+        }
     }
 
     public class DeleteBatch : BaseDynamoQuery

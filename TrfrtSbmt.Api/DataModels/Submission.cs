@@ -8,7 +8,7 @@ public class Submission : BaseEntity
 
     public Submission(Dictionary<string, AttributeValue> values) : base(values) { }
 
-    public Submission(string festivalId, string fortId, string name, string state, string city, string country, string description, string image, string website, string genre, string links, string contactInfo) : base(fortId, name, name)
+    public Submission(string festivalId, string fortId, string name, string state, string city, string country, string description, string image, string website, IEnumerable<string> genres, string statement, string links, string contactInfo) : base(fortId, name, name)
     {
         _attributes[nameof(SubmissionDate)] = new AttributeValue { S = DateTime.UtcNow.ToString() };
         _attributes[nameof(FestivalId)] = new AttributeValue { S = festivalId };
@@ -18,10 +18,16 @@ public class Submission : BaseEntity
         _attributes[nameof(Description)] = new AttributeValue { S = description };
         _attributes[nameof(Image)] = new AttributeValue { S = image };
         _attributes[nameof(Website)] = new AttributeValue { S = website };
-        _attributes[nameof(Genre)] = new AttributeValue { S = genre };
+        _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
         _attributes[nameof(Links)] = new AttributeValue { S = links };
         _attributes[nameof(ContactInfo)] = new AttributeValue { S = contactInfo };
+        
     }
+    public Submission(string labelId, Dictionary<string, AttributeValue> submission) : base(submission) 
+    {
+        _attributes[nameof(PartitionKey)] = new AttributeValue { S = labelId };
+    }
+    public string Statement => _attributes[nameof(Statement)].S;
     public string SubmissionDate => _attributes[nameof(SubmissionDate)].S;
     public string FestivalId => _attributes[nameof(FestivalId)].S;
     public string State => _attributes[nameof(State)].S;
@@ -30,7 +36,7 @@ public class Submission : BaseEntity
     public string Description => _attributes[nameof(Description)].S;
     public string Image => _attributes[nameof(Image)].S;
     public string Website => _attributes[nameof(Website)].S;
-    public string Genre => _attributes[nameof(Genre)].S;
+    public IEnumerable<string> Genres => _attributes[nameof(Genres)].SS;
     public string Links => _attributes[nameof(Links)].S;
     public string ContactInfo => _attributes[nameof(ContactInfo)].S;
 }
