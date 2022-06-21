@@ -14,11 +14,12 @@ public record SubmissionViewModel(string FestivalId,
                                       string Description,
                                       string Image,
                                       string Website,
+                                      string Statement,
                                       IEnumerable<string> Genres,
                                       SocialLinksVm Links,
                                       ContactInfoVm ContactInfo)
 {
-    public SubmissionViewModel(Submission submission) : this(submission.FestivalId, submission.PartitionKey, submission.EntityId, submission.SubmissionDate, submission.Name, submission.State, submission.City, submission.Country, submission.Description, submission.Image, submission.Website, submission.Genres, JsonSerializer.Deserialize<SocialLinksVm>(submission.Links), JsonSerializer.Deserialize<ContactInfoVm>(submission.ContactInfo)) { }
+    public SubmissionViewModel(Submission submission) : this(submission.FestivalId, submission.PartitionKey, submission.EntityId, submission.SubmissionDate, submission.Name, submission.State, submission.City, submission.Country, submission.Description, submission.Image, submission.Website, submission.Statement, submission.Genres, JsonSerializer.Deserialize<SocialLinksVm>(submission.Links), JsonSerializer.Deserialize<ContactInfoVm>(submission.ContactInfo)) { }
 }
 
 public record SocialLinksVm(string? Spotify, string? AppleMusic, string? Bandcamp, string? Soundcloud, string[]? Videos, string? Facebook, string? Twitter, string? Instagram, string? TikTok);
