@@ -23,20 +23,17 @@ public class DeleteLabel
 
         protected override async Task Handle(DeleteFortCommand request, CancellationToken cancellationToken)
         {
-            var fortResult = await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            var labelResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.Id, 1, null);
+            var singleOrDefault = labelResult.Items.SingleOrDefault();
+            if (singleOrDefault != null) 
             {
-                KeyConditionExpression = $"{nameof(BaseEntity.EntityId)} = :id",
-                ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
-                {
-                    {":id", new AttributeValue(request.Id)}
-                },
-                IndexName = BaseEntity.EntityIdIndex
-            });
-            var singleOrDefault = fortResult.Items.SingleOrDefault();
-            if (singleOrDefault == null) throw new Exception("Festival not found");
-
-            var fort = new Fort(singleOrDefault);
-            //await fort.DeleteAsync(_db, _settings.TableName);
+                var label = new Label(singleOrDefault);
+                List<Dictionary<string, AttributeValue>> items = new();
+                var submissionsResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(label.EntityId);
+                foreach (var item in submissionsResult.Items) items.Add(item);
+                items.Add(label.ToDictionary());
+                await new DynamoDbQueries.DeleteBatch(_db, _settings).ExecuteAsync(items);                
+            }
         }
     }
 }

@@ -1,11 +1,11 @@
-﻿using Amazon.DynamoDBv2;
-using TrfrtSbmt.Api.DataModels;
+﻿namespace TrfrtSbmt.Api.Features.Labels;
 
-namespace TrfrtSbmt.Api.Features.Labels;
+using Amazon.DynamoDBv2;
+using TrfrtSbmt.Api.DataModels;
 
 public class AddLabel
 {
-    public record AddLabelCommand(string Name) : IRequest<LabelViewModel>
+    public record AddLabelCommand(string Name, string FortId, string SubmissionId) : IRequest<LabelViewModel>
     {
         public string? FestivalId { get; internal set; }
     }
@@ -24,9 +24,26 @@ public class AddLabel
         public async Task<LabelViewModel> Handle(AddLabelCommand request, CancellationToken cancellationToken)
         {
             ArgumentNullException.ThrowIfNull(request.FestivalId);
-            var fort = new Fort(request.FestivalId, request.Name);
-            await _db.PutItemAsync(_settings.TableName, fort.ToDictionary(), cancellationToken);
-            return new LabelViewModel(fort);
+            Label label;
+            
+            var festivalLabelResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(request.FestivalId, $"{nameof(Label)}-{request.Name.ToUpperInvariant()}");
+            var singleOrDefaultFestivalLabel = festivalLabelResult.Items.SingleOrDefault();
+            if (singleOrDefaultFestivalLabel == null)
+            {
+                label = new Label(request.FestivalId, request.Name);
+                await _db.PutItemAsync(_settings.TableName, label.ToDictionary(), cancellationToken);
+            }
+            else label = new Label(singleOrDefaultFestivalLabel);
+
+            var submissionResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.SubmissionId, 1, null);
+            var singleOrDefault = submissionResult.Items.SingleOrDefault();
+            if(singleOrDefault != null)
+            {
+                var labeledSubmission = new Submission(label.EntityId, singleOrDefault);
+                await _db.PutItemAsync(_settings.TableName, labeledSubmission.ToDictionary(), cancellationToken);
+            }
+
+            return new LabelViewModel(label);
         }
     }
 }
