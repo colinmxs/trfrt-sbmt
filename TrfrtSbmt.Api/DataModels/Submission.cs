@@ -21,7 +21,7 @@ public class Submission : BaseEntity
         _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
         _attributes[nameof(Links)] = new AttributeValue { S = links };
         _attributes[nameof(ContactInfo)] = new AttributeValue { S = contactInfo };
-        
+        _attributes[nameof(Statement)] = new AttributeValue { S = statement };
     }
     public Submission(string labelId, Dictionary<string, AttributeValue> submission) : base(submission) 
     {

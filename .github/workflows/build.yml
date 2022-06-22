@@ -41,6 +41,9 @@ jobs:
         USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
+    - name: Run Tests
+      run: |
+        dotnet test TrfrtSbmt.Tests
     - name: Build CDK
       run: |
         dotnet publish TrfrtSbmt.Cdk/TrfrtSbmt.Cdk.csproj --configuration Release                
