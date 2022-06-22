@@ -7,6 +7,7 @@ using TrfrtSbmt.Api.Features.Festivals;
 using CodenameGenerator;
 using TrfrtSbmt.Api.Features.Forts;
 using System.Linq;
+using Shouldly;
 
 namespace TrfrtSbmt.Tests.Submissions;
 
@@ -61,5 +62,29 @@ public partial class AddSubmissionTests
             //submission.Id.IsNotNull();
         }
         
+    }
+
+    [TestMethod]
+    public async Task Update()
+    {
+        // arrange
+        var command = new AddSubmission.AddSubmissionCommand(GeneratorMethods.GenerateName(), GeneratorMethods.GenerateState(), GeneratorMethods.GenerateCity(), GeneratorMethods.GenerateCountry(), Lorem, GeneratorMethods.GeneratePictureUrl(), "https://www.reddit.com/r/U2Band/", GeneratorMethods.GenerateGenre().Distinct(), Lorem, new SocialLinksVm("https://open.spotify.com/artist/51Blml2LZPmy7TTiAg47vQ", "https://music.apple.com/us/artist/u2/78500", "https://suckling.bandcamp.com/releases", "https://soundcloud.com/u2", new string[3] { "https://www.youtube.com/watch?v=ujNeHIo7oTE&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=98W9QuMq-2k&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=co6WMzDOh1o&ab_channel=U2VEVO" }, "https://www.facebook.com/u2", "https://twitter.com/u2", "https://www.instagram.com/u2", "https://www.tiktok.com/@u2?lang=en"), GeneratorMethods.GenerateContactInfo())
+        {
+            FestivalId = festival.Id,
+            FortId = fort.Id
+        };
+        var sub = await SendAsync(command);
+
+        var update = new AddSubmission.AddSubmissionCommand("POOP", GeneratorMethods.GenerateState(), GeneratorMethods.GenerateCity(), GeneratorMethods.GenerateCountry(), Lorem, GeneratorMethods.GeneratePictureUrl(), "https://www.reddit.com/r/U2Band/", GeneratorMethods.GenerateGenre().Distinct(), Lorem, new SocialLinksVm("https://open.spotify.com/artist/51Blml2LZPmy7TTiAg47vQ", "https://music.apple.com/us/artist/u2/78500", "https://suckling.bandcamp.com/releases", "https://soundcloud.com/u2", new string[3] { "https://www.youtube.com/watch?v=ujNeHIo7oTE&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=98W9QuMq-2k&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=co6WMzDOh1o&ab_channel=U2VEVO" }, "https://www.facebook.com/u2", "https://twitter.com/u2", "https://www.instagram.com/u2", "https://www.tiktok.com/@u2?lang=en"), GeneratorMethods.GenerateContactInfo(), sub.Id)
+        {
+            FestivalId = festival.Id,
+            FortId = fort.Id
+        };
+
+        // act
+        var updatedSub = await SendAsync(update);
+
+        // assert
+        updatedSub.Name.ShouldBe("POOP");
     }
 }
