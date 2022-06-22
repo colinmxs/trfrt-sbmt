@@ -36,9 +36,9 @@ public class ListSubmissionTests
         fort = await SendAsync(command);
 
         List<Task> tasks = new List<Task>();
-        for (int i = 0; i < 400; i++)
+        for (int i = 0; i < 100; i++)
         {
-            var addSub = new AddSubmission.AddSubmissionCommand(GeneratorMethods.GenerateName(), i % 10 == 0 ? "Idaho" : GeneratorMethods.GenerateState(), i % 10 == 0 ? "Boise" : GeneratorMethods.GenerateCity(), i % 10 == 0 ? "United States" : GeneratorMethods.GenerateCountry(), Lorem, GeneratorMethods.GeneratePictureUrl(), "https://www.reddit.com/r/U2Band/", GeneratorMethods.GenerateGenre(), Lorem, new SocialLinksVm("https://open.spotify.com/artist/51Blml2LZPmy7TTiAg47vQ", "https://music.apple.com/us/artist/u2/78500", "https://suckling.bandcamp.com/releases", "https://soundcloud.com/u2", new string[3] { "https://www.youtube.com/watch?v=ujNeHIo7oTE&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=98W9QuMq-2k&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=co6WMzDOh1o&ab_channel=U2VEVO" }, "https://www.facebook.com/u2", "https://twitter.com/u2", "https://www.instagram.com/u2", "https://www.tiktok.com/@u2?lang=en"), GeneratorMethods.GenerateContactInfo())
+            var addSub = new AddSubmission.AddSubmissionCommand(GeneratorMethods.GenerateName(), i % 3 == 0 ? "Idaho" : GeneratorMethods.GenerateState(), i % 10 == 0 ? "Boise" : GeneratorMethods.GenerateCity(), i % 10 == 0 ? "United States" : GeneratorMethods.GenerateCountry(), Lorem, GeneratorMethods.GeneratePictureUrl(), "https://www.reddit.com/r/U2Band/", GeneratorMethods.GenerateGenre().Distinct(), Lorem, new SocialLinksVm("https://open.spotify.com/artist/51Blml2LZPmy7TTiAg47vQ", "https://music.apple.com/us/artist/u2/78500", "https://suckling.bandcamp.com/releases", "https://soundcloud.com/u2", new string[3] { "https://www.youtube.com/watch?v=ujNeHIo7oTE&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=98W9QuMq-2k&ab_channel=U2VEVO", "https://www.youtube.com/watch?v=co6WMzDOh1o&ab_channel=U2VEVO" }, "https://www.facebook.com/u2", "https://twitter.com/u2", "https://www.instagram.com/u2", "https://www.tiktok.com/@u2?lang=en"), GeneratorMethods.GenerateContactInfo())
             {
                 FestivalId = festival.Id,
                 FortId = fort.Id
