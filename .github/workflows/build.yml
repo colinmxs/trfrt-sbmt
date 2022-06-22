@@ -42,6 +42,6 @@ jobs:
         ls
     - name: Deploy
       run: |
-        cd TrfrtSbmt.Cdk/bin/Release/net6.0
+        cd TrfrtSbmt.Cdk
         ls
         cdk deploy * --require-approval never
