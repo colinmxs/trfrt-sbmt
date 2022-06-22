@@ -43,5 +43,4 @@ jobs:
     - name: Deploy
       run: |
         cd TrfrtSbmt.Cdk
-        ls
-        cdk deploy * --require-approval never
+        cdk deploy "*" --require-approval never
