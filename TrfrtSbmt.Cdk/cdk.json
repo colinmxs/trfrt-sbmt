@@ -1,5 +1,5 @@
 ﻿{
-  "app": "TrfrtSbmt.Cdk.exe",
+  "app": "dotnet run TrfrtSbmt.Cdk --no-build",
   "context": {
     "accountid": "#{ACCOUNTID}#",
     "domain": "#{DOMAIN}#",
