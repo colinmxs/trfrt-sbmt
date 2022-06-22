@@ -22,6 +22,16 @@ jobs:
         USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+    - name: Bootstrap CDK
+      run: |
+        cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-1
+        cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-2
     - name: Run Tests
       run: |
         dotnet test TrfrtSbmt.Tests
