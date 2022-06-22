@@ -1,7 +1,6 @@
 ﻿namespace TrfrtSbmt.Tests;
 
 using Amazon.DynamoDBv2;
-using Amazon.Extensions.NETCore.Setup;
 using CodenameGenerator;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,10 +25,7 @@ internal static class TestFixture
             TableName = "Submissions-Tests"
         };
         services.AddSingleton(appSettings);
-        services.AddAWSService<IAmazonDynamoDB>(new AWSOptions 
-        {
-            Region = Amazon.RegionEndpoint.USWest2
-        });
+        services.AddAWSService<IAmazonDynamoDB>();
         services.AddMediatR(typeof(Program));
         var provider = services.BuildServiceProvider();
         ScopeFactory = provider.GetService<IServiceScopeFactory>();
