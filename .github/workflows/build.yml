@@ -38,8 +38,8 @@ jobs:
       run: dotnet publish TrfrtSbmt.Api/TrfrtSbmt.Api.csproj --configuration Release
     - name: Zip Main
       run: |
-        Get-ChildItem -Path TrfrtSbmt.Api/bin/Release/net6.0/publish |
-        Compress-Archive -DestinationPath TrfrtSbmt.Api/publish.zip           
+        zip -r publish.zip TrfrtSbmt.Api/bin/Release/net6.0/publish
+        ls
     - name: Deploy
       run: |
         cd TrfrtSbmt.Cdk/bin/Release/net6.0
