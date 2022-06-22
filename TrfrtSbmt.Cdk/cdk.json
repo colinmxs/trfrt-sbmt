@@ -1,0 +1,14 @@
+﻿{
+  "app": "TrfrtSbmt.Cdk.exe",
+  "context": {
+    "accountid": "#{ACCOUNTID}#",
+    "domain": "#{DOMAIN}#",
+    "subdomain":  "#{SUBDOMAIN}#",
+    "us-west-1": {
+      "sslcertid": "#{USWEST1SSLCERTID}#"
+    },
+    "us-west-2": {
+      "sslcertid": "#{USWEST2SSLCERTID}#"
+    }      
+  }
+}
