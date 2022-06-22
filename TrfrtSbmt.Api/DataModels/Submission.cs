@@ -29,6 +29,22 @@ public class Submission : BaseEntity
     }
     public string Statement => _attributes[nameof(Statement)].S;
     public string SubmissionDate => _attributes[nameof(SubmissionDate)].S;
+
+    internal void Update(string name, string state, string city, string country, string description, string image, string website, IEnumerable<string> genres, string statement, string links, string contact)
+    {
+        _attributes[nameof(Name)] = new AttributeValue { S = name };
+        _attributes[nameof(State)] = new AttributeValue { S = state };
+        _attributes[nameof(City)] = new AttributeValue { S = city };
+        _attributes[nameof(Country)] = new AttributeValue { S = country };
+        _attributes[nameof(Description)] = new AttributeValue { S = description };
+        _attributes[nameof(Image)] = new AttributeValue { S = image };
+        _attributes[nameof(Website)] = new AttributeValue { S = website };
+        _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
+        _attributes[nameof(Links)] = new AttributeValue { S = links };
+        _attributes[nameof(ContactInfo)] = new AttributeValue { S = contact };
+        _attributes[nameof(Statement)] = new AttributeValue { S = statement };
+    }
+
     public string FestivalId => _attributes[nameof(FestivalId)].S;
     public string State => _attributes[nameof(State)].S;
     public string City => _attributes[nameof(City)].S;

@@ -7,7 +7,7 @@ using TrfrtSbmt.Api.DataModels;
 
 public class AddSubmission
 {
-    public record AddSubmissionCommand(string Name, string State, string City, string Country, string Description, string Image, string Website, IEnumerable<string> Genres, string Statement, SocialLinksVm Links, ContactInfoVm ContactInfo) : IRequest<SubmissionViewModel>
+    public record AddSubmissionCommand(string Name, string State, string City, string Country, string Description, string Image, string Website, IEnumerable<string> Genres, string Statement, SocialLinksVm Links, ContactInfoVm ContactInfo, string? Id = null) : IRequest<SubmissionViewModel>
     {
         public string? FestivalId { get; internal set; }
         public string? FortId { get; internal set; }
@@ -28,9 +28,16 @@ public class AddSubmission
         {
             ArgumentNullException.ThrowIfNull(request.FestivalId, nameof(request.FestivalId));
             ArgumentNullException.ThrowIfNull(request.FortId, nameof(request.FortId));
-            var submission = new Submission(
-                    request.FestivalId,
-                    request.FortId,
+            Submission submission;
+
+            // update
+            if(request.Id != null)
+            {
+                var result = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.Id, 1, null);
+                var singleOrDefault = result.Items.SingleOrDefault();
+                if (singleOrDefault == null) throw new Exception($"Submission not found: {request.Id}");
+                submission = new Submission(singleOrDefault);
+                submission.Update(
                     request.Name,
                     request.State,
                     request.City,
@@ -42,6 +49,22 @@ public class AddSubmission
                     request.Statement,
                     JsonSerializer.Serialize(request.Links),
                     JsonSerializer.Serialize(request.ContactInfo));
+            }
+            // add new 
+            else submission = new Submission(
+                request.FestivalId,
+                request.FortId,
+                request.Name,
+                request.State,
+                request.City,
+                request.Country,
+                request.Description,
+                request.Image,
+                request.Website,
+                request.Genres,
+                request.Statement,
+                JsonSerializer.Serialize(request.Links),
+                JsonSerializer.Serialize(request.ContactInfo));
             await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
             return new SubmissionViewModel(submission);
         }
