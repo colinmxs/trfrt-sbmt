@@ -28,18 +28,12 @@ jobs:
         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: us-west-2
-    - name: Bootstrap CDK
-      run: cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-2
     - name: Run Tests
       run: dotnet test TrfrtSbmt.Tests
-    - name: Build CDK
-      run: dotnet publish TrfrtSbmt.Cdk/TrfrtSbmt.Cdk.csproj --configuration Release                
     - name: Build Main
       run: dotnet publish TrfrtSbmt.Api/TrfrtSbmt.Api.csproj --configuration Release
     - name: Zip Main
-      run: |
-        zip -r publish.zip TrfrtSbmt.Api/bin/Release/net6.0/publish
-        ls
+      run: zip -r publish.zip TrfrtSbmt.Api/bin/Release/net6.0/publish
     - name: Deploy
       run: |
         cd TrfrtSbmt.Cdk
