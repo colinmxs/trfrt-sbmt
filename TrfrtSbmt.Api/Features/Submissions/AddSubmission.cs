@@ -2,6 +2,7 @@
 
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using System.Security.Claims;
 using System.Text.Json;
 using TrfrtSbmt.Api.DataModels;
 
@@ -18,10 +19,12 @@ public class AddSubmission
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
-        public CommandHandler(IAmazonDynamoDB db, AppSettings settings)
+        private readonly ClaimsPrincipal _user;
+        public CommandHandler(IAmazonDynamoDB db, AppSettings settings, ClaimsPrincipal user)
         {
             _db = db;
             _settings = settings;
+            _user = user;
         }
 
         public async Task<SubmissionViewModel> Handle(AddSubmissionCommand request, CancellationToken cancellationToken)
@@ -54,6 +57,7 @@ public class AddSubmission
             else submission = new Submission(
                 request.FestivalId,
                 request.FortId,
+                _user.Claims.Single(c => c.Type == "username").Value,
                 request.Name,
                 request.State,
                 request.City,

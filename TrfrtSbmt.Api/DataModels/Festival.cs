@@ -6,7 +6,7 @@ public class Festival : BaseEntity
 {
     protected override string SortKeyPrefix => $"{nameof(Festival)}-";
     public Festival(Dictionary<string, AttributeValue> dictionary) : base(dictionary) { }
-    public Festival(bool isActive, string name, string guidelines, DateTime startDateTime, DateTime endDateTime) : base(name, nameof(Festival)) 
+    public Festival(bool isActive, string name, string username, string guidelines, DateTime startDateTime, DateTime endDateTime) : base(name, nameof(Festival), username) 
     {
         _attributes[nameof(Guidelines)] = new AttributeValue { S = guidelines };        
         _attributes[nameof(IsActive)] = new AttributeValue { BOOL = isActive };

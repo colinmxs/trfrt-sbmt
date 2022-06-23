@@ -8,7 +8,7 @@ public class Submission : BaseEntity
 
     public Submission(Dictionary<string, AttributeValue> values) : base(values) { }
 
-    public Submission(string festivalId, string fortId, string name, string state, string city, string country, string description, string image, string website, IEnumerable<string> genres, string statement, string links, string contactInfo) : base(fortId, name, name)
+    public Submission(string festivalId, string fortId, string createdBy, string name, string state, string city, string country, string description, string image, string website, IEnumerable<string> genres, string statement, string links, string contactInfo) : base(fortId, name, name)
     {
         _attributes[nameof(SubmissionDate)] = new AttributeValue { S = DateTime.UtcNow.ToString() };
         _attributes[nameof(FestivalId)] = new AttributeValue { S = festivalId };
@@ -44,7 +44,6 @@ public class Submission : BaseEntity
         _attributes[nameof(ContactInfo)] = new AttributeValue { S = contact };
         _attributes[nameof(Statement)] = new AttributeValue { S = statement };
     }
-
     public string FestivalId => _attributes[nameof(FestivalId)].S;
     public string State => _attributes[nameof(State)].S;
     public string City => _attributes[nameof(City)].S;

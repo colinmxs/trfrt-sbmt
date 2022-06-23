@@ -100,6 +100,16 @@ public class DbStack : Stack
             }
         });
 
+        Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        {
+            IndexName = "CreatedByIndex",
+            PartitionKey = new Attribute
+            {
+                Name = "CreatedBy",
+                Type = AttributeType.STRING
+            }
+        });
+
         TestTable = new Table(this, "DynamoTestTable", new TableProps
         {
             BillingMode = BillingMode.PAY_PER_REQUEST,
