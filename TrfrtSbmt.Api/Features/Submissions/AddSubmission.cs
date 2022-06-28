@@ -75,43 +75,46 @@ public class AddSubmission
                 request.Statement,
                 JsonSerializer.Serialize(request.Links),
                 JsonSerializer.Serialize(request.ContactInfo));
+                await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
 
-                await _emailer.SendEmailAsync(new SendEmailRequest
+                if (_settings.EnvironmentName != "Production")
                 {
-                    FromEmailAddress = _settings.FromEmailAddress,
-                    Destination = new Destination
+                    await _emailer.SendEmailAsync(new SendEmailRequest
                     {
-                        ToAddresses =
-                        new List<string> { request.ContactInfo.Email }
-                    },
-                    Content = new EmailContent
-                    {
-                        Simple = new Message()
+                        FromEmailAddress = _settings.FromEmailAddress,
+                        Destination = new Destination
                         {
-                            Subject = new Content
+                            ToAddresses =
+                            new List<string> { request.ContactInfo.Email }
+                        },
+                        Content = new EmailContent
+                        {
+                            Simple = new Message()
                             {
-                                Data = "New Submission"
-                            },
-                            Body = new Body
-                            {
-                                //Html = new Content
-                                //{
-                                //    Charset = "UTF-8",
-                                //    Data = htmlBody
-                                //},
-                                Text = new Content
+                                Subject = new Content
                                 {
-                                    Charset = "UTF-8",
-                                    Data = @"Your submission to Treefort 11 has been received! 
-                                        We will notify all submissions of their status no later than January 15th, 2023. 
-                                        Submissions can be edited in the Treefort Submissions App."
+                                    Data = "New Submission"
+                                },
+                                Body = new Body
+                                {
+                                    //Html = new Content
+                                    //{
+                                    //    Charset = "UTF-8",
+                                    //    Data = htmlBody
+                                    //},
+                                    Text = new Content
+                                    {
+                                        Charset = "UTF-8",
+                                        Data = @"Your submission to Treefort 11 has been received! 
+                                                We will notify all submissions of their status no later than January 15th, 2023. 
+                                                Submissions can be edited in the Treefort Submissions App."
+                                    }
                                 }
                             }
                         }
-                    }
-                });
+                    });
+                }
             }
-            await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
             return new SubmissionViewModel(submission);
         }
     }
