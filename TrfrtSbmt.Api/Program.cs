@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Web;
 using Amazon.DynamoDBv2;
 using Amazon.S3;
+using Amazon.SimpleEmailV2;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using TrfrtSbmt.Api.Features.Festivals;
@@ -29,6 +30,7 @@ builder.Services.AddTransient(s =>
 });
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddAWSService<IAmazonSimpleEmailServiceV2>();
 builder.Services.AddMediatR(typeof(Program));
 
 // Add AWS Lambda support.

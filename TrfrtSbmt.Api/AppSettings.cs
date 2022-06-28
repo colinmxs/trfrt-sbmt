@@ -7,6 +7,7 @@ public class AppSettings
     public string BucketName { get; init; } = string.Empty;
     public string TableName { get; init; } = string.Empty;
     public string SubmissionGrouping { get; init; } = string.Empty;
+    public string FromEmailAddress { get; init; } = string.Empty;
 
     public AppSettings(ConfigurationManager config)
     {

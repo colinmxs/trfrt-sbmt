@@ -9,12 +9,13 @@ public class IamStack : Stack
     {
         var policy = new Policy(this, "table-access-policy", new PolicyProps 
         {
-            PolicyName = "table-access-policy",
+            PolicyName = "sbmt-policy",
             Roles = new Role[] { props.Role },
             Statements = new PolicyStatement[]
             {
                 new PolicyStatement(new PolicyStatementProps
                 {
+                    Sid = "table-access",
                     Effect = Effect.ALLOW,
                     Actions = new string[] { "dynamodb:*" },
                     Resources = new string[]
@@ -24,6 +25,13 @@ public class IamStack : Stack
                         props.TestTable.TableArn,
                         props.TestTable.TableArn + "/index/*"
                     }
+                }),
+                new PolicyStatement(new PolicyStatementProps
+                {
+                    Sid = "ses-access",
+                    Effect = Effect.ALLOW,
+                    Actions = new string[] { "ses:SendRawEmail", "ses:VerifyEmailIdentity" },
+                    Resources = new string[] { "*" }
                 })
             }
         });        
