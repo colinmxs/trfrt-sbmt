@@ -1,6 +1,7 @@
 namespace TrfrtSbmt.Api.Features.Festivals;
 
 using Amazon.DynamoDBv2;
+using System.Security.Claims;
 using TrfrtSbmt.Api.DataModels;
 using TrfrtSbmt.Api.Features;
 
@@ -18,11 +19,13 @@ public class AddFestivalCommandHandler : IRequestHandler<AddFestivalCommand, Fes
 {
     private readonly IAmazonDynamoDB _db;
     private readonly AppSettings _settings;
-
-    public AddFestivalCommandHandler(IAmazonDynamoDB db, AppSettings settings)
+    private readonly ClaimsPrincipal _user;
+    
+    public AddFestivalCommandHandler(IAmazonDynamoDB db, AppSettings settings, ClaimsPrincipal user)
     {
         _db = db;
         _settings = settings;
+        _user = user;
     }
     public async Task<FestivalViewModel> Handle(AddFestivalCommand request, CancellationToken cancellationToken)
     {
@@ -37,7 +40,7 @@ public class AddFestivalCommandHandler : IRequestHandler<AddFestivalCommand, Fes
             festival.Update(request.IsActive, request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
         }
         // add new
-        else festival = new Festival(request.IsActive, request.Name, request.Guidelines, request.StartDateTime, request.EndDateTime);
+        else festival = new Festival(request.IsActive, request.Name, _user.Claims.Single(c => c.Type == "username").Value, request.Guidelines, request.StartDateTime, request.EndDateTime);
         await _db.PutItemAsync(_settings.TableName, festival.ToDictionary(), cancellationToken);
         return new FestivalViewModel(festival);
     }

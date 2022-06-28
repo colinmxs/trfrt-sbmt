@@ -104,7 +104,6 @@ public class DynamoDbQueries
                 }
             });
         }
-
         public async Task<QueryResponse> ExecuteAsync(string partitionKey, string sortKey)
         {
             return await _db.QueryAsync(new QueryRequest(_settings.TableName)
@@ -115,6 +114,24 @@ public class DynamoDbQueries
                     {":pk", new AttributeValue(partitionKey)},
                     {":sk", new AttributeValue(sortKey)}
                 }
+            });
+        }
+    }
+
+    public class CreatedByQuery : BaseDynamoQuery
+    {
+        public CreatedByQuery(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
+
+        public async Task<QueryResponse> ExecuteAsync(string createdBy)
+        {
+            return await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            {
+                KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = :pk",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+                    {
+                        {":pk", new AttributeValue(createdBy)}
+                    },
+                IndexName = "CreatedByQuery"
             });
         }
     }

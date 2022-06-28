@@ -1,4 +1,5 @@
 using System.Runtime.CompilerServices;
+using System.Security.Claims;
 using System.Web;
 using Amazon.DynamoDBv2;
 using Amazon.S3;
@@ -19,6 +20,13 @@ var appSettings = new AppSettings(builder.Configuration);
 builder.Services.AddSingleton(appSettings);
 
 // Add other services to the container.
+builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddTransient(s =>
+{
+    IHttpContextAccessor contextAccessor = s.GetService<IHttpContextAccessor>();
+    ClaimsPrincipal? user = contextAccessor?.HttpContext?.User;
+    return user ?? throw new System.Exception("User not resolved");
+});
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddMediatR(typeof(Program));

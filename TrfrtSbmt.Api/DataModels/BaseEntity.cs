@@ -13,7 +13,7 @@ public abstract class BaseEntity
         _attributes = values;
     }
     
-    public BaseEntity(string partitionKey, string name, string searchTerm)
+    public BaseEntity(string partitionKey, string name, string searchTerm, string createdBy)
     {
         var typeName = GetType().Name;
         _attributes = new Dictionary<string, AttributeValue>
@@ -23,10 +23,11 @@ public abstract class BaseEntity
             [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{name}" },
             [nameof(Name)] = new AttributeValue { S = name },
             [nameof(SearchTerm)] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
-            [nameof(EntityType)] = new AttributeValue { S = typeName }
-        };
+            [nameof(EntityType)] = new AttributeValue { S = typeName },
+            [nameof(CreatedBy)] = new AttributeValue { S = createdBy }
+    };
     }
-    public BaseEntity(string name, string searchTerm)
+    public BaseEntity(string name, string searchTerm, string createdBy)
     {
         var id = Guid.NewGuid().ToString();
         var typeName = GetType().Name;
@@ -37,10 +38,11 @@ public abstract class BaseEntity
             [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{name}" },
             [nameof(Name)] = new AttributeValue { S = name },
             [nameof(SearchTerm)] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
-            [nameof(EntityType)] = new AttributeValue { S = typeName }
+            [nameof(EntityType)] = new AttributeValue { S = typeName },
+            [nameof(CreatedBy)] = new AttributeValue { S = createdBy }
         };
     }
-
+    public string CreatedBy => _attributes[nameof(CreatedBy)].S;
     public string Name => _attributes[nameof(Name)].S;
     protected internal string EntityId => _attributes[nameof(EntityId)].S;
     protected internal string PartitionKey => _attributes[nameof(PartitionKey)].S;
