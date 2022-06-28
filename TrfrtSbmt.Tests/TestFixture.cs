@@ -1,6 +1,7 @@
 ﻿namespace TrfrtSbmt.Tests;
 
 using Amazon.DynamoDBv2;
+using Amazon.S3;
 using CodenameGenerator;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,6 +29,7 @@ internal static class TestFixture
         };
         services.AddSingleton(appSettings);
         services.AddAWSService<IAmazonDynamoDB>();
+        services.AddAWSService<IAmazonS3>();
         services.AddSingleton(new ClaimsPrincipal(new List<ClaimsIdentity> { new ClaimsIdentity(new List<Claim> { new Claim("username", "colin"), new Claim("cognito:groups", "admin") }) }));
         services.AddMediatR(typeof(Program));
         var provider = services.BuildServiceProvider();
