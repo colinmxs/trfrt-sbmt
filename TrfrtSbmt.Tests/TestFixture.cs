@@ -28,7 +28,7 @@ internal static class TestFixture
         };
         services.AddSingleton(appSettings);
         services.AddAWSService<IAmazonDynamoDB>();
-        services.AddSingleton(new ClaimsPrincipal(new List<ClaimsIdentity> { new ClaimsIdentity(new List<Claim> { new Claim("username", "colin") }) }));
+        services.AddSingleton(new ClaimsPrincipal(new List<ClaimsIdentity> { new ClaimsIdentity(new List<Claim> { new Claim("username", "colin"), new Claim("cognito:groups", "admin") }) }));
         services.AddMediatR(typeof(Program));
         var provider = services.BuildServiceProvider();
         ScopeFactory = provider.GetService<IServiceScopeFactory>();

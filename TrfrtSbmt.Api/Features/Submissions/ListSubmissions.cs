@@ -2,9 +2,9 @@ namespace TrfrtSbmt.Api.Features.Submissions;
 
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using System.Security.Claims;
 using System.Text;
 using TrfrtSbmt.Api.DataModels;
-
 public class ListSubmissions
 {
     public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListSubmissionsResult>
@@ -44,28 +44,40 @@ public class ListSubmissions
     {
         public ViewModel(Submission s) : this(s.EntityId, s.Name, s.State, s.City, s.Image) { }
     }
-
+    
     public class QueryHandler : IRequestHandler<ListSubmissionsQuery, ListSubmissionsResult>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
+        private readonly ClaimsPrincipal _user;
 
-        public QueryHandler(IAmazonDynamoDB db, AppSettings settings)
+        public QueryHandler(IAmazonDynamoDB db, AppSettings settings, ClaimsPrincipal user)
         {
             _db = db;
             _settings = settings;
+            _user = user;
         }
         public async Task<ListSubmissionsResult> Handle(ListSubmissionsQuery request, CancellationToken cancellationToken)
         {
-            QueryResponse queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
-            if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<ViewModel>(), request.PageSize, null);
-            var submissions = queryResult.Items.Select(i => new Submission(i));
+            List<Submission> submissions;
+            QueryResponse queryResult;
+            if (_user.IsAdmin() || _user.IsVoter())
+            {
+                queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
+                if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<ViewModel>(), request.PageSize, null);
+                submissions = queryResult.Items.Select(i => new Submission(i)).ToList();
+            }
+            else
+            {
+                queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(_user.Claims.Single(c => c.Type == "username").Value);
+                submissions = queryResult.Items.Select(i => new Submission(i)).ToList();
+            }
 
-            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions.ToList(), request.PageSize, queryResult.LastEvaluatedKey);
+            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions, request.PageSize, queryResult.LastEvaluatedKey);
         }
 
         private static async Task<QueryResponse> SubmissionDateIndexQuery(IAmazonDynamoDB db, AppSettings settings, string id, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)
-        {
+        {            
             var pkSymbol = ":partitionKey";
             return await db.QueryAsync(new QueryRequest(settings.TableName)
             {
