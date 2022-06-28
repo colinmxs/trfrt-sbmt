@@ -2,7 +2,7 @@
 
 public class AppSettings
 {
-    public string EnvironmentName { get; init; } = "Development";
+    public string EnvironmentName { get; init; } = "Production";
     public Cognito? CognitoSettings { get; init; } = null;
     public string BucketName { get; init; } = string.Empty;
     public string TableName { get; init; } = string.Empty;

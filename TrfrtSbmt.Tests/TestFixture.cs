@@ -26,7 +26,9 @@ internal static class TestFixture
         // Add other services to the container.
         var appSettings = new AppSettings 
         {
-            TableName = "Submissions-Tests"
+            TableName = "Submissions-Tests",
+            FromEmailAddress = "smith.colin00@gmail.com",
+            EnvironmentName = "Development"
         };
         services.AddSingleton(appSettings);
         services.AddAWSService<IAmazonDynamoDB>();
