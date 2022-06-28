@@ -198,5 +198,15 @@ public class DbStack : Stack
                 Type = AttributeType.STRING
             }
         });
+
+        TestTable.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+        {
+            IndexName = "CreatedByIndex",
+            PartitionKey = new Attribute
+            {
+                Name = "CreatedBy",
+                Type = AttributeType.STRING
+            }
+        });
     }
 }
