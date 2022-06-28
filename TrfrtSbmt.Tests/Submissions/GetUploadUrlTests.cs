@@ -20,6 +20,14 @@ public class GetUploadUrlTests
     [TestMethod]
     public async Task SmokeTest()
     {
+        // arrange
+        var query = new GetUploadUrl.Query("test.jpg", "Testiest Test", "Desc", "image/jpeg");
 
+        // act
+        var url = await SendAsync(query);
+
+        // assert
+        url.ShouldNotBeNull();
+        url.UploadUrl.ShouldNotBeNullOrEmpty();
     }
 }
