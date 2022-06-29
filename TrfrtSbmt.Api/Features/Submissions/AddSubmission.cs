@@ -77,7 +77,7 @@ public class AddSubmission
                 JsonSerializer.Serialize(request.ContactInfo));
                 await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
 
-                if (_settings.EnvironmentName != "Production")
+                if (_settings.EnvironmentName == "Production")
                 {
                     await _emailer.SendEmailAsync(new SendEmailRequest
                     {
