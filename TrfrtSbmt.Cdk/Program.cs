@@ -22,17 +22,15 @@ var dbs = new DbStack(app, "TrfrtSbmt-DbStack", new StackProps
     Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId }
 });
 
+var s3 = new S3Stack(app, "TrfrtSbmt-S3Stack", new S3Stack.S3StackProps());
+
 var iam = new IamStack(app, "TrfrtSbmt-IamStack", new IamStack.IamStackProps
 {
     Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
     Role = api.LambdaExecutionRole,
     Table = dbs.Table,
-    TestTable = dbs.TestTable
-});
-
-var s3 = new S3Stack(app, "TrfrtSbmt-S3Stack", new S3Stack.S3StackProps 
-{
-    RoleArn = api.LambdaExecutionRole.RoleArn
+    TestTable = dbs.TestTable,
+    Bucket = s3.Bucket
 });
 
 app.Synth();

@@ -1,5 +1,6 @@
 ﻿using Amazon.CDK.AWS.DynamoDB;
 using Amazon.CDK.AWS.IAM;
+using Amazon.CDK.AWS.S3;
 
 namespace TrfrtSbmt.Cdk;
 
@@ -7,7 +8,7 @@ public class IamStack : Stack
 {
     public IamStack(Construct scope, string id, IamStackProps props) : base(scope, id, props) 
     {
-        var policy = new Policy(this, "table-access-policy", new PolicyProps 
+        var policy = new Policy(this, "smbt-policy", new PolicyProps 
         {
             PolicyName = "sbmt-policy",
             Roles = new Role[] { props.Role },
@@ -30,6 +31,16 @@ public class IamStack : Stack
                     Effect = Effect.ALLOW,
                     Actions = new string[] { "ses:SendRawEmail", "ses:VerifyEmailIdentity" },
                     Resources = new string[] { "*" }
+                }),
+                new PolicyStatement(new PolicyStatementProps
+                {
+                    Effect = Effect.ALLOW,
+                    Actions = new string[] { "s3:*" },
+                    Resources = new string[]
+                    {
+                        props.Bucket.BucketArn,
+                        props.Bucket.BucketArn + "/*"
+                    }
                 })
             }
         });        
@@ -41,5 +52,6 @@ public class IamStack : Stack
         public Role Role { get; set; }
         public Table Table { get; set; }
         public Table TestTable { get; set; }
+        public Bucket Bucket { get; set; }
     }
 }
