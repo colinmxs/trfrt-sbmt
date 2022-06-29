@@ -23,7 +23,8 @@ public class S3Stack : Stack
                     AllowedMethods = new HttpMethods[] { HttpMethods.GET, HttpMethods.POST, HttpMethods.PUT, HttpMethods.DELETE, HttpMethods.HEAD },
                     AllowedOrigins = new string[] { "*" }
                 }
-            }            
+            },
+            PublicReadAccess = true
         });
 
         var bucketAccessPolicy = new Policy(this, "BucketPolicy", new PolicyProps

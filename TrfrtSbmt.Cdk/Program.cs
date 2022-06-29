@@ -30,5 +30,9 @@ var iam = new IamStack(app, "TrfrtSbmt-IamStack", new IamStack.IamStackProps
     TestTable = dbs.TestTable
 });
 
+var s3 = new S3Stack(app, "TrfrtSbmt-S3Stack", new S3Stack.S3StackProps 
+{
+    RoleArn = api.LambdaExecutionRole.RoleArn
+});
 
 app.Synth();
