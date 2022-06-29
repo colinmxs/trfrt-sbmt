@@ -6,7 +6,7 @@ namespace TrfrtSbmt.Api.Features.Submissions;
 
 public class GetUploadUrl
 {
-    public record Query(string FileName, string Title, string Description, string FileType) : IRequest<Result>;
+    public record Query(string FileName, string FileType) : IRequest<Result>;
 
     public record Result(string UploadUrl);
 
@@ -34,8 +34,6 @@ public class GetUploadUrl
                 Expires = DateTime.Now.AddMinutes(5)
             };
 
-            getPreSignedUrlRequest.Parameters[metadataHeaderPrefix + "title"] = request.Title;
-            getPreSignedUrlRequest.Parameters[metadataHeaderPrefix + "description"] = request.Description;
             getPreSignedUrlRequest.Parameters[metadataHeaderPrefix + "filetype"] = request.FileType;
             string url = _s3.GetPreSignedURL(getPreSignedUrlRequest);
 

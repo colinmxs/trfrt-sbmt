@@ -146,6 +146,6 @@ app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions/{submissionId}", 
     => await mediator.Send(new GetSubmission.GetSubmissionQuery(festivalId, fortId, submissionId)))
     .RequireAuthorization();
 
-app.MapGet("/photo-upload-url", async (string fileName, string title, string description, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, title, description, fileType)));
+app.MapGet("/photo-upload-url", async (string fileName, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, fileType)));
 
 app.Run();
