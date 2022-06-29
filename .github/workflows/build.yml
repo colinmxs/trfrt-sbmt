@@ -1,15 +1,34 @@
 name: Build
 on:
   push:
-    branches: [ main ]
+    branches: [ init, main ]
   pull_request:
     branches: [ main ]
 
 jobs:
   build-and-deploy:
-    runs-on: [self-hosted, linux]
+    runs-on: windows-latest
     steps:
-    - uses: actions/checkout@v3    
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core SDK
+      uses: actions/setup-dotnet@v2.0.0
+      with:
+        dotnet-version: 6.0.x
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: us-west-2
+    - name: Install cdk
+      run: |
+        npm install -g aws-cdk
+        npm install -g aws-cli   
+        dotnet tool install -g Amazon.Lambda.Tools      
+    - name: Bootstrap CDK
+      run: |
+        cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-1
+        cdk bootstrap aws://${{ secrets.AWS_ACCOUNT_ID }}/us-west-2
     - name: Replace tokens
       uses: cschleiden/replace-tokens@v1.1
       with:
@@ -22,19 +41,20 @@ jobs:
         USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
-    - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
-      with:
-        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-        aws-region: us-west-2
     - name: Run Tests
-      run: dotnet test TrfrtSbmt.Tests
-    - name: Build Main
-      run: dotnet publish TrfrtSbmt.Api/TrfrtSbmt.Api.csproj --configuration Release
-    - name: Zip Main
-      run: zip -r publish.zip TrfrtSbmt.Api/bin/Release/net6.0/publish
-    - name: Deploy
       run: |
-        cd TrfrtSbmt.Cdk
-        cdk deploy "*" --require-approval never
+        dotnet test TrfrtSbmt.Tests
+    - name: Build CDK
+      run: |
+        dotnet publish TrfrtSbmt.Cdk/TrfrtSbmt.Cdk.csproj --configuration Release                
+    - name: Build Main
+      run: |
+        dotnet publish TrfrtSbmt.Api/TrfrtSbmt.Api.csproj --configuration Release
+    - name: Zip Main
+      run: |
+        Get-ChildItem -Path TrfrtSbmt.Api/bin/Release/net6.0/publish |
+        Compress-Archive -DestinationPath TrfrtSbmt.Api/publish.zip           
+    - name: Deploy
+      run: |      
+        cd TrfrtSbmt.Cdk/bin/Release/net6.0
+        cdk deploy * --require-approval never

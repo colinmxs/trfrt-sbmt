@@ -15,7 +15,7 @@ public class ApiStack : Stack
         public string CertId { get; init; } = string.Empty;
         //public string[] OtherRegions { get; init; } = new string[] { "us-west-2" };
     }
-    
+
     public Role LambdaExecutionRole { get; init; }
 
     public ApiStack(Construct scope, string id, ApiStackProps props) : base(scope, id, props)
@@ -58,17 +58,17 @@ public class ApiStack : Stack
 
         var lambdaFunction = new Function(this, "LambdaFunction", new FunctionProps
         {
-            Code = new AssetCode($"{Utilities.GetDirectory("trfrt-sbmt-api")}/publish.zip"),
+            Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.Api")}/publish.zip"),
             Handler = "TrfrtSbmt.Api",
             Runtime = Runtime.DOTNET_6,
             Timeout = Duration.Seconds(10),
-            FunctionName = $"{props.Name}LambdaFunction",            
+            FunctionName = $"{props.Name}LambdaFunction",
             MemorySize = 256,
             RetryAttempts = 1,
             Role = LambdaExecutionRole,
             Environment = new Dictionary<string, string>
             {
-                ["ASPNETCORE_ENVIRONMENT"] = "Production" 
+                ["ASPNETCORE_ENVIRONMENT"] = "Production"
             }
         });
         Amazon.CDK.Tags.Of(lambdaFunction).Add("Name", $"{props.Name}LambdaFunction");
@@ -83,7 +83,7 @@ public class ApiStack : Stack
             Handler = lambdaFunction,
             Proxy = true,
             Deploy = true,
-            DefaultCorsPreflightOptions = new CorsOptions 
+            DefaultCorsPreflightOptions = new CorsOptions
             {
                 AllowOrigins = Cors.ALL_ORIGINS,
                 AllowMethods = Cors.ALL_METHODS,
@@ -93,7 +93,7 @@ public class ApiStack : Stack
             EndpointTypes = new EndpointType[]
             {
                 EndpointType.REGIONAL
-            },            
+            },
             DomainName = new DomainNameOptions
             {
                 Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:{props.Region}:{accountId}:certificate/{props.CertId}"),
