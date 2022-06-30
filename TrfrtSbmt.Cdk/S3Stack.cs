@@ -1,5 +1,4 @@
-﻿using Amazon.CDK.AWS.IAM;
-using Amazon.CDK.AWS.S3;
+﻿using Amazon.CDK.AWS.S3;
 
 namespace TrfrtSbmt.Cdk;
 
