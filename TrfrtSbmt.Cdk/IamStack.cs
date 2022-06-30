@@ -29,7 +29,7 @@ public class IamStack : Stack
                 new PolicyStatement(new PolicyStatementProps
                 {
                     Effect = Effect.ALLOW,
-                    Actions = new string[] { "ses:SendRawEmail", "ses:VerifyEmailIdentity" },
+                    Actions = new string[] { "ses:SendEmail", "ses:VerifyEmailIdentity" },
                     Resources = new string[] { "*" }
                 }),
                 new PolicyStatement(new PolicyStatementProps
