@@ -19,6 +19,7 @@ public class AppSettings
         BucketName = appSettings["BucketName"];
         TableName = appSettings["TableName"];
         SubmissionGrouping = appSettings["SubmissionGrouping"];
+        FromEmailAddress = appSettings["FromEmailAddress"];
     }
     public AppSettings() { }
     public record Cognito(string ResponseType, string MetadataAddress, string ClientId);
