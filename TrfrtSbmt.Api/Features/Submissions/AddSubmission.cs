@@ -105,9 +105,7 @@ public class AddSubmission
                                     Text = new Content
                                     {
                                         Charset = "UTF-8",
-                                        Data = @"Your submission to Treefort 11 has been received! 
-                                                We will notify all submissions of their status no later than January 15th, 2023. 
-                                                Submissions can be edited in the Treefort Submissions App."
+                                        Data = @"Your submission to Treefort 11 has been received! We will notify all submissions of their status no later than January 15th, 2023. Submissions can be edited in the Treefort Submissions App."
                                     }
                                 }
                             }
