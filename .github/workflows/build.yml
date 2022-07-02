@@ -34,13 +34,14 @@ jobs:
       with:
         tokenPrefix: '#{'
         tokenSuffix: '}#'
-        files: '**/TrfrtSbmt.Cdk/cdk.json,**/TrfrtSbmt.Api/appsettings.json'
+        files: '**/*/*.json'
       env:
         ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
         USWEST1SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_1 }}
         USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
+        DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
     - name: Run Tests
       run: |
         dotnet test TrfrtSbmt.Tests

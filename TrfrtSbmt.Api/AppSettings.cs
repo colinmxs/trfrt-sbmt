@@ -8,6 +8,7 @@ public class AppSettings
     public string TableName { get; init; } = string.Empty;
     public string SubmissionGrouping { get; init; } = string.Empty;
     public string FromEmailAddress { get; init; } = string.Empty;
+    public string DiscordWebhookUrl { get; init; } = String.Empty;
 
     public AppSettings(ConfigurationManager config)
     {
@@ -20,6 +21,7 @@ public class AppSettings
         TableName = appSettings["TableName"];
         SubmissionGrouping = appSettings["SubmissionGrouping"];
         FromEmailAddress = appSettings["FromEmailAddress"];
+        //DiscordWebhookUrl = appSettings["DiscordWebhookUrl"];
     }
     public AppSettings() { }
     public record Cognito(string ResponseType, string MetadataAddress, string ClientId);
