@@ -34,7 +34,7 @@ jobs:
       with:
         tokenPrefix: '#{'
         tokenSuffix: '}#'
-        files: '**/TrfrtSbmt.Cdk/cdk.json'
+        files: '**/TrfrtSbmt.Cdk/cdk.json,**/TrfrtSbmt.Api/appsettings.json'
       env:
         ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
         USWEST1SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_1 }}
