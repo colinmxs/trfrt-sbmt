@@ -124,7 +124,7 @@ public class DbStack : Stack
                 Type = AttributeType.STRING
             },
             RemovalPolicy = RemovalPolicy.DESTROY,
-            TableName = $"Submissions-Tests"
+            TableName = $"Submissions-Tests1"
         });
 
         Amazon.CDK.Tags.Of(TestTable).Add("Name", "Submissions-Tests");
@@ -132,11 +132,11 @@ public class DbStack : Stack
 
         TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
         {
-            IndexName = "StateIndex",
+            IndexName = "LocationIndex",
             ProjectionType = ProjectionType.ALL,
             SortKey = new Attribute
             {
-                Name = "State",
+                Name = "Location",
                 Type = AttributeType.STRING
             }
         });
@@ -154,11 +154,11 @@ public class DbStack : Stack
 
         TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
         {
-            IndexName = "StateRankIndex",
+            IndexName = "LocationRankIndex",
             ProjectionType = ProjectionType.ALL,
             SortKey = new Attribute
             {
-                Name = "StateRank",
+                Name = "LocationRank",
                 Type = AttributeType.STRING
             }
         });
