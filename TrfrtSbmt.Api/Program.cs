@@ -10,6 +10,9 @@ using TrfrtSbmt.Api.Features.Festivals;
 using TrfrtSbmt.Api.Features.Forts;
 using TrfrtSbmt.Api.Features.Labels;
 using TrfrtSbmt.Api.Features.Submissions;
+using TrfrtSbmt.Api.Utilities;
+using TrfrtSbmt.Api.Utils.DiscordWebhooks;
+using static TrfrtSbmt.Api.Utilities.DiscordExceptionLogger;
 
 [assembly: InternalsVisibleTo("TrfrtSbmt.Tests")]
 
@@ -31,6 +34,10 @@ builder.Services.AddTransient(s =>
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddAWSService<IAmazonSimpleEmailServiceV2>();
+builder.Services.AddScoped<IDiscordWebhookClient>(sp => new DiscordWebhookClient 
+{
+    Uri = new Uri(appSettings.DiscordWebhookUrl)
+});
 builder.Services.AddMediatR(typeof(Program));
 
 // Add AWS Lambda support.
@@ -88,6 +95,7 @@ app.UseCors(builder => builder.AllowAnyOrigin().AllowAnyHeader().AllowAnyMethod(
     .UseAuthorization();
 
 app.UseSwagger();
+app.UseMiddleware<DiscordExceptionLogger>();
 app.UseSwaggerUI(options =>
 {
     var url = "swagger/v1/swagger.json";
@@ -148,4 +156,10 @@ app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions/{submissionId}", 
 
 app.MapGet("/photo-upload-url", async (string fileName, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, fileType)));
 
+app.MapGet("/test", () => new Foo().Bar.ToLower()).RequireAuthorization();
 app.Run();
+
+class Foo
+{
+    public string Bar { get; init; }
+}
