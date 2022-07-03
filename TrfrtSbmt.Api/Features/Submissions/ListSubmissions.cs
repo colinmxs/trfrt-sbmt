@@ -7,7 +7,7 @@ using System.Text;
 using TrfrtSbmt.Api.DataModels;
 public class ListSubmissions
 {
-    public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListSubmissionsResult>
+    public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? CreatedBy = null, string? PaginationKey = null) : IRequest<ListSubmissionsResult>
     {
         internal Dictionary<string, AttributeValue>? ExclusiveStartKey => GetLastEvaluatedKey(PaginationKey);
         private Dictionary<string, AttributeValue>? GetLastEvaluatedKey(string? paginationKey)
@@ -23,10 +23,10 @@ public class ListSubmissions
         }
     }
 
-    public record ListSubmissionsResult(string FestivalId, string FortId, List<ViewModel> Submissions, int PageSize = 20, string? PaginationKey = null)
+    public record ListSubmissionsResult(string FestivalId, string FortId, IEnumerable<ViewModel> Submissions, int PageSize = 20, string? PaginationKey = null)
     {
         public ListSubmissionsResult(string festivalId, string fortId, IEnumerable<Submission> submissions, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey) :
-        this(festivalId, fortId, submissions.Select(s => new ViewModel(s)).ToList(), pageSize, GetPaginationKey(lastEvaluatedKey))
+        this(festivalId, fortId, submissions.Select(s => new ViewModel(s)), pageSize, GetPaginationKey(lastEvaluatedKey))
         { }
         private static string? GetPaginationKey(Dictionary<string, AttributeValue>? lastEvaluatedKey)
         {
@@ -59,21 +59,29 @@ public class ListSubmissions
         }
         public async Task<ListSubmissionsResult> Handle(ListSubmissionsQuery request, CancellationToken cancellationToken)
         {
-            List<Submission> submissions;
-            QueryResponse queryResult;
-            if (_user.IsAdmin() || _user.IsVoter())
+            List<Submission> submissions = new List<Submission>();
+            QueryResponse? queryResult = null;
+
+            if(request.CreatedBy != null)
             {
-                queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
-                if (queryResult.Items == null) return new ListSubmissionsResult(request.FestivalId, request.FortId, new List<ViewModel>(), request.PageSize, null);
-                submissions = queryResult.Items.Select(i => new Submission(i)).ToList();
+                var user = _user.Claims.Single(c => c.Type == "username").Value;
+                if (user != request.CreatedBy && !_user.IsAdmin())
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to view this submission.");
+                }
+                queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(request.CreatedBy);
+                submissions = queryResult.Items.Select(i => new Submission(i)).ToList();                
             }
             else
             {
-                queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(_user.Claims.Single(c => c.Type == "username").Value);
-                submissions = queryResult.Items.Select(i => new Submission(i)).ToList();
-            }
+                if (_user.IsAdmin())
+                {
+                    queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
+                    submissions = queryResult.Items.Select(i => new Submission(i)).ToList();
+                }
+            }            
 
-            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions, request.PageSize, queryResult.LastEvaluatedKey);
+            return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions, request.PageSize, queryResult?.LastEvaluatedKey);
         }
 
         private static async Task<QueryResponse> SubmissionDateIndexQuery(IAmazonDynamoDB db, AppSettings settings, string id, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)

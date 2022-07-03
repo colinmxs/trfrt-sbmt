@@ -1,10 +1,8 @@
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
-using System.Web;
 using Amazon.DynamoDBv2;
 using Amazon.S3;
 using Amazon.SimpleEmailV2;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.OpenApi.Models;
 using TrfrtSbmt.Api.Features.Festivals;
 using TrfrtSbmt.Api.Features.Forts;
@@ -12,7 +10,6 @@ using TrfrtSbmt.Api.Features.Labels;
 using TrfrtSbmt.Api.Features.Submissions;
 using TrfrtSbmt.Api.Utilities;
 using TrfrtSbmt.Api.Utils.DiscordWebhooks;
-using static TrfrtSbmt.Api.Utilities.DiscordExceptionLogger;
 
 [assembly: InternalsVisibleTo("TrfrtSbmt.Tests")]
 
@@ -146,13 +143,23 @@ app.MapPost("/festivals/{festivalId}/forts/{fortId}/submissions", async (string 
 })
     .RequireAuthorization();
 
-app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions", async (string festivalId, string fortId, int pageSize, string? paginationKey, [FromServices] IMediator mediator)
-    => await mediator.Send(new ListSubmissions.ListSubmissionsQuery(festivalId, fortId, pageSize, paginationKey)))
+app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions", async (string festivalId, string fortId, int pageSize, string? createdBy, string? paginationKey, [FromServices] IMediator mediator)
+    => await mediator.Send(new ListSubmissions.ListSubmissionsQuery(festivalId, fortId, pageSize, createdBy, paginationKey)))
     .RequireAuthorization();
 
 app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions/{submissionId}", async (string festivalId, string fortId, string submissionId, [FromServices] IMediator mediator)
     => await mediator.Send(new GetSubmission.GetSubmissionQuery(festivalId, fortId, submissionId)))
     .RequireAuthorization();
+
+app.MapPost("/festivals/{festivalId}/forts/{fortId}/submissions/{submissionId}/review", async (string festivalId, string fortId, string submissionId, ReviewSubmission.ReviewSubmissionCommand command, [FromServices] IMediator mediator)
+    => 
+{
+    command.FestivalId = festivalId;
+    command.FortId = fortId;
+    command.SubmissionId = submissionId;
+    await mediator.Send(command);
+})
+    .RequireAuthorization("admin");
 
 app.MapGet("/photo-upload-url", async (string fileName, string fileType, [FromServices] IMediator mediator) 
     => await mediator.Send(new GetUploadUrl.Query(fileName, fileType)));

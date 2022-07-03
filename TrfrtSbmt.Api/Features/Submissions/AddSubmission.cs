@@ -17,13 +17,13 @@ public class AddSubmission
         
     };
     
-    public class CommandHandler : IRequestHandler<AddSubmissionCommand, SubmissionViewModel>
+    public class AddSubmissionCommandHandler : IRequestHandler<AddSubmissionCommand, SubmissionViewModel>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly IAmazonSimpleEmailServiceV2 _emailer;
         private readonly AppSettings _settings;
         private readonly ClaimsPrincipal _user;
-        public CommandHandler(IAmazonDynamoDB db, IAmazonSimpleEmailServiceV2 emailer, AppSettings settings, ClaimsPrincipal user)
+        public AddSubmissionCommandHandler(IAmazonDynamoDB db, IAmazonSimpleEmailServiceV2 emailer, AppSettings settings, ClaimsPrincipal user)
         {
             _db = db;
             _emailer = emailer;
