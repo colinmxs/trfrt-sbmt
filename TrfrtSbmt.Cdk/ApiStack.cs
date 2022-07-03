@@ -63,7 +63,7 @@ public class ApiStack : Stack
             Runtime = Runtime.DOTNET_6,
             Timeout = Duration.Seconds(10),
             FunctionName = $"{props.Name}LambdaFunction",
-            MemorySize = 256,
+            MemorySize = 2048,
             RetryAttempts = 1,
             Role = LambdaExecutionRole,
             Environment = new Dictionary<string, string>
