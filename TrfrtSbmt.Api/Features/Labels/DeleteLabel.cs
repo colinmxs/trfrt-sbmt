@@ -10,12 +10,12 @@ public class DeleteLabel
 {
     public record DeleteLabelCommand(string Id) : IRequest;
 
-    public class CommandHandler : AsyncRequestHandler<DeleteLabelCommand>
+    public class DeleteLabelCommandHandler : AsyncRequestHandler<DeleteLabelCommand>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
 
-        public CommandHandler(IAmazonDynamoDB db, AppSettings settings)
+        public DeleteLabelCommandHandler(IAmazonDynamoDB db, AppSettings settings)
         {
             _db = db;
             _settings = settings;

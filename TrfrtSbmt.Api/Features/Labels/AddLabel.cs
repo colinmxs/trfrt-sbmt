@@ -11,13 +11,13 @@ public class AddLabel
         public string? FestivalId { get; internal set; }
     }
 
-    public class CommandHandler : IRequestHandler<AddLabelCommand, LabelViewModel>
+    public class AddLabelCommandHandler : IRequestHandler<AddLabelCommand, LabelViewModel>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
         private readonly ClaimsPrincipal _user;
 
-        public CommandHandler(IAmazonDynamoDB db, AppSettings settings, ClaimsPrincipal user)
+        public AddLabelCommandHandler(IAmazonDynamoDB db, AppSettings settings, ClaimsPrincipal user)
         {
             _db = db;
             _settings = settings;

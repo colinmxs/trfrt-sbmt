@@ -40,12 +40,12 @@ public class ListLabels
         }
     }
 
-    public class QueryHandler : IRequestHandler<ListLabelsQuery, ListLabelsResult>
+    public class ListLabelsQueryHandler : IRequestHandler<ListLabelsQuery, ListLabelsResult>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
 
-        public QueryHandler(IAmazonDynamoDB db, AppSettings settings)
+        public ListLabelsQueryHandler(IAmazonDynamoDB db, AppSettings settings)
         {
             _db = db;
             _settings = settings;

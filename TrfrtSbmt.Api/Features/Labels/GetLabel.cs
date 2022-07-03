@@ -22,9 +22,9 @@ namespace TrfrtSbmt.Api.Features.Labels
             }
         }
 
-        public record GetLabelResult(IEnumerable<ViewModel> Submissions, int PageSize, string? PaginationKey)
+        public record GetLabelResult(IEnumerable<GetLabelViewModel> Submissions, int PageSize, string? PaginationKey)
         {
-            public GetLabelResult(IEnumerable<ViewModel> submissions, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey) :
+            public GetLabelResult(IEnumerable<GetLabelViewModel> submissions, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey) :
                 this(submissions, pageSize, GetPaginationKey(lastEvaluatedKey))
             { }
 
@@ -38,28 +38,28 @@ namespace TrfrtSbmt.Api.Features.Labels
             }
         }
 
-        public record ViewModel(string Id, string Name, string State, string City, string Image)
+        public record GetLabelViewModel(string Id, string Name, string State, string City, string Image)
         {
-            public ViewModel(Submission s) : this(s.EntityId, s.Name, s.State, s.City, s.Image) { }
+            public GetLabelViewModel(Submission s) : this(s.EntityId, s.Name, s.State, s.City, s.Image) { }
         }
 
-        public class QueryHandler : IRequestHandler<GetLabelQuery, GetLabelResult>
+        public class GetLabelQueryHandler : IRequestHandler<GetLabelQuery, GetLabelResult>
         {
             private readonly IAmazonDynamoDB _db;
             private readonly AppSettings _settings;
 
-            public QueryHandler(IAmazonDynamoDB db, AppSettings settings)
+            public GetLabelQueryHandler(IAmazonDynamoDB db, AppSettings settings)
             {
                 _db = db;
                 _settings = settings;
             }
             public async Task<GetLabelResult> Handle(GetLabelQuery request, CancellationToken cancellationToken)
             {
-                var vms = new List<ViewModel>();
+                var vms = new List<GetLabelViewModel>();
                 var submissionLabelsResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(request.LabelId, request.ExclusiveStartKey);
                 foreach (var item in submissionLabelsResult.Items.Select(i => new SubmissionLabel(i)))
                 {
-                    vms.Add(new ViewModel(item.SubmissionEntityId, item.Name, item.State, item.City, item.Image));
+                    vms.Add(new GetLabelViewModel(item.SubmissionEntityId, item.Name, item.State, item.City, item.Image));
                 }
 
                 return new GetLabelResult(vms, request.PageSize, submissionLabelsResult.LastEvaluatedKey);
