@@ -21,7 +21,7 @@ public class AppSettings
         TableName = appSettings["TableName"];
         SubmissionGrouping = appSettings["SubmissionGrouping"];
         FromEmailAddress = appSettings["FromEmailAddress"];
-        //DiscordWebhookUrl = appSettings["DiscordWebhookUrl"];
+        DiscordWebhookUrl = appSettings["DiscordWebhookUrl"];
     }
     public AppSettings() { }
     public record Cognito(string ResponseType, string MetadataAddress, string ClientId);
