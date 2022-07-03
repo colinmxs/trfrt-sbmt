@@ -28,6 +28,7 @@ public class DeleteFestivalCommandHandler : AsyncRequestHandler<DeleteFestivalCo
         {
             var festival = new Festival(singleOrDefault);
             List<Fort> forts = new();
+            List<Label> labels = new();
             List<Dictionary<string, AttributeValue>> items = new();
             
             List<Dictionary<string, AttributeValue>> dictionaries = new();
@@ -52,7 +53,27 @@ public class DeleteFestivalCommandHandler : AsyncRequestHandler<DeleteFestivalCo
             }
             items.Add(festival.ToDictionary());
 
-            await new DynamoDbQueries.DeleteBatch(_db, _settings).ExecuteAsync(items);
+            dictionaries = new();
+            QueryResponse? labelsResult = null;
+            do
+            {
+                labelsResult = await new DynamoDbQueries.BeginsWithQuery(_db, _settings).ExecuteAsync(festival.EntityId, nameof(Label), 1000, fortsResult?.LastEvaluatedKey);
+                dictionaries.AddRange(labelsResult.Items);
+            } while (labelsResult.LastEvaluatedKey.Count() != 0);
+            labels.AddRange(dictionaries.Select(i => new Label(i)));
+
+            foreach (var label in labels)
+            {
+                var labelSubmissionsResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(label.EntityId);
+
+                foreach (var item in labelSubmissionsResult.Items)
+                {
+                    items.Add(item);
+                }
+                items.Add(label.ToDictionary());
+            }
+
+            await new DynamoDbQueries.DeleteBatch(_db, _settings).ExecuteAsync(items.Distinct().ToList());
         }
     }
 

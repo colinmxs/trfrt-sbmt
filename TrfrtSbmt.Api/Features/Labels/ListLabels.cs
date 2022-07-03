@@ -2,17 +2,45 @@
 
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using TrfrtSbmt.Api.DataModels;
 
 public class ListLabels
 {
-    public record ListFortsQuery(string FestivalId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListFortsResult>;
+    public record ListLabelsQuery(string FestivalId, int PageSize = 20, string? PaginationKey = null) : IRequest<ListLabelsResult> 
+    {
+        internal Dictionary<string, AttributeValue>? ExclusiveStartKey => GetLastEvaluatedKey(PaginationKey);
+        private static Dictionary<string, AttributeValue>? GetLastEvaluatedKey(string? paginationKey)
+        {
+            if (string.IsNullOrEmpty(paginationKey)) return null;
+            paginationKey = Encoding.UTF8.GetString(Convert.FromBase64String(paginationKey));
+            return new Dictionary<string, AttributeValue>
+            {
+                [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = paginationKey?.Split('|')[0] },
+                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = paginationKey?.Split('|')[1] }
+            };
+        }
+    }
 
-    public record ListFortsResult(string FestivalId, IEnumerable<LabelViewModel> Forts, int PageSize, string? PaginationKey);
+    public record ListLabelsResult(string FestivalId, IEnumerable<LabelViewModel> Labels, int PageSize, string? PaginationKey) 
+    {
+        public ListLabelsResult(string festivalId, IEnumerable<Label> labels, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey) :
+        this(festivalId, labels.Select(l => new LabelViewModel(l.EntityId, l.Name)), pageSize, GetPaginationKey(lastEvaluatedKey))
+        { }
 
-    public class QueryHandler : IRequestHandler<ListFortsQuery, ListFortsResult>
+        private static string? GetPaginationKey(Dictionary<string, AttributeValue>? lastEvaluatedKey)
+        {
+            if (lastEvaluatedKey == null) return null;
+            if (!lastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
+            if (!lastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
+
+            return Convert.ToBase64String(Encoding.UTF8.GetBytes($"{lastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{lastEvaluatedKey[nameof(BaseEntity.SortKey)].S}"));
+        }
+    }
+
+    public class QueryHandler : IRequestHandler<ListLabelsQuery, ListLabelsResult>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
@@ -22,7 +50,7 @@ public class ListLabels
             _db = db;
             _settings = settings;
         }
-        public async Task<ListFortsResult> Handle(ListFortsQuery request, CancellationToken cancellationToken)
+        public async Task<ListLabelsResult> Handle(ListLabelsQuery request, CancellationToken cancellationToken)
         {
             var pkSymbol = ":partitionKey";
             var skSymbol = ":sortKey";
@@ -32,36 +60,14 @@ public class ListLabels
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
                     [pkSymbol] = new AttributeValue { S = request.FestivalId },
-                    [skSymbol] = new AttributeValue { S = $"{nameof(Fort)}-" }
+                    [skSymbol] = new AttributeValue { S = $"{nameof(Label)}-" }
                 },
                 Limit = request.PageSize,
-                ExclusiveStartKey = GetLastEvaluatedKey(request),
+                ExclusiveStartKey = request.ExclusiveStartKey
 
             });
-            if (queryResult.Items == null) return new ListFortsResult(request.FestivalId, new List<LabelViewModel>(), request.PageSize, null);
-            var forts = queryResult.Items.Select(i => new Fort(i));
-
-            string? paginationKey = GetPaginationKey(queryResult);
-            return new ListFortsResult(request.FestivalId, forts.Select(f => new LabelViewModel(f.EntityId, f.Name)), request.PageSize, paginationKey);
-        }
-
-        private static string? GetPaginationKey(QueryResponse queryResult)
-        {
-            if (queryResult.LastEvaluatedKey == null) return null;
-            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.PartitionKey))) return null;
-            if (!queryResult.LastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
-
-            return $"{queryResult.LastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{queryResult.LastEvaluatedKey[nameof(BaseEntity.SortKey)].S}";
-        }
-
-        private Dictionary<string, AttributeValue> GetLastEvaluatedKey(ListFortsQuery request)
-        {
-            if (string.IsNullOrEmpty(request.PaginationKey)) return null;
-            return new Dictionary<string, AttributeValue>
-            {
-                [nameof(BaseEntity.PartitionKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[0] },
-                [nameof(BaseEntity.SortKey)] = new AttributeValue { S = request.PaginationKey?.Split('|')[1] }
-            };
+            var labels = queryResult.Items.Select(i => new Label(i));
+            return new ListLabelsResult(request.FestivalId, labels, request.PageSize, queryResult.LastEvaluatedKey);
         }
     }
 }

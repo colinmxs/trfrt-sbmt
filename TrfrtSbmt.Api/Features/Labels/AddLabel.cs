@@ -1,11 +1,12 @@
 ﻿namespace TrfrtSbmt.Api.Features.Labels;
 
 using Amazon.DynamoDBv2;
+using System.Security.Claims;
 using TrfrtSbmt.Api.DataModels;
 
 public class AddLabel
 {
-    public record AddLabelCommand(string Name, string FortId, string SubmissionId) : IRequest<LabelViewModel>
+    public record AddLabelCommand(string Name, string? SubmissionId) : IRequest<LabelViewModel>
     {
         public string? FestivalId { get; internal set; }
     }
@@ -14,11 +15,13 @@ public class AddLabel
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
+        private readonly ClaimsPrincipal _user;
 
-        public CommandHandler(IAmazonDynamoDB db, AppSettings settings)
+        public CommandHandler(IAmazonDynamoDB db, AppSettings settings, ClaimsPrincipal user)
         {
             _db = db;
             _settings = settings;
+            _user = user;
         }
 
         public async Task<LabelViewModel> Handle(AddLabelCommand request, CancellationToken cancellationToken)
@@ -30,18 +33,25 @@ public class AddLabel
             var singleOrDefaultFestivalLabel = festivalLabelResult.Items.SingleOrDefault();
             if (singleOrDefaultFestivalLabel == null)
             {
-                label = new Label(request.FestivalId, request.Name);
+                label = new Label(request.FestivalId, request.Name, _user.Claims.Single(c => c.Type == "username").Value);
                 await _db.PutItemAsync(_settings.TableName, label.ToDictionary(), cancellationToken);
             }
             else label = new Label(singleOrDefaultFestivalLabel);
 
-            var submissionResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.SubmissionId, 1, null);
-            var singleOrDefault = submissionResult.Items.SingleOrDefault();
-            if(singleOrDefault != null)
+            if(request.SubmissionId != null)
             {
-                var labeledSubmission = new Submission(label.EntityId, singleOrDefault);
-                await _db.PutItemAsync(_settings.TableName, labeledSubmission.ToDictionary(), cancellationToken);
+                var submissionResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.SubmissionId, 1, null);
+                var singleOrDefault = submissionResult.Items.SingleOrDefault();
+                if(singleOrDefault != null)
+                {
+                    var submission = new Submission(singleOrDefault);
+                    var submissionLabel = new SubmissionLabel(label, submission, _user.Claims.Single(c => c.Type == "username").Value);
+                    submission.AddLabel(new Submission.Label(submissionLabel));
+                    await _db.PutItemAsync(_settings.TableName, submissionLabel.ToDictionary(), cancellationToken);
+                    await _db.PutItemAsync(_settings.TableName, submission.ToDictionary(), cancellationToken);
+                }
             }
+            
 
             return new LabelViewModel(label);
         }

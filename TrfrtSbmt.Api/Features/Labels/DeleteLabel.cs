@@ -8,9 +8,9 @@ using TrfrtSbmt.Api.DataModels;
 
 public class DeleteLabel
 {
-    public record DeleteFortCommand(string Id) : IRequest;
+    public record DeleteLabelCommand(string Id) : IRequest;
 
-    public class CommandHandler : AsyncRequestHandler<DeleteFortCommand>
+    public class CommandHandler : AsyncRequestHandler<DeleteLabelCommand>
     {
         private readonly IAmazonDynamoDB _db;
         private readonly AppSettings _settings;
@@ -21,7 +21,7 @@ public class DeleteLabel
             _settings = settings;
         }
 
-        protected override async Task Handle(DeleteFortCommand request, CancellationToken cancellationToken)
+        protected override async Task Handle(DeleteLabelCommand request, CancellationToken cancellationToken)
         {
             var labelResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.Id, 1, null);
             var singleOrDefault = labelResult.Items.SingleOrDefault();
@@ -29,8 +29,18 @@ public class DeleteLabel
             {
                 var label = new Label(singleOrDefault);
                 List<Dictionary<string, AttributeValue>> items = new();
-                var submissionsResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(label.EntityId);
-                foreach (var item in submissionsResult.Items) items.Add(item);
+                var submissionLabelsResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(label.EntityId);
+                foreach (var item in submissionLabelsResult.Items.Select(i => new SubmissionLabel(i)))
+                {
+                    items.Add(item.ToDictionary());
+
+                    var submissionId = submissionLabelsResult.Items.Single()[nameof(SubmissionLabel.SubmissionEntityId)].S;
+                    var submissionResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(submissionId, 1, null);
+                    var submission = new Submission(submissionResult.Items.Single());
+                    submission.RemoveLabel(submission.Labels.SingleOrDefault(l => l.Id == item.PartitionKey));
+                    await _db.PutItemAsync(_settings.TableName, submission.ToDictionary());
+                }
+                
                 items.Add(label.ToDictionary());
                 await new DynamoDbQueries.DeleteBatch(_db, _settings).ExecuteAsync(items);                
             }

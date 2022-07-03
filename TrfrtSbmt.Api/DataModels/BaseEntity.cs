@@ -16,16 +16,17 @@ public abstract class BaseEntity
     public BaseEntity(string partitionKey, string name, string searchTerm, string createdBy)
     {
         var typeName = GetType().Name;
+        var id = Guid.NewGuid().ToString();
         _attributes = new Dictionary<string, AttributeValue>
         {
-            [nameof(EntityId)] = new AttributeValue(Guid.NewGuid().ToString()),
+            [nameof(EntityId)] = new AttributeValue(id),
             [nameof(PartitionKey)] = new AttributeValue { S = partitionKey },
-            [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{name}" },
+            [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{id}" },
             [nameof(Name)] = new AttributeValue { S = name },
             [nameof(SearchTerm)] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
             [nameof(EntityType)] = new AttributeValue { S = typeName },
             [nameof(CreatedBy)] = new AttributeValue { S = createdBy }
-    };
+        };
     }
     public BaseEntity(string name, string searchTerm, string createdBy)
     {
@@ -35,7 +36,7 @@ public abstract class BaseEntity
         {
             [nameof(EntityId)] = new AttributeValue(id),
             [nameof(PartitionKey)] = new AttributeValue { S = id },
-            [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{name}" },
+            [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{id}" },
             [nameof(Name)] = new AttributeValue { S = name },
             [nameof(SearchTerm)] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
             [nameof(EntityType)] = new AttributeValue { S = typeName },

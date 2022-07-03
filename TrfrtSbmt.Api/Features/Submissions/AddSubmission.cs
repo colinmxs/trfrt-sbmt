@@ -56,6 +56,10 @@ public class AddSubmission
                     request.Statement,
                     JsonSerializer.Serialize(request.Links),
                     JsonSerializer.Serialize(request.ContactInfo));
+                foreach (var label in submission.Labels)
+                {
+                    await _db.PutItemAsync(new PutItemRequest(_settings.TableName, new SubmissionLabel(label, submission).ToDictionary()));
+                }
             }
             // add new 
             else

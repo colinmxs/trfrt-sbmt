@@ -24,22 +24,22 @@ public class DbStack : Stack
                 Type = AttributeType.STRING
             },
             RemovalPolicy = RemovalPolicy.DESTROY,
-            TableName = $"Submissions",
+            TableName = $"Production-Submissions",
             //ReplicationRegions = replicateRegions
         });
         
         Amazon.CDK.Tags.Of(Table).Add("Name", "Submissions");
         Amazon.CDK.Tags.Of(Table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
-        Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps 
+        Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
         {
-            IndexName = "StateIndex",
+            IndexName = "LocationIndex",
             ProjectionType = ProjectionType.ALL,
             SortKey = new Attribute
             {
-                Name = "State",
+                Name = "Location",
                 Type = AttributeType.STRING
-            }            
+            }
         });
 
         Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
@@ -55,11 +55,11 @@ public class DbStack : Stack
 
         Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
         {
-            IndexName = "StateRankIndex",
+            IndexName = "LocationRankIndex",
             ProjectionType = ProjectionType.ALL,
             SortKey = new Attribute
             {
-                Name = "StateRank",
+                Name = "LocationRank",
                 Type = AttributeType.STRING
             }
         });
@@ -130,38 +130,7 @@ public class DbStack : Stack
         Amazon.CDK.Tags.Of(TestTable).Add("Name", "Submissions-Tests");
         Amazon.CDK.Tags.Of(TestTable).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
-        TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
-        {
-            IndexName = "LocationIndex",
-            ProjectionType = ProjectionType.ALL,
-            SortKey = new Attribute
-            {
-                Name = "Location",
-                Type = AttributeType.STRING
-            }
-        });
-
-        TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
-        {
-            IndexName = "RankIndex",
-            ProjectionType = ProjectionType.ALL,
-            SortKey = new Attribute
-            {
-                Name = "Rank",
-                Type = AttributeType.STRING
-            }
-        });
-
-        TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
-        {
-            IndexName = "LocationRankIndex",
-            ProjectionType = ProjectionType.ALL,
-            SortKey = new Attribute
-            {
-                Name = "LocationRank",
-                Type = AttributeType.STRING
-            }
-        });
+        
 
         TestTable.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
         {

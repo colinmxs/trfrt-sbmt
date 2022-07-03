@@ -154,12 +154,28 @@ app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions/{submissionId}", 
     => await mediator.Send(new GetSubmission.GetSubmissionQuery(festivalId, fortId, submissionId)))
     .RequireAuthorization();
 
-app.MapGet("/photo-upload-url", async (string fileName, string fileType, [FromServices] IMediator mediator) => await mediator.Send(new GetUploadUrl.Query(fileName, fileType)));
+app.MapGet("/photo-upload-url", async (string fileName, string fileType, [FromServices] IMediator mediator) 
+    => await mediator.Send(new GetUploadUrl.Query(fileName, fileType)));
 
-app.MapGet("/test", () => new Foo().Bar.ToLower()).RequireAuthorization();
-app.Run();
 
-class Foo
+// labels
+app.MapPost("/festivals/{festivalId}/labels", async (string festivalId, AddLabel.AddLabelCommand command, [FromServices] IMediator mediator) =>
 {
-    public string Bar { get; init; }
-}
+    command.FestivalId = festivalId;
+    return await mediator.Send(command);
+})
+    .RequireAuthorization("admin");
+
+app.MapGet("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, int pageSize, string paginationKey, [FromServices] IMediator mediator)
+    => await mediator.Send(new GetLabel.GetLabelQuery(labelId, pageSize, paginationKey)))
+    .RequireAuthorization("admin");
+
+app.MapGet("/festivals/{festivalId}/labels", async (string festivalId, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
+    => await mediator.Send(new ListLabels.ListLabelsQuery(festivalId, pageSize, paginationKey)))
+.RequireAuthorization("admin");
+
+app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, [FromServices] IMediator mediator) 
+    => await mediator.Send(new DeleteLabel.DeleteLabelCommand(labelId)))
+    .RequireAuthorization("admin");
+
+app.Run();

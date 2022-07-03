@@ -93,7 +93,7 @@ public class DynamoDbQueries
     {
         public Query(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
 
-        public async Task<QueryResponse> ExecuteAsync(string partitionKey)
+        public async Task<QueryResponse> ExecuteAsync(string partitionKey, Dictionary<string, AttributeValue>? exclusiveStartKey = null)
         {
             return await _db.QueryAsync(new QueryRequest(_settings.TableName)
             {
@@ -101,7 +101,8 @@ public class DynamoDbQueries
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
                 {
                     {":pk", new AttributeValue(partitionKey)}
-                }
+                },
+                ExclusiveStartKey = exclusiveStartKey
             });
         }
         public async Task<QueryResponse> ExecuteAsync(string partitionKey, string sortKey)
