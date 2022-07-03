@@ -166,7 +166,7 @@ app.MapPost("/festivals/{festivalId}/labels", async (string festivalId, AddLabel
 })
     .RequireAuthorization("admin");
 
-app.MapGet("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, int pageSize, string paginationKey, [FromServices] IMediator mediator)
+app.MapGet("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, int pageSize, string? paginationKey, [FromServices] IMediator mediator)
     => await mediator.Send(new GetLabel.GetLabelQuery(labelId, pageSize, paginationKey)))
     .RequireAuthorization("admin");
 
