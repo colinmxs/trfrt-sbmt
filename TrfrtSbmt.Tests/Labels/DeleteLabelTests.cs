@@ -46,7 +46,7 @@ namespace TrfrtSbmt.Tests.Labels
             };
             submissions.Add(await SendAsync(addSub));
 
-            var labelCommand = new AddLabel.AddLabelCommand("Poop", submissions.Single().Id) 
+            var labelCommand = new AddLabel.AddLabelCommand("Poop", new string[] { submissions.Single().Id }) 
             {
                 FestivalId= festival.Id
             };

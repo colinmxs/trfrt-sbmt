@@ -47,7 +47,7 @@ namespace TrfrtSbmt.Tests.Labels
 
             for (int i = 0; i < 40; i++)
             {
-                var labelCommand = new AddLabel.AddLabelCommand(i.ToString(), submissions.Single().Id) 
+                var labelCommand = new AddLabel.AddLabelCommand(i.ToString(), new string[] { submissions.Single().Id }) 
                 {
                     FestivalId = festival.Id,
                 };

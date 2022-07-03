@@ -60,7 +60,7 @@ namespace TrfrtSbmt.Tests.Labels
         {
             // arrange
             var submissionId = submissions.First().Id;
-            var command = new AddLabel.AddLabelCommand("Test", submissionId) 
+            var command = new AddLabel.AddLabelCommand("Test", new string[] { submissionId }) 
             {
                 FestivalId = festival.Id
             };

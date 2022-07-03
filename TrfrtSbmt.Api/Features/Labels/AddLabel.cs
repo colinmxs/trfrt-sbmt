@@ -6,7 +6,7 @@ using TrfrtSbmt.Api.DataModels;
 
 public class AddLabel
 {
-    public record AddLabelCommand(string Name, string? SubmissionId) : IRequest<LabelViewModel>
+    public record AddLabelCommand(string Name, string[]? SubmissionIds) : IRequest<LabelViewModel>
     {
         public string? FestivalId { get; internal set; }
     }
@@ -38,20 +38,22 @@ public class AddLabel
             }
             else label = new Label(singleOrDefaultFestivalLabel);
 
-            if(request.SubmissionId != null)
+            if(request.SubmissionIds != null)
             {
-                var submissionResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.SubmissionId, 1, null);
-                var singleOrDefault = submissionResult.Items.SingleOrDefault();
-                if(singleOrDefault != null)
+                foreach (var submissionId in request.SubmissionIds)
                 {
-                    var submission = new Submission(singleOrDefault);
-                    var submissionLabel = new SubmissionLabel(label, submission, _user.Claims.Single(c => c.Type == "username").Value);
-                    submission.AddLabel(new Submission.Label(submissionLabel));
-                    await _db.PutItemAsync(_settings.TableName, submissionLabel.ToDictionary(), cancellationToken);
-                    await _db.PutItemAsync(_settings.TableName, submission.ToDictionary(), cancellationToken);
+                    var submissionResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(submissionId, 1, null);
+                    var singleOrDefault = submissionResult.Items.SingleOrDefault();
+                    if(singleOrDefault != null)
+                    {
+                        var submission = new Submission(singleOrDefault);
+                        var submissionLabel = new SubmissionLabel(label, submission, _user.Claims.Single(c => c.Type == "username").Value);
+                        submission.AddLabel(new Submission.Label(submissionLabel));
+                        await _db.PutItemAsync(_settings.TableName, submissionLabel.ToDictionary(), cancellationToken);
+                        await _db.PutItemAsync(_settings.TableName, submission.ToDictionary(), cancellationToken);
+                    }
                 }
             }
-            
 
             return new LabelViewModel(label);
         }
