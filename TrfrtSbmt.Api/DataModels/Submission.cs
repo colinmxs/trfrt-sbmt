@@ -41,7 +41,7 @@ public class Submission : BaseEntity
                       string contactInfo) : base(fortId, name, name, createdBy)
     {
         _attributes[nameof(NeedsReview)] = new AttributeValue { BOOL = true };
-        _attributes[nameof(SubmissionDate)] = new AttributeValue { S = DateTime.UtcNow.ToString() };
+        _attributes[nameof(SubmissionDate)] = new AttributeValue { S = DateTime.UtcNow.ToString("s") };
         _attributes[nameof(FestivalId)] = new AttributeValue { S = festivalId };
         _attributes[nameof(State)] = new AttributeValue { S = state };
         _attributes[nameof(City)] = new AttributeValue { S = city };
