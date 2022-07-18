@@ -127,7 +127,7 @@ public class DynamoDbQueries
         {
             return await _db.QueryAsync(new QueryRequest(_settings.TableName)
             {
-                KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = :pk",
+                KeyConditionExpression = $"{nameof(BaseEntity.CreatedBy)} = :pk",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
                     {
                         {":pk", new AttributeValue(createdBy)}
