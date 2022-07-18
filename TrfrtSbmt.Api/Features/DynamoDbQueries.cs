@@ -132,7 +132,7 @@ public class DynamoDbQueries
                     {
                         {":pk", new AttributeValue(createdBy)}
                     },
-                IndexName = "CreatedByQuery"
+                IndexName = "CreatedByIndex"
             });
         }
     }
