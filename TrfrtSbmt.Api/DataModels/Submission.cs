@@ -54,7 +54,8 @@ public class Submission : BaseEntity
         _attributes[nameof(Statement)] = new AttributeValue { S = statement };
         _attributes[nameof(Location)] = new AttributeValue { S = $"{Country}{State}{City}" };
 
-        _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
+        if (genres != null)
+            _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
     }
 
     public Submission(string labelId, Dictionary<string, AttributeValue> submission) : base(submission)
