@@ -31,7 +31,7 @@ namespace TrfrtSbmt.Tests.Labels
 
             NameGenerator.SetParts(WordBank.Nouns);
             NameGenerator.EndsWith = $"fort";
-            var command = new AddFort.AddFortCommand("Music")
+            var command = new AddFort.AddFortCommand("Music", Lorem)
             {
                 FestivalId = festival.Id
             };

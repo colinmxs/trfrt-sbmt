@@ -25,7 +25,7 @@ public class DeleteFortTests
         
         NameGenerator.SetParts(WordBank.Nouns);
         NameGenerator.EndsWith = $"Fort";
-        var command = new AddFort.AddFortCommand(NameGenerator.Generate()) 
+        var command = new AddFort.AddFortCommand(NameGenerator.Generate(), Lorem) 
         {
             FestivalId = fest.Id
         };

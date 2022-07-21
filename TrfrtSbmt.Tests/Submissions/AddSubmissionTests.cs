@@ -26,7 +26,7 @@ public partial class AddSubmissionTests
 
         NameGenerator.SetParts(WordBank.Nouns);
         NameGenerator.EndsWith = $"Fort";
-        var command = new AddFort.AddFortCommand("Music")
+        var command = new AddFort.AddFortCommand("Music", Lorem)
         {
             FestivalId = festival.Id
         };

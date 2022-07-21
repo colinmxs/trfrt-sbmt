@@ -27,7 +27,7 @@ public class ListFortTests
         NameGenerator.EndsWith = $"Fort";
         for (int i = 0; i < 40; i++)
         {
-            var command = new AddFort.AddFortCommand(NameGenerator.Generate()) 
+            var command = new AddFort.AddFortCommand(NameGenerator.Generate(), Lorem) 
             {
                 FestivalId = festival.Id
             };
