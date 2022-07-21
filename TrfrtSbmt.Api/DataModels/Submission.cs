@@ -25,17 +25,17 @@ public class Submission : BaseEntity
 
     public Submission(Dictionary<string, AttributeValue> values) : base(values) { }
 
-    public Submission(string festivalId,
+    public Submission(string? festivalId,
                       string fortId,
                       string createdBy,
                       string name,
-                      string? state,
+                      string state,
                       string city,
                       string country,
                       string description,
                       string image,
                       string website,
-                      IEnumerable<string> genres,
+                      IEnumerable<string>? genres,
                       string statement,
                       string links,
                       string contactInfo) : base(fortId, name, name, createdBy)
@@ -49,11 +49,12 @@ public class Submission : BaseEntity
         _attributes[nameof(Description)] = new AttributeValue { S = description };
         _attributes[nameof(Image)] = new AttributeValue { S = image };
         _attributes[nameof(Website)] = new AttributeValue { S = website };
-        _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
         _attributes[nameof(Links)] = new AttributeValue { S = links };
         _attributes[nameof(ContactInfo)] = new AttributeValue { S = contactInfo };
         _attributes[nameof(Statement)] = new AttributeValue { S = statement };
         _attributes[nameof(Location)] = new AttributeValue { S = $"{Country}{State}{City}" };
+
+        _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
     }
 
     public Submission(string labelId, Dictionary<string, AttributeValue> submission) : base(submission)
@@ -111,7 +112,7 @@ public class Submission : BaseEntity
         }
     }
 
-    internal void Update(string name, string state, string city, string country, string description, string image, string website, IEnumerable<string> genres, string statement, string links, string contact)
+    internal void Update(string name, string state, string city, string country, string description, string image, string website, IEnumerable<string>? genres, string statement, string links, string contact)
     {
         _attributes[nameof(Name)] = new AttributeValue { S = name };
         _attributes[nameof(State)] = new AttributeValue { S = state };
@@ -156,6 +157,13 @@ public class Submission : BaseEntity
         if (_attributes.TryGetValue(nameof(Labels), out var labels))
             return labels.L.Select(av => new Label(av.M)).ToList();
         return new List<Label>();
+    }
+    
+    private List<string> GetGenres()
+    {
+        if (_attributes.TryGetValue(nameof(Genres), out var genres))
+            return genres.SS;
+        return new List<string>();
     }
 
     public class Label

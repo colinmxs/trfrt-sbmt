@@ -11,7 +11,7 @@ using TrfrtSbmt.Api.Utils.DiscordWebhooks;
 
 public class AddSubmission
 {
-    public record AddSubmissionCommand(string Name, string State, string City, string Country, string Description, string Image, string Website, IEnumerable<string> Genres, string Statement, SocialLinksVm Links, ContactInfoVm ContactInfo, string? Id = null) : IRequest<SubmissionViewModel>
+    public record AddSubmissionCommand(string Name, string? State, string? City, string? Country, string? Description, string? Image, string? Website, IEnumerable<string>? Genres, string? Statement, SocialLinksVm Links, ContactInfoVm ContactInfo, string? Id = null) : IRequest<SubmissionViewModel>
     {
         public string? FestivalId { get; internal set; }
         public string? FortId { get; internal set; }
@@ -48,14 +48,14 @@ public class AddSubmission
                 submission = new Submission(singleOrDefault);
                 submission.Update(
                     request.Name,
-                    request.State,
-                    request.City,
-                    request.Country,
-                    request.Description,
-                    request.Image,
-                    request.Website,
+                    request.State ?? string.Empty,
+                    request.City ?? string.Empty,
+                    request.Country ?? string.Empty,
+                    request.Description ?? string.Empty,
+                    request.Image ?? string.Empty,
+                    request.Website ?? string.Empty,
                     request.Genres,
-                    request.Statement,
+                    request.Statement ?? string.Empty,
                     JsonSerializer.Serialize(request.Links),
                     JsonSerializer.Serialize(request.ContactInfo));
                 foreach (var label in submission.Labels)
