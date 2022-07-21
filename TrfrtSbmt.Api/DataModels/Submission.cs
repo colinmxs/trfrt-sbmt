@@ -13,7 +13,7 @@ public class Submission : BaseEntity
     public string Description => _attributes[nameof(Description)].S;
     public string Image => _attributes[nameof(Image)].S;
     public string Website => _attributes[nameof(Website)].S;
-    public IEnumerable<string> Genres => _attributes[nameof(Genres)].SS;
+    public IEnumerable<string> Genres => GetGenres();
     public string Links => _attributes[nameof(Links)].S;
     public string ContactInfo => _attributes[nameof(ContactInfo)].S;
     public string Location => _attributes[nameof(Location)].S;
@@ -54,7 +54,7 @@ public class Submission : BaseEntity
         _attributes[nameof(Statement)] = new AttributeValue { S = statement };
         _attributes[nameof(Location)] = new AttributeValue { S = $"{Country}{State}{City}" };
 
-        if (genres != null)
+        if (genres != null && genres.Any())
             _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
     }
 

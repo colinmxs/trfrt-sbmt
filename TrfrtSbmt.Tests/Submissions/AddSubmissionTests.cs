@@ -65,6 +65,29 @@ public partial class AddSubmissionTests
     }
 
     [TestMethod]
+    public async Task Nulls()
+    {
+        for (int i = 0; i < 10; i++)
+        {
+            // arrange
+            var command = new AddSubmission.AddSubmissionCommand(
+                "a", "a","a","A","a", "A", "A", new string[0], "A",  new SocialLinksVm(string.Empty, string.Empty, string.Empty, string.Empty, new string[0], string.Empty, string.Empty, string.Empty, string.Empty), new ContactInfoVm("A", "A", "smith.colin00@gmail.com", string.Empty, string.Empty, string.Empty, string.Empty, string.Empty)
+                )
+            {
+                FestivalId = festival.Id,
+                FortId = fort.Id
+            };
+
+            // act
+            await SendAsync(command);
+
+            // assert
+            //submission.Id.IsNotNull();
+        }
+
+    }
+
+    [TestMethod]
     public async Task Update()
     {
         // arrange
