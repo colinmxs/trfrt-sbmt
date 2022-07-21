@@ -31,9 +31,14 @@ builder.Services.AddTransient(s =>
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddAWSService<IAmazonSimpleEmailServiceV2>();
-builder.Services.AddScoped<IDiscordWebhookClient>(sp => new DiscordWebhookClient 
-{
-    Uri = new Uri(appSettings.DiscordWebhookUrl)
+builder.Services.AddScoped<IDiscordWebhookClient>(sp => {
+    var uri = appSettings.DiscordWebhookUrl;
+    if (string.IsNullOrEmpty(uri))
+        return null;
+    return new DiscordWebhookClient
+    {
+        Uri = new Uri(uri)
+    };
 });
 builder.Services.AddMediatR(typeof(Program));
 
