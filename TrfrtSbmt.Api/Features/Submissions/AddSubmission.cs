@@ -24,15 +24,13 @@ public class AddSubmission
         private readonly IAmazonSimpleEmailServiceV2 _emailer;
         private readonly AppSettings _settings;
         private readonly ClaimsPrincipal _user;
-        private readonly IDiscordWebhookClient _discord;
 
-        public AddSubmissionCommandHandler(IAmazonDynamoDB db, IAmazonSimpleEmailServiceV2 emailer, AppSettings settings, ClaimsPrincipal user, IDiscordWebhookClient discord)
+        public AddSubmissionCommandHandler(IAmazonDynamoDB db, IAmazonSimpleEmailServiceV2 emailer, AppSettings settings, ClaimsPrincipal user)
         {
             _db = db;
             _emailer = emailer;
             _settings = settings;
             _user = user;
-            _discord = discord;
         }
 
         public async Task<SubmissionViewModel> Handle(AddSubmissionCommand request, CancellationToken cancellationToken)
