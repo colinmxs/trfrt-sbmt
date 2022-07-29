@@ -25,7 +25,7 @@ var dbs = new DbStack(app, $"{envPrefix}TrfrtSbmt-DbStack", new DbStackProps
     EnvironmentPrefix = envPrefix
 });
 
-var s3 = new S3Stack(app, $"{envPrefix.ToLower()}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps() 
+var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps() 
 {    
     EnvironmentName = env,
     EnvironmentPrefix = envPrefix
