@@ -73,7 +73,7 @@ public class ApiStack : Stack
                 ["ASPNETCORE_ENVIRONMENT"] = props.EnvironmentName
             }
         });
-        Amazon.CDK.Tags.Of(lambdaFunction).Add("Name", $"{props.EnvironmentPrefix}{props.Name}LambdaFunction",);
+        Amazon.CDK.Tags.Of(lambdaFunction).Add("Name", $"{props.EnvironmentPrefix}{props.Name}LambdaFunction");
         Amazon.CDK.Tags.Of(lambdaFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         var restApi = new LambdaRestApi(this, "RestApi", new LambdaRestApiProps
