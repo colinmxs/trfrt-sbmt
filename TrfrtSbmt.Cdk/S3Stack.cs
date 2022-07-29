@@ -15,7 +15,7 @@ public class S3Stack : Stack
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
         Bucket = new Bucket(this, "Bucket", new BucketProps
         {
-            BucketName = $"{props.EnvironmentPrefix}sbmt-api-1",
+            BucketName = $"{props.EnvironmentPrefix.ToLower()}sbmt-api-1",
             Cors = new CorsRule[1] 
             {
                 new CorsRule
