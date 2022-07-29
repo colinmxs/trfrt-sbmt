@@ -5,13 +5,17 @@ namespace TrfrtSbmt.Cdk;
 public class S3Stack : Stack
 {
     public Bucket Bucket { get; set; }
-    public class S3StackProps : StackProps { }
+    public class S3StackProps : StackProps 
+    {
+        public string EnvironmentName { get; init; } = "Development";
+        public string EnvironmentPrefix { get; init; } = "Development-";
+    }
     public S3Stack(Construct scope, string id, S3StackProps props) : base(scope, id, props)
     {
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
         Bucket = new Bucket(this, "Bucket", new BucketProps
         {
-            BucketName = "sbmt-api-1",
+            BucketName = $"{props.EnvironmentPrefix}sbmt-api-1",
             Cors = new CorsRule[1] 
             {
                 new CorsRule

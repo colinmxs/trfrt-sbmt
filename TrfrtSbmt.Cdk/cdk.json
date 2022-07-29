@@ -9,6 +9,7 @@
     },
     "us-west-2": {
       "sslcertid": "#{USWEST2SSLCERTID}#"
-    }
+    },
+    "asp_env": "#{ASPNETENVIRONMENT}#"
   }
 }

@@ -53,5 +53,7 @@ public class IamStack : Stack
         public Table Table { get; set; }
         public Table TestTable { get; set; }
         public Bucket Bucket { get; set; }
+        public string EnvironmentName { get; init; } = "Development";
+        public string EnvironmentPrefix { get; init; } = "Development-";
     }
 }

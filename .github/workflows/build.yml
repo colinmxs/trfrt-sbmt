@@ -42,6 +42,7 @@ jobs:
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
         DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
+        ASPNETENVIRONMENT: Development
     - name: Run Tests
       run: |
         dotnet test TrfrtSbmt.Tests
