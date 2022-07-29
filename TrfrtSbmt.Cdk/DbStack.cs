@@ -23,7 +23,7 @@ public class DbStack : Stack
                 Name = "SortKey",
                 Type = AttributeType.STRING
             },
-            RemovalPolicy = RemovalPolicy.DESTROY,
+            RemovalPolicy = RemovalPolicy.RETAIN,
             TableName = $"Production-Submissions",
             //ReplicationRegions = replicateRegions
         });
