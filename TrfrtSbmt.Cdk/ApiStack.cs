@@ -10,6 +10,8 @@ public class ApiStack : Stack
 {
     public class ApiStackProps : StackProps
     {
+        public string EnvironmentName { get; init; } = "Development";
+        public string EnvironmentPrefix { get; init; } = "Development-";
         public string Name { get; init; } = "TreefortSubmitApi";
         public string Region { get; init; } = "us-east-1";
         public string CertId { get; init; } = string.Empty;
@@ -28,7 +30,7 @@ public class ApiStack : Stack
         LambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
         {
             AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
-            RoleName = $"{props.Name}LambdaExecutionRole",
+            RoleName = $"{props.EnvironmentPrefix}{props.Name}LambdaExecutionRole",
             InlinePolicies = new Dictionary<string, PolicyDocument>
             {
                 {
@@ -53,7 +55,7 @@ public class ApiStack : Stack
                 }
             }
         });
-        Amazon.CDK.Tags.Of(LambdaExecutionRole).Add("Name", $"{props.Name}LambdaExecutionRole");
+        Amazon.CDK.Tags.Of(LambdaExecutionRole).Add("Name", $"{props.EnvironmentPrefix}{props.Name}LambdaExecutionRole");
         Amazon.CDK.Tags.Of(LambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         var lambdaFunction = new Function(this, "LambdaFunction", new FunctionProps
@@ -62,16 +64,16 @@ public class ApiStack : Stack
             Handler = "TrfrtSbmt.Api",
             Runtime = Runtime.DOTNET_6,
             Timeout = Duration.Seconds(10),
-            FunctionName = $"{props.Name}LambdaFunction",
+            FunctionName = $"{props.EnvironmentPrefix}{props.Name}LambdaFunction",
             MemorySize = 2048,
             RetryAttempts = 1,
             Role = LambdaExecutionRole,
             Environment = new Dictionary<string, string>
             {
-                ["ASPNETCORE_ENVIRONMENT"] = "Production"
+                ["ASPNETCORE_ENVIRONMENT"] = props.EnvironmentName
             }
         });
-        Amazon.CDK.Tags.Of(lambdaFunction).Add("Name", $"{props.Name}LambdaFunction");
+        Amazon.CDK.Tags.Of(lambdaFunction).Add("Name", $"{props.EnvironmentPrefix}{props.Name}LambdaFunction",);
         Amazon.CDK.Tags.Of(lambdaFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         var restApi = new LambdaRestApi(this, "RestApi", new LambdaRestApiProps
@@ -89,7 +91,7 @@ public class ApiStack : Stack
                 AllowMethods = Cors.ALL_METHODS,
                 AllowHeaders = Cors.DEFAULT_HEADERS
             },
-            RestApiName = $"{props.Name}RestApi",
+            RestApiName = $"{props.EnvironmentPrefix}{props.Name}RestApi",
             EndpointTypes = new EndpointType[]
             {
                 EndpointType.REGIONAL
@@ -97,17 +99,17 @@ public class ApiStack : Stack
             DomainName = new DomainNameOptions
             {
                 Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:{props.Region}:{accountId}:certificate/{props.CertId}"),
-                DomainName = $"{subdomain}.{domain}",
+                DomainName = $"{props.EnvironmentPrefix.ToLower()}{subdomain}.{domain}",
                 EndpointType = EndpointType.REGIONAL,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
             }
         });
-        Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.Name}RestApi");
+        Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.EnvironmentPrefix.ToLower()}{subdomain}.{domain}");
         Amazon.CDK.Tags.Of(restApi).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
         var route53 = new RecordSet(this, "customdomain", new RecordSetProps
         {
-            RecordName = $"{subdomain}.{domain}",
+            RecordName = $"{props.EnvironmentPrefix.ToLower()}{subdomain}.{domain}",
             RecordType = RecordType.A,
             Zone = HostedZone.FromLookup(this, "HostedZone", new HostedZoneProviderProps
             {
