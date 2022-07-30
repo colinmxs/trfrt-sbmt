@@ -25,6 +25,7 @@ public class DbStack : Stack
             },
             RemovalPolicy = RemovalPolicy.RETAIN,
             TableName = $"Production-Submissions",
+            PointInTimeRecovery = true
             //ReplicationRegions = replicateRegions
         });
         
