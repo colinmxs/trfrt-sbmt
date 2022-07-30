@@ -2,13 +2,13 @@
 using Amazon.CDK.AWS.IAM;
 using Amazon.CDK.AWS.S3;
 
-namespace TrfrtSbmt.Cdk;
+namespace TrfrtSbmt.Cdk.Stacks;
 
 public class IamStack : Stack
 {
-    public IamStack(Construct scope, string id, IamStackProps props) : base(scope, id, props) 
+    public IamStack(Construct scope, string id, IamStackProps props) : base(scope, id, props)
     {
-        var policy = new Policy(this, "smbt-policy", new PolicyProps 
+        var policy = new Policy(this, "smbt-policy", new PolicyProps
         {
             PolicyName = "sbmt-policy",
             Roles = new Role[] { props.Role },
@@ -43,7 +43,7 @@ public class IamStack : Stack
                     }
                 })
             }
-        });        
+        });
     }
 
     public class IamStackProps : StackProps
