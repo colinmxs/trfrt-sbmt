@@ -18,7 +18,7 @@ public class AppSettings
         ArgumentNullException.ThrowIfNull(environment, "ASPNETCORE_ENVIRONMENT");
         EnvironmentName = environment;
         BucketName = appSettings["BucketName"];
-        TableName = appSettings["TableName"];
+        TableName = $"{environment}-{appSettings["TableName"]}";
         SubmissionGrouping = appSettings["SubmissionGrouping"];
         FromEmailAddress = appSettings["FromEmailAddress"];
         DiscordWebhookUrl = appSettings["DiscordWebhookUrl"];

@@ -1,4 +1,4 @@
-﻿namespace TrfrtSbmt.Cdk;
+﻿namespace TrfrtSbmt.Cdk.Stacks;
 using Amazon.CDK.AWS.APIGateway;
 using Amazon.CDK.AWS.CertificateManager;
 using Amazon.CDK.AWS.IAM;

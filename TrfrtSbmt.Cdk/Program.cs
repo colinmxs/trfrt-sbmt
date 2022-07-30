@@ -1,8 +1,9 @@
 ﻿var app = new App(null);
-var region = "us-west-2";
 Tags.Of(app).Add("Owner", "smith.colin00@gmail.com");
 Tags.Of(app).Add("Application", "Submit Api");
 Tags.Of(app).Add("Billing", "Treefort");
+
+var region = "us-west-2";
 var accountId = (string)app.Node.TryGetContext("accountid");
 var env = (string)app.Node.TryGetContext("asp_env");
 var envPrefix = env != "Production" ? $"{env}-" : string.Empty;

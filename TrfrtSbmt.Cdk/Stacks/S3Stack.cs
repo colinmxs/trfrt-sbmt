@@ -1,11 +1,11 @@
 ﻿using Amazon.CDK.AWS.S3;
 
-namespace TrfrtSbmt.Cdk;
+namespace TrfrtSbmt.Cdk.Stacks;
 
 public class S3Stack : Stack
 {
     public Bucket Bucket { get; set; }
-    public class S3StackProps : StackProps 
+    public class S3StackProps : StackProps
     {
         public string EnvironmentName { get; init; } = "Development";
         public string EnvironmentPrefix { get; init; } = "Development-";
@@ -16,7 +16,7 @@ public class S3Stack : Stack
         Bucket = new Bucket(this, "Bucket", new BucketProps
         {
             BucketName = $"{props.EnvironmentPrefix.ToLower()}sbmt-api-1",
-            Cors = new CorsRule[1] 
+            Cors = new CorsRule[1]
             {
                 new CorsRule
                 {

@@ -13,6 +13,8 @@
 
 	<ItemGroup>
 		<Using Include="TrfrtSbmt.Cdk" />
+		<Using Include="TrfrtSbmt.Cdk.Stacks" />
+		<Using Include="TrfrtSbmt.Cdk.Constructs" />
 	</ItemGroup>
 
   <ItemGroup>
