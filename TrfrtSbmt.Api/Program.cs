@@ -152,6 +152,10 @@ app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions", async (string f
     => await mediator.Send(new ListSubmissions.ListSubmissionsQuery(festivalId, fortId, pageSize, createdBy, paginationKey)))
     .RequireAuthorization();
 
+app.MapGet("/festivals/{festivalId}/submissions", async (string festivalId, int pageSize, string? createdBy, string? paginationKey, [FromServices] IMediator mediator)
+    => await mediator.Send(new ListSubmissions.ListSubmissionsQuery(festivalId, null, pageSize, createdBy, paginationKey)))
+    .RequireAuthorization();
+
 app.MapGet("/festivals/{festivalId}/forts/{fortId}/submissions/{submissionId}", async (string festivalId, string fortId, string submissionId, [FromServices] IMediator mediator)
     => await mediator.Send(new GetSubmission.GetSubmissionQuery(festivalId, fortId, submissionId)))
     .RequireAuthorization();

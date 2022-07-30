@@ -7,7 +7,7 @@ using System.Text;
 using TrfrtSbmt.Api.DataModels;
 public class ListSubmissions
 {
-    public record ListSubmissionsQuery(string FestivalId, string FortId, int PageSize = 20, string? CreatedBy = null, string? PaginationKey = null) : IRequest<ListSubmissionsResult>
+    public record ListSubmissionsQuery(string FestivalId, string? FortId, int PageSize = 20, string? CreatedBy = null, string? PaginationKey = null) : IRequest<ListSubmissionsResult>
     {
         internal Dictionary<string, AttributeValue>? ExclusiveStartKey => GetLastEvaluatedKey(PaginationKey);
         private Dictionary<string, AttributeValue>? GetLastEvaluatedKey(string? paginationKey)
@@ -23,9 +23,9 @@ public class ListSubmissions
         }
     }
 
-    public record ListSubmissionsResult(string FestivalId, string FortId, IEnumerable<ViewModel> Submissions, int PageSize = 20, string? PaginationKey = null)
+    public record ListSubmissionsResult(string FestivalId, string? FortId, IEnumerable<ViewModel> Submissions, int PageSize = 20, string? PaginationKey = null)
     {
-        public ListSubmissionsResult(string festivalId, string fortId, IEnumerable<Submission> submissions, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey) :
+        public ListSubmissionsResult(string festivalId, string? fortId, IEnumerable<Submission> submissions, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey) :
         this(festivalId, fortId, submissions.Select(s => new ViewModel(s)), pageSize, GetPaginationKey(lastEvaluatedKey))
         { }
         private static string? GetPaginationKey(Dictionary<string, AttributeValue>? lastEvaluatedKey)
@@ -62,7 +62,17 @@ public class ListSubmissions
             List<Submission> submissions = new List<Submission>();
             QueryResponse? queryResult = null;
 
-            if(request.CreatedBy != null)
+            string[] fortIds;
+            if (request.FortId != null)
+            {
+                fortIds = new string[] { request.FortId };
+            }
+            else
+            {
+                var fortsResult = await new DynamoDbQueries.BeginsWithQuery(_db, _settings).ExecuteAsync(request.FestivalId, $"{nameof(Fort)}-", 10000, null);
+                fortIds = fortsResult.Items.Select(i => i[nameof(Fort.EntityId)].S).ToArray();
+            }            
+            if (request.CreatedBy != null)
             {
                 var user = _user.Claims.Single(c => c.Type == "username").Value;
                 if (user != request.CreatedBy && !_user.IsAdmin())
@@ -70,16 +80,15 @@ public class ListSubmissions
                     throw new UnauthorizedAccessException("You are not authorized to view this submission.");
                 }
                 queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(request.CreatedBy);
-                submissions = queryResult.Items.Select(i => new Submission(i)).ToList();                
+                submissions = queryResult.Items.Select(i => new Submission(i)).Where(s => fortIds.Contains(s.FortId)).ToList();
             }
-            else
+
+            if (_user.IsAdmin())
             {
-                if (_user.IsAdmin())
-                {
-                    queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
-                    submissions = queryResult.Items.Select(i => new Submission(i)).ToList();
-                }
-            }            
+                ArgumentNullException.ThrowIfNull(request.FortId);
+                queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
+                submissions = queryResult.Items.Select(i => new Submission(i)).ToList();
+            }
 
             return new ListSubmissionsResult(request.FestivalId, request.FortId, submissions, request.PageSize, queryResult?.LastEvaluatedKey);
         }

@@ -5,6 +5,7 @@ using Amazon.DynamoDBv2.Model;
 public class Submission : BaseEntity
 {
     protected override string SortKeyPrefix => $"{nameof(Submission)}-";
+    public string FortId => PartitionKey;
     public string Statement => _attributes[nameof(Statement)].S;
     public string SubmissionDate => _attributes[nameof(SubmissionDate)].S;
     public string FestivalId => _attributes[nameof(FestivalId)].S;
