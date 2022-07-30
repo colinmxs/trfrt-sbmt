@@ -9,10 +9,10 @@ namespace TrfrtSbmt.Cdk.Constructs
         public string TableName { get; set; } = "Submissions";
         public RemovalPolicy RemovalPolicy { get; set; }
     }
-    public class SubmissionsTable : Construct
+    public class SubmissionsTable
     {
         public Table Table { get; }
-        public SubmissionsTable(Construct scope, string id, SubmissionsTableProps props) : base(scope, id)
+        public SubmissionsTable(Construct scope, string id, SubmissionsTableProps props)
         {
             Table = new Table(scope, id, new TableProps
             {
