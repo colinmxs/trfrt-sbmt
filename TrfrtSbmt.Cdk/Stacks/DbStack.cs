@@ -14,14 +14,14 @@ public class DbStack : Stack
     {
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
 
-        Table = new SubmissionsTable(scope, "DynamoTable", new SubmissionsTableProps 
+        Table = new SubmissionsTable(this, "DynamoTable", new SubmissionsTableProps 
         {
             EnvironmentName = props.EnvironmentName,
             RemovalPolicy = RemovalPolicy.RETAIN,
             TableName = "Submissions"
         }).Table;
 
-        TestTable = new SubmissionsTable(scope, "TestDynamoTable", new SubmissionsTableProps
+        TestTable = new SubmissionsTable(this, "TestDynamoTable", new SubmissionsTableProps
         {
             EnvironmentName = props.EnvironmentName,
             RemovalPolicy = RemovalPolicy.DESTROY,
