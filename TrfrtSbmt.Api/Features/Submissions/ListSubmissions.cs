@@ -83,7 +83,7 @@ public class ListSubmissions
                 submissions = queryResult.Items.Select(i => new Submission(i)).Where(s => fortIds.Contains(s.FortId)).ToList();
             }
 
-            if (_user.IsAdmin())
+            if (_user.IsAdmin() && request.CreatedBy == null)
             {
                 ArgumentNullException.ThrowIfNull(request.FortId);
                 queryResult = await SubmissionDateIndexQuery(_db, _settings, request.FortId, request.PageSize, request.ExclusiveStartKey);
