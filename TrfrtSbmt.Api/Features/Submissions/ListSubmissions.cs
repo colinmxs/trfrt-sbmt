@@ -40,9 +40,9 @@ public class ListSubmissions
         }
     }
 
-    public record ViewModel(string Id, string Name, string State, string City, string Country, string Image)
+    public record ViewModel(string Id, string Name, string State, string City, string Country, string Image, string FortId)
     {
-        public ViewModel(Submission s) : this(s.EntityId, s.Name, s.State, s.City, s.Country, s.Image) { }
+        public ViewModel(Submission s) : this(s.EntityId, s.Name, s.State, s.City, s.Country, s.Image, s.FortId) { }
     }
     
     public class QueryHandler : IRequestHandler<ListSubmissionsQuery, ListSubmissionsResult>
