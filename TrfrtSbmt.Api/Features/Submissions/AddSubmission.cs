@@ -66,6 +66,15 @@ public class AddSubmission
             // add new 
             else
             {
+                // ensure festival is open for submissions
+                var festivalResponse = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.FestivalId, 1, null);
+                var festival = new Festival(festivalResponse.Items.Single());
+
+                if (DateTime.UtcNow < festival.StartDateTime || DateTime.UtcNow > festival.EndDateTime)
+                {
+                    throw new Exception("Festival is not open for submissions");
+                }
+
                 submission = new Submission(
                 request.FestivalId,
                 request.FortId,
@@ -81,7 +90,6 @@ public class AddSubmission
                 request.Statement ?? string.Empty,
                 JsonSerializer.Serialize(request.Links),
                 JsonSerializer.Serialize(request.ContactInfo));
-                await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
 
                 if (_settings.EnvironmentName == "Production")
                 {
@@ -103,11 +111,6 @@ public class AddSubmission
                                 },
                                 Body = new Body
                                 {
-                                    //Html = new Content
-                                    //{
-                                    //    Charset = "UTF-8",
-                                    //    Data = htmlBody
-                                    //},
                                     Text = new Content
                                     {
                                         Charset = "UTF-8",
@@ -123,6 +126,7 @@ Until then, please follow us on our socials and sign up to receive our emails: h
                     });
                 }
             }
+            await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
             return new SubmissionViewModel(submission);
         }
     }
