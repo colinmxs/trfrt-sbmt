@@ -12,7 +12,7 @@ var certId = (string)regionConfig["sslcertid"];
 var api = new ApiStack(app, $"{envPrefix}TrfrtSbmt-ApiStack-{region}", new ApiStack.ApiStackProps
 {
     Env = new Amazon.CDK.Environment { Region = region, Account = accountId },
-    Name = $"{envPrefix}TrfrtSbmt-{region}",
+    Name = $"TrfrtSbmt-{region}",
     CertId = certId,
     Region = region,
     EnvironmentName = env,
