@@ -29,7 +29,7 @@ public class AddLabel
             ArgumentNullException.ThrowIfNull(request.FestivalId);
             Label label;
             
-            var festivalLabelResult = await new DynamoDbQueries.Query(_db, _settings).ExecuteAsync(request.FestivalId, $"{nameof(Label)}-{request.Name.ToUpperInvariant()}");
+            var festivalLabelResult = await new DynamoDbQueries.SearchTermQuery(_db, _settings).ExecuteAsync($"{request.Name.ToUpperInvariant()}", nameof(Label), 1, null);
             var singleOrDefaultFestivalLabel = festivalLabelResult.Items.SingleOrDefault();
             if (singleOrDefaultFestivalLabel == null)
             {

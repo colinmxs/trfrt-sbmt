@@ -41,6 +41,25 @@ public class DynamoDbQueries
                 ExclusiveStartKey = exclusiveStartKey
             });
         }
+
+        public async Task<QueryResponse> ExecuteAsync(string searchTerm, string type, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)
+        {
+            // $"{nameof(BaseEntity.PartitionKey)} = :pk AND {nameof(BaseEntity.SortKey)} = :sk"
+            var pkSymbol = ":partitionKey";
+            var skSymbol = ":sortKey";
+            return await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            {
+                IndexName = SearchTermIndex,
+                KeyConditionExpression = $"{nameof(BaseEntity.SearchTerm)} = {pkSymbol} AND {nameof(BaseEntity.EntityType)} = {skSymbol}",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                {
+                    [pkSymbol] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
+                    [skSymbol] = new AttributeValue { S = type }
+                },
+                Limit = pageSize,
+                ExclusiveStartKey = exclusiveStartKey
+            });
+        }
     }
 
     public class EntityIdQuery : BaseDynamoQuery
