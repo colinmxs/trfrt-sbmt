@@ -18,7 +18,7 @@ var api = new ApiStack(app, $"{envPrefix}TrfrtSbmt-ApiStack-{region}", new ApiSt
     EnvironmentName = env,
     EnvironmentPrefix = envPrefix
 });
-if (true)
+if (false)
 {
     var dbs = new DbStack(app, $"{envPrefix}TrfrtSbmt-DbStack", new DbStackProps
     {
