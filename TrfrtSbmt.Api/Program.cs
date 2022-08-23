@@ -194,4 +194,8 @@ app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festival
     => await mediator.Send(new DeleteLabel.DeleteLabelCommand(labelId)))
     .RequireAuthorization("admin");
 
+app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, string submissionId, [FromServices] IMediator mediator)
+    => await mediator.Send(new RemoveLabel.RemoveLabelCommand(labelId, submissionId)))
+    .RequireAuthorization("admin");
+
 app.Run();
