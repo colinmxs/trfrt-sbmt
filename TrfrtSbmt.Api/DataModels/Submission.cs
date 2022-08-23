@@ -116,6 +116,9 @@ public class Submission : BaseEntity
 
     internal void Update(string name, string state, string city, string country, string description, string image, string website, IEnumerable<string>? genres, string statement, string links, string contact)
     {
+        if (genres != null && genres.Any())
+            _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
+        
         _attributes[nameof(Name)] = new AttributeValue { S = name };
         _attributes[nameof(State)] = new AttributeValue { S = state };
         _attributes[nameof(City)] = new AttributeValue { S = city };
@@ -123,7 +126,6 @@ public class Submission : BaseEntity
         _attributes[nameof(Description)] = new AttributeValue { S = description };
         _attributes[nameof(Image)] = new AttributeValue { S = image };
         _attributes[nameof(Website)] = new AttributeValue { S = website };
-        _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
         _attributes[nameof(Links)] = new AttributeValue { S = links };
         _attributes[nameof(ContactInfo)] = new AttributeValue { S = contact };
         _attributes[nameof(Statement)] = new AttributeValue { S = statement };
