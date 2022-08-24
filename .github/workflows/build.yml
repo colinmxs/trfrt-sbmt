@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [ tempdev ]
+    branches: [ main ]
   pull_request:
     branches: [ main ]
 
@@ -59,4 +59,5 @@ jobs:
     - name: Deploy
       run: |      
         cd TrfrtSbmt.Cdk/bin/Release/net6.0
-        cdk deploy * --require-approval never
+        #cdk deploy * --require-approval never
+        cdk diff *
