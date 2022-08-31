@@ -33,8 +33,11 @@ builder.Services.AddAWSService<IAmazonS3>();
 builder.Services.AddAWSService<IAmazonSimpleEmailServiceV2>();
 builder.Services.AddScoped<IDiscordWebhookClient>(sp => {
     var uri = appSettings.DiscordWebhookUrl;
-    if (string.IsNullOrEmpty(uri))
-        return null;
+if (string.IsNullOrEmpty(uri) || uri == "#{DISCORDWEBHOOKURL}#")
+        return new DiscordWebhookClient
+        {
+            Uri = null
+        }; ;
     return new DiscordWebhookClient
     {
         Uri = new Uri(uri)
@@ -189,10 +192,6 @@ app.MapGet("/festivals/{festivalId}/labels/{labelId}", async (string festivalId,
 app.MapGet("/festivals/{festivalId}/labels", async (string festivalId, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
     => await mediator.Send(new ListLabels.ListLabelsQuery(festivalId, pageSize, paginationKey)))
 .RequireAuthorization("admin");
-
-app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, [FromServices] IMediator mediator) 
-    => await mediator.Send(new DeleteLabel.DeleteLabelCommand(labelId)))
-    .RequireAuthorization("admin");
 
 app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, string submissionId, [FromServices] IMediator mediator)
     => await mediator.Send(new RemoveLabel.RemoveLabelCommand(labelId, submissionId)))
