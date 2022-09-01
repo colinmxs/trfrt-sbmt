@@ -7,7 +7,7 @@ public class SubmissionLabel : BaseEntity
     protected override string SortKeyPrefix => $"{nameof(SubmissionLabel)}-";
 
     public SubmissionLabel(Dictionary<string, AttributeValue> values) : base(values) { }
-    public SubmissionLabel(Label label, Submission submission, string createdBy) : base(label.EntityId, submission.EntityId, label.Name, createdBy) 
+    public SubmissionLabel(Label label, Submission submission, string createdBy) : base(label.EntityId, submission.EntityId, label.Name, label.Name, createdBy) 
     {
         _attributes[nameof(SubmissionEntityId)] = new AttributeValue(submission.EntityId);
         _attributes[nameof(Name)] = new AttributeValue(submission.Name);
@@ -16,7 +16,7 @@ public class SubmissionLabel : BaseEntity
         _attributes[nameof(Image)] = new AttributeValue(submission.Image);
     }
 
-    public SubmissionLabel(Submission.Label label, Submission submission) : base(label.Id, submission.EntityId, label.Name, label.CreatedBy)
+    public SubmissionLabel(Submission.Label label, Submission submission) : base(label.Id, submission.EntityId, label.Name, label.Name, label.CreatedBy)
     {
         _attributes[nameof(SubmissionEntityId)] = new AttributeValue(submission.EntityId);
         _attributes[nameof(Name)] = new AttributeValue(submission.Name);

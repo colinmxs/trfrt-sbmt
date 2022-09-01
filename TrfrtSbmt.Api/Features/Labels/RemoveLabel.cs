@@ -27,7 +27,7 @@ public class RemoveLabel
             var submission = new Submission(submissionResult.Items.Single());
             submission.RemoveLabel(submission.Labels.Single(l => l.Id == request.LabelId));
 
-            // delete submissionlabel
+            // delete submissionlabel            
             await _db.DeleteItemAsync(_settings.TableName, new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue> 
             {
                 [nameof(BaseEntity.PartitionKey)] = new Amazon.DynamoDBv2.Model.AttributeValue(request.LabelId),
