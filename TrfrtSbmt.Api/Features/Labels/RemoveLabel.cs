@@ -31,7 +31,7 @@ public class RemoveLabel
             await _db.DeleteItemAsync(_settings.TableName, new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue> 
             {
                 [nameof(BaseEntity.PartitionKey)] = new Amazon.DynamoDBv2.Model.AttributeValue(request.LabelId),
-                [nameof(BaseEntity.SortKey)] = new Amazon.DynamoDBv2.Model.AttributeValue(request.SubmissionId)
+                [nameof(BaseEntity.SortKey)] = new Amazon.DynamoDBv2.Model.AttributeValue($"{nameof(SubmissionLabel)}-{request.SubmissionId}")
             }, cancellationToken);
 
             // save submission
