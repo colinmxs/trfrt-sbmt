@@ -68,5 +68,5 @@ jobs:
     - name: Deploy
       run: |      
         cd TrfrtSbmt.Cdk/bin/Release/net6.0
-        #cdk deploy * --require-approval never
-        cdk diff *
+        cdk deploy * --require-approval never
+        #cdk diff *
