@@ -28,6 +28,24 @@ public abstract class BaseEntity
             [nameof(CreatedBy)] = new AttributeValue { S = createdBy }
         };
     }
+
+    public BaseEntity(string partitionKey, string sortKey, string name, string searchTerm, string createdBy)
+    {
+        var typeName = GetType().Name;
+        var id = Guid.NewGuid().ToString();
+        _attributes = new Dictionary<string, AttributeValue>
+        {
+            [nameof(EntityId)] = new AttributeValue(id),
+            [nameof(PartitionKey)] = new AttributeValue { S = partitionKey },
+            [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{sortKey}" },
+            [nameof(Name)] = new AttributeValue { S = name },
+            [nameof(SearchTerm)] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
+            [nameof(EntityType)] = new AttributeValue { S = typeName },
+            [nameof(CreatedBy)] = new AttributeValue { S = createdBy }
+        };
+    }
+
+
     public BaseEntity(string name, string searchTerm, string createdBy)
     {
         var id = Guid.NewGuid().ToString();

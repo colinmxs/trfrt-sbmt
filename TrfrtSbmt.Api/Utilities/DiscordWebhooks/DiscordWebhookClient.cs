@@ -20,27 +20,30 @@ public class DiscordWebhookClient : IDiscordWebhookClient
     /// </summary>
     public async Task SendAsync(DiscordMessage message, params FileInfo[] files)
     {
-        using var httpClient = new HttpClient();
-
-        string bound = "------------------------" + DateTime.Now.Ticks.ToString("x");
-
-        var httpContent = new MultipartFormDataContent(bound);
-
-        foreach (var file in files)
+        if (Uri != null)
         {
-            var fileContent = new ByteArrayContent(await File.ReadAllBytesAsync(file.FullName));
-            fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
-            httpContent.Add(fileContent, file.Name, file.Name);
-        }
+            using var httpClient = new HttpClient();
 
-        var jsonContent = new StringContent(JsonSerializer.Serialize(message));
-        jsonContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
-        httpContent.Add(jsonContent, "payload_json");
+            string bound = "------------------------" + DateTime.Now.Ticks.ToString("x");
 
-        var response = await httpClient.PostAsync(Uri, httpContent);
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new DiscordException(await response.Content.ReadAsStringAsync());
+            var httpContent = new MultipartFormDataContent(bound);
+
+            foreach (var file in files)
+            {
+                var fileContent = new ByteArrayContent(await File.ReadAllBytesAsync(file.FullName));
+                fileContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/octet-stream");
+                httpContent.Add(fileContent, file.Name, file.Name);
+            }
+
+            var jsonContent = new StringContent(JsonSerializer.Serialize(message));
+            jsonContent.Headers.ContentType = MediaTypeHeaderValue.Parse("application/json");
+            httpContent.Add(jsonContent, "payload_json");
+
+            var response = await httpClient.PostAsync(Uri, httpContent);
+            if (!response.IsSuccessStatusCode)
+            {
+                throw new DiscordException(await response.Content.ReadAsStringAsync());
+            }
         }
     }
 }
