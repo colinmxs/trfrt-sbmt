@@ -25,7 +25,11 @@ public class RemoveLabel
             // load submission
             var submissionResult = await new DynamoDbQueries.EntityIdQuery(_db, _settings).ExecuteAsync(request.SubmissionId, 1, null);
             var submission = new Submission(submissionResult.Items.Single());
-            submission.RemoveLabel(submission.Labels.Single(l => l.Id == request.LabelId));
+            var labels = submission.Labels.Where(l => l.Id == request.LabelId);
+            foreach (var item in labels)
+            {
+                submission.RemoveLabel(item);
+            }
 
             // delete submissionlabel            
             await _db.DeleteItemAsync(_settings.TableName, new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue> 
