@@ -93,7 +93,7 @@ public class Submission : BaseEntity
         }
         else if(!Labels.Any(l => l.Id == label.Id))
         {
-            _attributes[nameof(Labels)].L = _attributes[nameof(Labels)].L.Add(new AttributeValue { M = label.ToDictionary() }).Distinct();
+            _attributes[nameof(Labels)].L.Add(new AttributeValue { M = label.ToDictionary() });
         }
     }
     
