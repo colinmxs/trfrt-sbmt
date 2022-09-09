@@ -1,7 +1,7 @@
 name: Build
 on:
   push:
-    branches: [ main ]
+    branches: [ tempdev ]
   pull_request:
     branches: [ main ]
 
@@ -42,7 +42,7 @@ jobs:
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
         DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
-        ASPNETENVIRONMENT: Production
+        ASPNETENVIRONMENT: Development
     - name: Run Tests
       run: |
         dotnet test TrfrtSbmt.Tests
