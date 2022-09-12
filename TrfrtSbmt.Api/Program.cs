@@ -209,9 +209,9 @@ app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festival
 }).RequireAuthorization("admin");
 
 // voting
-app.MapGet("/votes", async (GetMyVotes.GetMyVotesQuery query, [FromServices] IMediator mediator) =>
+app.MapGet("/votes", async ([FromServices] IMediator mediator) =>
 {
-    return await mediator.Send(query);
+    return await mediator.Send(new GetMyVotes.GetMyVotesQuery());
 }).RequireAuthorization("admin", "voter");
 
 app.MapPost("/votes", async (VoteOnSubmission.VoteOnSubmissionCommand command, [FromServices] IMediator mediator) => 
