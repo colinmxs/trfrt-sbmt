@@ -92,7 +92,15 @@ builder.Services.AddAuthorization(opts =>
 {
     // add auth policy called admin
     opts.AddPolicy("admin", policy => policy.RequireClaim("cognito:groups", "admin"));
-    opts.AddPolicy("voter", policy => policy.RequireClaim("cognito:groups", "voter"));
+    opts.AddPolicy("voter", policy => 
+    {
+        policy.RequireAssertion(context =>
+        {
+            var user = context.User;
+            var groups = user.Claims.Where(c => c.Type == "cognito:groups").Select(c => c.Value);
+            return groups.Contains("admin") || groups.Contains("voter");
+        });
+    });
 })
     .ConfigureCognitoAuth(appSettings);
 
