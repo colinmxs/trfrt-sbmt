@@ -3,11 +3,13 @@ using System.Security.Claims;
 using Amazon.DynamoDBv2;
 using Amazon.S3;
 using Amazon.SimpleEmailV2;
+using MediatR;
 using Microsoft.OpenApi.Models;
 using TrfrtSbmt.Api.Features.Festivals;
 using TrfrtSbmt.Api.Features.Forts;
 using TrfrtSbmt.Api.Features.Labels;
 using TrfrtSbmt.Api.Features.Submissions;
+using TrfrtSbmt.Api.Features.Voting;
 using TrfrtSbmt.Api.Utilities;
 using TrfrtSbmt.Api.Utils.DiscordWebhooks;
 
@@ -90,6 +92,7 @@ builder.Services.AddAuthorization(opts =>
 {
     // add auth policy called admin
     opts.AddPolicy("admin", policy => policy.RequireClaim("cognito:groups", "admin"));
+    opts.AddPolicy("voter", policy => policy.RequireClaim("cognito:groups", "voter"));
 })
     .ConfigureCognitoAuth(appSettings);
 
@@ -204,5 +207,16 @@ app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festival
         await mediator.Send(new RemoveLabel.RemoveLabelCommand(labelId, submissionId));
     }
 }).RequireAuthorization("admin");
+
+// voting
+app.MapGet("/votes", async (GetMyVotes.GetMyVotesQuery query, [FromServices] IMediator mediator) =>
+{
+    return await mediator.Send(query);
+}).RequireAuthorization("admin", "voter");
+
+app.MapPost("/votes", async (VoteOnSubmission.VoteOnSubmissionCommand command, [FromServices] IMediator mediator) => 
+{
+    await mediator.Send(command);
+}).RequireAuthorization("admin", "voter");
 
 app.Run();

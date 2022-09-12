@@ -8,11 +8,13 @@ public abstract class BaseEntity
     
     internal const string EntityIdIndex = "EntityIdIndex";
     protected readonly Dictionary<string, AttributeValue> _attributes;
+
     public BaseEntity(Dictionary<string, AttributeValue> values) 
     {
         _attributes = values;
     }
     
+    /// this ctor generates and entityid which it uses for the sortkey
     public BaseEntity(string partitionKey, string name, string searchTerm, string createdBy)
     {
         var typeName = GetType().Name;
@@ -29,7 +31,7 @@ public abstract class BaseEntity
         };
     }
 
-    public BaseEntity(string partitionKey, string sortKey, string name, string searchTerm, string createdBy)
+    public BaseEntity(string partitionKey, string sortKeySuffix, string name, string searchTerm, string createdBy)
     {
         var typeName = GetType().Name;
         var id = Guid.NewGuid().ToString();
@@ -37,7 +39,7 @@ public abstract class BaseEntity
         {
             [nameof(EntityId)] = new AttributeValue(id),
             [nameof(PartitionKey)] = new AttributeValue { S = partitionKey },
-            [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{sortKey}" },
+            [nameof(SortKey)] = new AttributeValue { S = $"{SortKeyPrefix}{sortKeySuffix}" },
             [nameof(Name)] = new AttributeValue { S = name },
             [nameof(SearchTerm)] = new AttributeValue { S = searchTerm.ToUpperInvariant() },
             [nameof(EntityType)] = new AttributeValue { S = typeName },
