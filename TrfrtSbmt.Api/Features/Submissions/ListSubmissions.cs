@@ -79,7 +79,7 @@ public class ListSubmissions
                 {
                     throw new UnauthorizedAccessException("You are not authorized to view this submission.");
                 }
-                queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(request.CreatedBy);
+                queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(request.CreatedBy, nameof(Submission));
                 submissions = queryResult.Items.Select(i => new Submission(i)).Where(s => fortIds.Contains(s.FortId)).ToList();
             }
 

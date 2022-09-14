@@ -142,14 +142,15 @@ public class DynamoDbQueries
     {
         public CreatedByQuery(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
 
-        public async Task<QueryResponse> ExecuteAsync(string createdBy)
+        public async Task<QueryResponse> ExecuteAsync(string createdBy, string entityType)
         {
             return await _db.QueryAsync(new QueryRequest(_settings.TableName)
             {
-                KeyConditionExpression = $"{nameof(BaseEntity.CreatedBy)} = :pk",
+                KeyConditionExpression = $"{nameof(BaseEntity.CreatedBy)} = :pk AND {nameof(BaseEntity.EntityType)} = :sk",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
                     {
                         {":pk", new AttributeValue(createdBy)}
+                        ,{":sk", new AttributeValue(entityType)}
                     },
                 IndexName = "CreatedByIndex"
             });

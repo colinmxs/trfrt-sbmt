@@ -30,7 +30,7 @@ public class GetMyVotes
         public async Task<List<VoteViewModel>> Handle(GetMyVotesQuery request, CancellationToken cancellationToken)
         {
             var result = new List<VoteViewModel>();
-            var votesResponse = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(_user.Claims.Single(c => c.Type == "username").Value);
+            var votesResponse = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(_user.Claims.Single(c => c.Type == "username").Value, nameof(Vote));
             foreach (var item in votesResponse.Items)
             {
                 var vote = new Vote(item);

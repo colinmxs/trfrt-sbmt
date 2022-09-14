@@ -111,6 +111,11 @@ namespace TrfrtSbmt.Cdk.Constructs
                 {
                     Name = "CreatedBy",
                     Type = AttributeType.STRING
+                },
+                SortKey = new Attribute
+                {
+                    Name = "EntityType",
+                    Type = AttributeType.STRING
                 }
             });
         }

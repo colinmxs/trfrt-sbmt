@@ -21,7 +21,7 @@ public class GetMySubmissions
         }
         public async Task<List<SubmissionViewModel>> Handle(GetMySubmissionsQuery request, CancellationToken cancellationToken)
         {
-            var queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(_user.Claims.Single(c => c.Type == "username").Value);
+            var queryResult = await new DynamoDbQueries.CreatedByQuery(_db, _settings).ExecuteAsync(_user.Claims.Single(c => c.Type == "username").Value, nameof(Submission));
             return queryResult.Items.Select(i => new SubmissionViewModel(new Submission(i))).ToList();
         }
     }
