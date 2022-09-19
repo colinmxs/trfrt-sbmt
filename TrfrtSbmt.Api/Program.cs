@@ -198,11 +198,11 @@ app.MapPost("/festivals/{festivalId}/labels", async (string festivalId, AddLabel
 
 app.MapGet("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, int pageSize, string? paginationKey, [FromServices] IMediator mediator)
     => await mediator.Send(new GetLabel.GetLabelQuery(labelId, pageSize, paginationKey)))
-    .RequireAuthorization("admin");
+    .RequireAuthorization("voter");
 
 app.MapGet("/festivals/{festivalId}/labels", async (string festivalId, int pageSize, string? paginationKey, [FromServices] IMediator mediator) 
     => await mediator.Send(new ListLabels.ListLabelsQuery(festivalId, pageSize, paginationKey)))
-.RequireAuthorization("admin");
+.RequireAuthorization("voter");
 
 app.MapDelete("/festivals/{festivalId}/labels/{labelId}", async (string festivalId, string labelId, string? submissionId, [FromServices] IMediator mediator) =>
 {
