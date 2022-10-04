@@ -1,4 +1,6 @@
-﻿var app = new App(null);
+﻿using Amazon.CDK.AWS.DynamoDB;
+
+var app = new App(null);
 Tags.Of(app).Add("Owner", "smith.colin00@gmail.com");
 Tags.Of(app).Add("Application", "Submit Api");
 Tags.Of(app).Add("Billing", "Treefort");
@@ -27,6 +29,13 @@ if (true)
         EnvironmentPrefix = envPrefix
     });
 
+    var voteStreamStack = new VoteStreamStack(app, $"{envPrefix}TrfrtSbmt-VoteStreamStack", new VoteStreamStack.VoteStreamStackProps
+    {
+        EnvironmentName = env,
+        EnvironmentPrefix = envPrefix,
+        Table = dbs.Table
+    });
+
     var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps() 
     {    
         EnvironmentName = env,
@@ -41,7 +50,8 @@ if (true)
         TestTable = dbs.TestTable,
         Bucket = s3.Bucket,
         EnvironmentName = env,
-        EnvironmentPrefix = envPrefix
+        EnvironmentPrefix = envPrefix,
+        VoteRole = voteStreamStack.LambdaExecutionRole
     });
 }
 

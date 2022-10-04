@@ -17,7 +17,7 @@ public class VoteStreamStack : Stack
         public string EnvironmentName { get; init; } = "Development";
         public string EnvironmentPrefix { get; init; } = "Development-";
         public string Name { get; init; } = "TreefortSubmitVoteProcessor";
-        public Table Table { get; }
+        public Table Table { get; set; }
     }
     public Role LambdaExecutionRole { get; init; }
     public VoteStreamStack(Construct scope, string id, VoteStreamStackProps props) : base(scope, id, props)
