@@ -44,11 +44,35 @@ public class IamStack : Stack
                 })
             }
         });
+
+        var votePolicy = new Policy(this, "vote-policy", new PolicyProps 
+        {
+            PolicyName = "vote-policy",
+            Roles = new Role[] { props.VoteRole },
+            Statements = new PolicyStatement[]
+            {
+                new PolicyStatement(new PolicyStatementProps
+                {
+                    Effect = Effect.ALLOW,
+                    Actions = new string[] { "dynamodb:*" },
+                    Resources = new string[]
+                    {
+                        props.Table.TableArn,
+                        props.Table.TableArn + "/index/*",
+                        props.Table.TableStreamArn,
+                        props.TestTable.TableArn,
+                        props.TestTable.TableArn + "/index/*",
+                        props.TestTable.TableStreamArn,
+                    }
+                })
+            }
+        });
     }
 
     public class IamStackProps : StackProps
     {
         public Amazon.CDK.Environment Env { get; set; }
+        public Role VoteRole { get; set; }
         public Role Role { get; set; }
         public Table Table { get; set; }
         public Table TestTable { get; set; }
