@@ -58,7 +58,7 @@ public class VoteStreamStack : Stack
         var targetFunction = new Function(this, "VoteStream.Function", new FunctionProps 
         {
             Runtime = Runtime.DOTNET_6,
-            Code = Code.FromAsset("TrfrtSbmt.VoteStreamProcessor/publish.zip"),
+            Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.VoteStreamProcessor")}/publish.zip"),
             Handler = "TrfrtSbmt.VoteStreamProcessor",
             Timeout = Duration.Seconds(10),
             FunctionName = $"{props.EnvironmentPrefix}{props.Name}LambdaFunction",
