@@ -12,7 +12,7 @@ namespace TrfrtSbmt.Cdk.Stacks;
 
 public class VoteStreamStack : Stack
 {
-    public class VoteStreamStackProps : IStackProps
+    public class VoteStreamStackProps : StackProps
     {
         public string EnvironmentName { get; init; } = "Development";
         public string EnvironmentPrefix { get; init; } = "Development-";
