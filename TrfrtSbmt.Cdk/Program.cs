@@ -31,6 +31,7 @@ if (true)
 
     var voteStreamStack = new VoteStreamStack(app, $"{envPrefix}TrfrtSbmt-VoteStreamStack", new VoteStreamStack.VoteStreamStackProps
     {
+        Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
         EnvironmentName = env,
         EnvironmentPrefix = envPrefix,
         Table = dbs.Table
