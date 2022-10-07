@@ -43,16 +43,16 @@ var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackPr
     EnvironmentPrefix = envPrefix
 });
 
-//var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamStackProps
-//{
-//    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-//    Role = api.LambdaExecutionRole,
-//    Table = dbs.Table,
-//    TestTable = dbs.TestTable,
-//    Bucket = s3.Bucket,
-//    EnvironmentName = env,
-//    EnvironmentPrefix = envPrefix,
-//    VoteRole = voteStreamStack.LambdaExecutionRole
-//});
+var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamStackProps
+{
+    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
+    Role = api.LambdaExecutionRole,
+    Table = dbs.Table,
+    TestTable = dbs.TestTable,
+    Bucket = s3.Bucket,
+    EnvironmentName = env,
+    EnvironmentPrefix = envPrefix,
+    VoteRole = voteStreamStack.LambdaExecutionRole
+});
 
 app.Synth();
