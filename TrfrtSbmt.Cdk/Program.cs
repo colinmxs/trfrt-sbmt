@@ -45,7 +45,7 @@ var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackPr
 
 var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamStackProps
 {
-    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
+    Env = new Amazon.CDK.Environment { Account = accountId },
     Role = api.LambdaExecutionRole,
     Table = dbs.Table,
     TestTable = dbs.TestTable,
