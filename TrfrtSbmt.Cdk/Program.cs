@@ -1,4 +1,6 @@
 ﻿using Amazon.CDK.AWS.DynamoDB;
+using Amazon.CDK.AWS.Lambda;
+using Amazon.CDK.AWS.SES.Actions;
 
 var app = new App(null);
 Tags.Of(app).Add("Owner", "smith.colin00@gmail.com");
@@ -36,12 +38,16 @@ var voteStreamStack = new VoteStreamStack(app, $"{envPrefix}TrfrtSbmt-VoteStream
     Table = dbs.Table
 });
 
-var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps()
+if (false)
 {
-    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-    EnvironmentName = env,
-    EnvironmentPrefix = envPrefix
-});
+    var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps()
+    {
+        Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
+        EnvironmentName = env,
+        EnvironmentPrefix = envPrefix
+    });
+}
+
 
 var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamStackProps
 {
@@ -49,10 +55,21 @@ var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamSt
     Role = api.LambdaExecutionRole,
     Table = dbs.Table,
     //TestTable = dbs.TestTable,
-    Bucket = s3.Bucket,
     EnvironmentName = env,
     EnvironmentPrefix = envPrefix,
     VoteRole = voteStreamStack.LambdaExecutionRole
 });
+
+//var trigger = new EventSourceMapping(this, "VoteStream.EventSourceMapping", new EventSourceMappingProps
+//{
+//    EventSourceArn = props.Table.TableStreamArn,
+//    StartingPosition = StartingPosition.LATEST,
+//    BatchSize = 10,
+//    BisectBatchOnError = true,
+//    RetryAttempts = 1,
+//    Target = targetFunction,
+//    Enabled = true,
+//    ParallelizationFactor = 1,
+//});
 
 app.Synth();

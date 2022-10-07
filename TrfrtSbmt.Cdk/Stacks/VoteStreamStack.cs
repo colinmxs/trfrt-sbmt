@@ -71,18 +71,6 @@ public class VoteStreamStack : Stack
             }
         });
         Amazon.CDK.Tags.Of(targetFunction).Add("Name", $"{props.EnvironmentPrefix}{props.Name}LambdaFunction");
-        Amazon.CDK.Tags.Of(targetFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
-
-        var trigger = new EventSourceMapping(this, "VoteStream.EventSourceMapping", new EventSourceMappingProps
-        {
-            EventSourceArn = props.Table.TableStreamArn,
-            StartingPosition = StartingPosition.LATEST,
-            BatchSize = 10,
-            BisectBatchOnError = true,
-            RetryAttempts = 1,
-            Target = targetFunction,
-            Enabled = true,
-            ParallelizationFactor = 1,
-        });
+        Amazon.CDK.Tags.Of(targetFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());        
     }
 }
