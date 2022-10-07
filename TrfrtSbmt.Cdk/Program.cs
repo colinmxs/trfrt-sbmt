@@ -52,7 +52,7 @@ var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamSt
     Bucket = s3.Bucket,
     EnvironmentName = env,
     EnvironmentPrefix = envPrefix,
-    //VoteRole = voteStreamStack.LambdaExecutionRole
+    VoteRole = voteStreamStack.LambdaExecutionRole
 });
 
 app.Synth();
