@@ -35,19 +35,15 @@ var voteStreamStack = new VoteStreamStack(app, $"{envPrefix}TrfrtSbmt-VoteStream
     Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
     EnvironmentName = env,
     EnvironmentPrefix = envPrefix,
-    Table = dbs.Table
 });
 
-if (false)
-{
-    var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps()
-    {
-        Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-        EnvironmentName = env,
-        EnvironmentPrefix = envPrefix
-    });
-}
 
+var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps()
+{
+    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
+    EnvironmentName = env,
+    EnvironmentPrefix = envPrefix
+});
 
 var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamStackProps
 {
@@ -57,7 +53,8 @@ var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamSt
     //TestTable = dbs.TestTable,
     EnvironmentName = env,
     EnvironmentPrefix = envPrefix,
-    VoteRole = voteStreamStack.LambdaExecutionRole
+    VoteRole = voteStreamStack.LambdaExecutionRole,
+    Bucket = s3.Bucket
 });
 
 //var trigger = new EventSourceMapping(this, "VoteStream.EventSourceMapping", new EventSourceMappingProps
