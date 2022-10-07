@@ -22,8 +22,8 @@ public class IamStack : Stack
                     {
                         props.Table.TableArn,
                         props.Table.TableArn + "/index/*",
-                        props.TestTable.TableArn,
-                        props.TestTable.TableArn + "/index/*"
+                        //props.TestTable.TableArn,
+                        //props.TestTable.TableArn + "/index/*"
                     }
                 }),
                 new PolicyStatement(new PolicyStatementProps
@@ -45,28 +45,28 @@ public class IamStack : Stack
             }
         });
 
-        var votePolicy = new Policy(this, "vote-policy", new PolicyProps 
-        {
-            PolicyName = "vote-policy",
-            Roles = new Role[] { props.VoteRole },
-            Statements = new PolicyStatement[]
-            {
-                new PolicyStatement(new PolicyStatementProps
-                {
-                    Effect = Effect.ALLOW,
-                    Actions = new string[] { "dynamodb:*" },
-                    Resources = new string[]
-                    {
-                        props.Table.TableArn,
-                        props.Table.TableArn + "/index/*",
-                        props.Table.TableStreamArn,
-                        props.TestTable.TableArn,
-                        props.TestTable.TableArn + "/index/*",
-                        props.TestTable.TableStreamArn,
-                    }
-                })
-            }
-        });
+        //var votePolicy = new Policy(this, "vote-policy", new PolicyProps 
+        //{
+        //    PolicyName = "vote-policy",
+        //    Roles = new Role[] { props.VoteRole },
+        //    Statements = new PolicyStatement[]
+        //    {
+        //        new PolicyStatement(new PolicyStatementProps
+        //        {
+        //            Effect = Effect.ALLOW,
+        //            Actions = new string[] { "dynamodb:*" },
+        //            Resources = new string[]
+        //            {
+        //                props.Table.TableArn,
+        //                props.Table.TableArn + "/index/*",
+        //                props.Table.TableStreamArn,
+        //                //props.TestTable.TableArn,
+        //                //props.TestTable.TableArn + "/index/*",
+        //                //props.TestTable.TableStreamArn,
+        //            }
+        //        })
+        //    }
+        //});
     }
 
     public class IamStackProps : StackProps
@@ -74,7 +74,7 @@ public class IamStack : Stack
         public Role VoteRole { get; set; }
         public Role Role { get; set; }
         public Table Table { get; set; }
-        public Table TestTable { get; set; }
+        //public Table TestTable { get; set; }
         public Bucket Bucket { get; set; }
         public string EnvironmentName { get; init; } = "Development";
         public string EnvironmentPrefix { get; init; } = "Development-";

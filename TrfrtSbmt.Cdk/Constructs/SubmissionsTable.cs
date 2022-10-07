@@ -14,7 +14,7 @@ namespace TrfrtSbmt.Cdk.Constructs
         public Table Table { get; }
         public SubmissionsTable(Construct scope, string id, SubmissionsTableProps props) : base(scope, id)
         {
-            Table = new Table(this, id, new TableProps
+            Table = new Table(scope, id, new TableProps
             {
                 BillingMode = BillingMode.PAY_PER_REQUEST,
                 PartitionKey = new Attribute

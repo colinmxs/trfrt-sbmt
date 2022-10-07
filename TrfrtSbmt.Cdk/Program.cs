@@ -48,11 +48,11 @@ var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamSt
     Env = new Amazon.CDK.Environment { Account = accountId },
     Role = api.LambdaExecutionRole,
     Table = dbs.Table,
-    TestTable = dbs.TestTable,
+    //TestTable = dbs.TestTable,
     Bucket = s3.Bucket,
     EnvironmentName = env,
     EnvironmentPrefix = envPrefix,
-    VoteRole = voteStreamStack.LambdaExecutionRole
+    //VoteRole = voteStreamStack.LambdaExecutionRole
 });
 
 app.Synth();
