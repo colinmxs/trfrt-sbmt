@@ -13,7 +13,7 @@ public class DbStack : Stack
     public DbStack(Construct scope, string id, DbStackProps props, string[]? replicateRegions = null) : base(scope, id, props)
     {
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
-
+        
         Table = new SubmissionsTable(this, "DynamoTable", new SubmissionsTableProps 
         {
             EnvironmentName = props.EnvironmentName,
@@ -25,7 +25,7 @@ public class DbStack : Stack
         {
             EnvironmentName = props.EnvironmentName,
             RemovalPolicy = RemovalPolicy.DESTROY,
-            TableName = "Submissions-Tests1"
+            TableName = "Submissions-Tests"
         }).Table;
     }
 }
