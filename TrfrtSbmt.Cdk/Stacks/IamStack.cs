@@ -71,7 +71,6 @@ public class IamStack : Stack
 
     public class IamStackProps : StackProps
     {
-        public Amazon.CDK.Environment Env { get; set; }
         public Role VoteRole { get; set; }
         public Role Role { get; set; }
         public Table Table { get; set; }
