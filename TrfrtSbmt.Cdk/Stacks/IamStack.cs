@@ -8,6 +8,7 @@ public class IamStack : Stack
 {
     public IamStack(Construct scope, string id, IamStackProps props) : base(scope, id, props)
     {
+        var table = Table.FromTableArn(this, "table", props.Table.TableArn);
         var policy = new Policy(this, "smbt-policy", new PolicyProps
         {
             PolicyName = "sbmt-policy",
@@ -20,9 +21,9 @@ public class IamStack : Stack
                     Actions = new string[] { "dynamodb:*" },
                     Resources = new string[]
                     {
-                        props.Table.TableArn,
-                        props.Table.TableArn + "/index/*",
-                        props.Table.TableStreamArn
+                        table.TableArn,
+                        table.TableArn + "/index/*",
+                        table.TableStreamArn
                         //props.TestTable.TableArn,
                         //props.TestTable.TableArn + "/index/*"
                     }
