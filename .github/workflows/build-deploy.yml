@@ -7,7 +7,12 @@ on:
 
 jobs:
   run-builds:
+    strategy:
+      matrix:
+        project: [TrfrtSbmt.Api, TrfrtSbmt.Cdk, TrfrtSbmt.Tests, TrfrtSbmt.VoteStreamProcessor]
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/build.yml@tempdev
+    with:
+      project: ${{ matrix.project }}
   #build-and-deploy:
   #  runs-on: self-hosted
   #  steps:

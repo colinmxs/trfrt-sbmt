@@ -1,84 +1,29 @@
 name: build
 on:
   workflow_call:
+    inputs:
+      project:
+        type: string
+        required: true
 jobs:
-  build_api:
+  build:
     runs-on: 'self-hosted'
     steps:
       - uses: actions/checkout@v3
       - name: Build Main
         run: |
-          dotnet publish TrfrtSbmt.Api/TrfrtSbmt.Api.csproj --configuration Release
+          dotnet publish ${{ inputs.project }}/${{ inputs.project }}.csproj --configuration Release
       - name: Zip Main
         run: |
-          Get-ChildItem -Path TrfrtSbmt.Api/bin/Release/net6.0/publish |
-          Compress-Archive -DestinationPath TrfrtSbmt.Api/publish.zip     
+          Get-ChildItem -Path ${{ inputs.project }}/bin/Release/net6.0/publish |
+          Compress-Archive -DestinationPath ${{ inputs.project }}/publish.zip     
       - name: Upload API Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
           # Artifact name
-          name: TrfrtSbmt.Api
+          name: ${{ inputs.project }}
           # A file, directory or wildcard pattern that describes what to upload
-          path: TrfrtSbmt.Api/publish.zip
+          path: ${{ inputs.project }}/publish.zip
           # The desired behavior if no files are found using the provided path.
           retention-days: 1
-  build_cdk:
-    runs-on: 'self-hosted'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build CDK
-        run: |
-          dotnet publish TrfrtSbmt.Cdk/TrfrtSbmt.Cdk.csproj --configuration Release
-      - name: Zip Main
-        run: |
-          Get-ChildItem -Path TrfrtSbmt.Cdk/bin/Release/net6.0/publish |
-          Compress-Archive -DestinationPath TrfrtSbmt.Cdk/publish.zip  
-      - name: Upload CDK Artifact
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          # Artifact name
-          name: TrfrtSbmt.CDK
-          # A file, directory or wildcard pattern that describes what to upload
-          path: TrfrtSbmt.CDK/publish.zip
-          # The desired behavior if no files are found using the provided path.
-          retention-days: 1         
-  build_votelambda:
-    runs-on: self-hosted
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build VoteStreamLambda
-        run: |
-          dotnet publish TrfrtSbmt.VoteStreamProcessor/TrfrtSbmt.VoteStreamProcessor.csproj --configuration Release
-      - name: Zip VoteStreamLambda
-        run: |
-          Get-ChildItem -Path TrfrtSbmt.VoteStreamProcessor/bin/Release/net6.0/publish |
-          Compress-Archive -DestinationPath TrfrtSbmt.VoteStreamProcessor/publish.zip  
-      - name: Upload VoteStreamLambda Artifact
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          # Artifact name
-          name: TrfrtSbmt.VoteStreamProcessor
-          # A file, directory or wildcard pattern that describes what to upload
-          path: TrfrtSbmt.VoteStreamProcessor/publish.zip
-          # The desired behavior if no files are found using the provided path.
-          retention-days: 1
-  build_tests:
-    runs-on: 'self-hosted'
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build CDK
-        run: |
-          dotnet publish TrfrtSbmt.Tests/TrfrtSbmt.Tests.csproj --configuration Release
-      - name: Zip Main
-        run: |
-          Get-ChildItem -Path TrfrtSbmt.Tests/bin/Release/net6.0/publish |
-          Compress-Archive -DestinationPath TrfrtSbmt.Tests/publish.zip  
-      - name: Upload CDK Artifact
-        uses: actions/upload-artifact@v3.1.0
-        with:
-          # Artifact name
-          name: TrfrtSbmt.Tests
-          # A file, directory or wildcard pattern that describes what to upload
-          path: TrfrtSbmt.Tests/publish.zip
-          # The desired behavior if no files are found using the provided path.
-          retention-days: 1
+          
