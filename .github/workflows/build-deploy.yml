@@ -7,7 +7,7 @@ on:
 
 jobs:
   call-workflow-1-in-local-repo:
-    uses: trfrt-sbmt\.github\workflows\build.yml@tempdev
+    uses: .github/workflows/build.yml@tempdev
   build-and-deploy:
     runs-on: self-hosted
     steps:
