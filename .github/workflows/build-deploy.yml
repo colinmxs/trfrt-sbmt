@@ -9,6 +9,7 @@ jobs:
   build-assets:
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/build-assets.yml@tempdev
   run-tests:
+    needs: build-assets
     runs-on: self-hosted    
     steps:
     - name: Download Artifact
@@ -19,6 +20,7 @@ jobs:
       run: |
         dotnet test TrfrtSbmt.Tests
   deploy:
+    needs: run-tests
     runs-on: self-hosted
     steps:
     - name: Download Artifacts
