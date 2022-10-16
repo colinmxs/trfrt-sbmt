@@ -8,9 +8,27 @@ on:
 jobs:
   build-assets:
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/build-assets.yml@tempdev
-  #build-and-deploy:
-  #  runs-on: self-hosted
-  #  steps:
+  run-tests:
+    runs-on: self-hosted    
+    steps:
+    - name: Download Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: TrfrtSbmt.Tests
+    - name: Run Tests
+      run: |
+        dotnet test TrfrtSbmt.Tests
+  deploy:
+    runs-on: self-hosted
+    steps:
+    - name: Download Artifacts
+      uses: actions/download-artifact@v3
+    - name: Deploy
+      run: |      
+        cd TrfrtSbmt.Cdk
+        #cdk deploy * --require-approval never
+        cdk diff *
+    
   #  - uses: actions/checkout@v3    
     #- name: Replace tokens
     #  uses: cschleiden/replace-tokens@v1.1
@@ -26,11 +44,6 @@ jobs:
     #    SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
     #    DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
     #    ASPNETENVIRONMENT: Development
-    #- name: Run Tests
-    #  run: |
-    #    dotnet test TrfrtSbmt.Tests    
-    #- name: Deploy
-    #  run: |      
-    #    cd TrfrtSbmt.Cdk/bin/Release/net6.0
-    #    cdk deploy * --require-approval never
-    #    #cdk diff *
+    
+    
+        #cdk diff *
