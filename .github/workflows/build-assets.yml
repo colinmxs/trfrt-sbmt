@@ -1,0 +1,11 @@
+name: build-assets
+on:
+  workflow_call:
+jobs:
+  build:
+    strategy:
+      matrix:
+        project: [TrfrtSbmt.Api, TrfrtSbmt.Cdk, TrfrtSbmt.Tests, TrfrtSbmt.VoteStreamProcessor]
+    uses: colinmxs/trfrt-sbmt-api/.github/workflows/build.yml@tempdev
+    with:
+      project: ${{ matrix.project }}
