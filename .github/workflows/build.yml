@@ -3,7 +3,7 @@ on:
   workflow_call:
 jobs:
   reusable_workflow_job:
-	runs-on: self-hosted
+    runs-on: self-hosted
     steps:
     - uses: actions/checkout@v3
     - name: Bootstrap CDK
