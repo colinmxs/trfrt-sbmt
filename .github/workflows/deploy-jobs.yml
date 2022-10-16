@@ -24,7 +24,7 @@ jobs:
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
         DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
-        ASPNETENVIRONMENT: ${{ inputes.env}}    
+        ASPNETENVIRONMENT: ${{ inputs.env}}    
     - name: Deploy
       run: |      
         cd TrfrtSbmt.Cdk
