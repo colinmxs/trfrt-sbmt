@@ -10,17 +10,12 @@ jobs:
     runs-on: 'self-hosted'
     steps:
       - uses: actions/checkout@v3
-      - name: Build Main
+      - name: Build
         run: |
           dotnet publish ${{ inputs.project }}/${{ inputs.project }}.csproj --configuration Release
-      - name: Zip Main
-        run: |
-          Get-ChildItem -Path ${{ inputs.project }}/bin/Release/net6.0/publish |
-          Compress-Archive -DestinationPath ${{ inputs.project }}/publish.zip     
-      - name: Upload API Artifact
+      - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
           name: ${{ inputs.project }}
-          path: ${{ inputs.project }}/publish.zip
-          retention-days: 1
-          
+          path: ${{ inputs.project }}/bin/Release/net6.0/publish
+          retention-days: 1          
