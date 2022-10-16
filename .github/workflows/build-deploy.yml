@@ -6,7 +6,7 @@ on:
     branches: [ main ]
 
 jobs:
-  run-build-job:
+  run-builds:
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/build.yml@tempdev
   #build-and-deploy:
   #  runs-on: self-hosted
