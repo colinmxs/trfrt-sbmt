@@ -13,60 +13,15 @@ var env = (string)app.Node.TryGetContext("asp_env");
 var envPrefix = env != "Production" ? $"{env}-" : string.Empty;
 var regionConfig = (Dictionary<string, object>)app.Node.TryGetContext(region);
 var certId = (string)regionConfig["sslcertid"];
-var api = new ApiStack(app, $"{envPrefix}TrfrtSbmt-ApiStack-{region}", new ApiStack.ApiStackProps
+
+var api = new RegionalStack(app, $"{envPrefix}TrfrtSbmt-ApiStack-{region}", new RegionalStack.RegionalStackProps
 {
     Env = new Amazon.CDK.Environment { Region = region, Account = accountId },
     Name = $"TrfrtSbmt-{region}",
     CertId = certId,
     Region = region,
     EnvironmentName = env,
-    EnvironmentPrefix = envPrefix
+    EnvironmentPrefix = envPrefix    
 });
-
-var dbs = new DbStack(app, $"{envPrefix}TrfrtSbmt-DbStack", new DbStackProps
-{
-    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-    EnvironmentName = env,
-    EnvironmentPrefix = envPrefix
-});
-
-var voteStreamStack = new VoteStreamStack(app, $"{envPrefix}TrfrtSbmt-VoteStreamStack", new VoteStreamStack.VoteStreamStackProps
-{
-    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-    EnvironmentName = env,
-    EnvironmentPrefix = envPrefix,
-});
-
-
-var s3 = new S3Stack(app, $"{envPrefix}TrfrtSbmt-S3Stack", new S3Stack.S3StackProps()
-{
-    Env = new Amazon.CDK.Environment { Region = "us-west-2", Account = accountId },
-    EnvironmentName = env,
-    EnvironmentPrefix = envPrefix
-});
-
-var iam = new IamStack(app, $"{envPrefix}TrfrtSbmt-IamStack", new IamStack.IamStackProps
-{
-    Env = new Amazon.CDK.Environment { Account = accountId },
-    Role = api.LambdaExecutionRole,
-    Table = dbs.Table,
-    //TestTable = dbs.TestTable,
-    EnvironmentName = env,
-    EnvironmentPrefix = envPrefix,
-    VoteRole = voteStreamStack.LambdaExecutionRole,
-    Bucket = s3.Bucket
-});
-
-//var trigger = new EventSourceMapping(this, "VoteStream.EventSourceMapping", new EventSourceMappingProps
-//{
-//    EventSourceArn = props.Table.TableStreamArn,
-//    StartingPosition = StartingPosition.LATEST,
-//    BatchSize = 10,
-//    BisectBatchOnError = true,
-//    RetryAttempts = 1,
-//    Target = targetFunction,
-//    Enabled = true,
-//    ParallelizationFactor = 1,
-//});
 
 app.Synth();

@@ -23,6 +23,20 @@ jobs:
     needs: run-tests
     runs-on: self-hosted
     steps:
+    - name: Replace tokens
+      uses: cschleiden/replace-tokens@v1.1
+      with:
+        tokenPrefix: '#{'
+        tokenSuffix: '}#'
+        files: '**/*/*.json'
+      env:
+        ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
+        USWEST1SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_1 }}
+        USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
+        DOMAIN: ${{ secrets.DOMAIN }}
+        SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
+        DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
+        ASPNETENVIRONMENT: Development
     - name: Download Artifacts
       uses: actions/download-artifact@v3
     - name: Deploy
@@ -32,20 +46,7 @@ jobs:
         cdk diff *
     
   #  - uses: actions/checkout@v3    
-    #- name: Replace tokens
-    #  uses: cschleiden/replace-tokens@v1.1
-    #  with:
-    #    tokenPrefix: '#{'
-    #    tokenSuffix: '}#'
-    #    files: '**/*/*.json'
-    #  env:
-    #    ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
-    #    USWEST1SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_1 }}
-    #    USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
-    #    DOMAIN: ${{ secrets.DOMAIN }}
-    #    SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
-    #    DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
-    #    ASPNETENVIRONMENT: Development
+
     
     
         #cdk diff *
