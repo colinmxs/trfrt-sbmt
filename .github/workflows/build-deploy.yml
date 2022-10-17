@@ -6,16 +6,16 @@ on:
     branches: [ main ]
 
 jobs:
-  run-tests:
-    runs-on: self-hosted    
-    steps:    
-    - name: Run Tests
-      run: |
-        dotnet test TrfrtSbmt.Tests
+  #run-tests:
+  #  runs-on: self-hosted    
+  #  steps:    
+  #  - name: Run Tests
+  #    run: |
+  #      dotnet test TrfrtSbmt.Tests
   build-assets:
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/build-assets.yml@tempdev  
   deploy:
-    needs: [ run-tests, build-assets ]        
+    needs: [ build-assets ]        
     strategy:
       matrix:
         env: [ Development ]
