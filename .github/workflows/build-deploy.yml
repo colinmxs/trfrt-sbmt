@@ -1,4 +1,4 @@
-name: Build
+name: Regional Api Pipeline
 on:
   push:
     branches: [ tempdev ]
