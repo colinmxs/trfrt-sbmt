@@ -37,7 +37,7 @@ public class RegionalStack : Stack
             table = new SubmissionsTable(this, "SubmissionsDynamoTable", new SubmissionsTableProps
             {
                 EnvironmentName = props.EnvironmentName,
-                RemovalPolicy = RemovalPolicy.RETAIN,
+                RemovalPolicy = props.EnvironmentName == "Production" ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
                 TableName = $"Submissions{props.EnvironmentSuffix}",
                 ReplicationRegion = "us-west-1"
             }).Table;
@@ -90,8 +90,7 @@ public class RegionalStack : Stack
                                 Resources = new string[]
                                 {
                                     table.TableArn,
-                                    table.TableArn + "/index/*",
-                                    table.TableStreamArn!
+                                    table.TableArn + "/index/*"
                                     //props.TestTable.TableArn,
                                     //props.TestTable.TableArn + "/index/*"
                                 }
