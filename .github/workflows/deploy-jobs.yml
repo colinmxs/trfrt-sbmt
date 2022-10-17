@@ -5,21 +5,7 @@ on:
       env:
         type: string
         required: true
-    secrets:
-      AWS_ACCOUNT_ID:
-        required: true
-      AWS_SSL_CERT_ID_US_WEST_1:
-        required: true
-      AWS_SSL_CERT_ID_US_WEST_2:
-        required: true
-      AWS_SSL_CERT_ID_US_GLOBAL:
-        required: true
-      DOMAIN:
-        required: true
-      SUBDOMAIN:
-        required: true
-      DISCORD_WEBHOOK_URL:
-        required: true
+    
 jobs:
   deploy:
     runs-on: self-hosted
