@@ -30,9 +30,9 @@ jobs:
     - name: Deploy Oregon
       run: |      
         cd TrfrtSbmt.Cdk
-        cdk deploy TrfrtSbmt-ApiStack-us-west-2-${{ inputs.env}}
+        cdk deploy TrfrtSbmt-ApiStack-us-west-2-${{ inputs.env}} --require-approval never
     - name: Deploy California
       run: |      
         cd TrfrtSbmt.Cdk
-        cdk deploy TrfrtSbmt-ApiStack-us-west-1-${{ inputs.env}}
+        cdk deploy TrfrtSbmt-ApiStack-us-west-1-${{ inputs.env}} --require-approval never
   
