@@ -46,7 +46,7 @@ public class RegionalStack : Stack
         }
         else
         {
-            table = Table.FromTableArn(this, "SubmissionsDynamoTable", $"arn:aws:dynamodb:{props.PrimaryRegion}:{accountId}:table/Submissions{props.EnvironmentSuffix}");
+            table = Table.FromTableArn(this, "SubmissionsDynamoTable", $"arn:aws:dynamodb:{props.Region}:{accountId}:table/Submissions{props.EnvironmentSuffix}");
         }
 
         var lambdaExecutionRole = new Role(this, "SubmissionsApiLambdaExecutionRole", new RoleProps
