@@ -11,7 +11,6 @@ jobs:
     steps:    
     - name: Run Tests
       run: |
-        dir
         dotnet test TrfrtSbmt.Tests
   build-assets:
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/build-assets.yml@tempdev  
