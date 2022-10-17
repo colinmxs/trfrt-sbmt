@@ -26,7 +26,7 @@ public class RegionalStack : Stack
     {
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
 
-        var s3Bucket = Bucket.FromBucketName(this, "SubmissionsBucket", props.EnvironmentName == "Production" ? "sbmt-api-1" : $"{ props.EnvironmentName}-sbmt-api-1");
+        var s3Bucket = Bucket.FromBucketName(this, "SubmissionsBucket", props.EnvironmentName == "Production" ? "sbmt-api-1" : $"{ props.EnvironmentName.ToLower()}-sbmt-api-1");
 
         var accountId = (string)scope.Node.TryGetContext("accountid");
         var domain = (string)scope.Node.TryGetContext("domain");
