@@ -52,7 +52,7 @@ public class RegionalStack : Stack
         var lambdaExecutionRole = new Role(this, "SubmissionsApiLambdaExecutionRole", new RoleProps
         {
             AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
-            RoleName = $"SubmissionsApiLambdaExecutionRole{props.EnvironmentSuffix}",
+            RoleName = $"SubmissionsApiLambdaExecutionRole-{props.Region}{props.EnvironmentSuffix}",
             InlinePolicies = new Dictionary<string, PolicyDocument>
             {
                 {
