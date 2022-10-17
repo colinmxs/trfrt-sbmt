@@ -98,7 +98,7 @@ public class RegionalStack : Stack
                                 {
                                     table.TableArn,
                                     table.TableArn + "/index/*",
-                                    table.TableStreamArn
+                                    //table.TableStreamArn
                                     //props.TestTable.TableArn,
                                     //props.TestTable.TableArn + "/index/*"
                                 }
