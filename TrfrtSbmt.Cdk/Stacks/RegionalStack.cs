@@ -54,7 +54,8 @@ public class RegionalStack : Stack
 
         if (table == null) throw new Exception("Table not found");
         if (table.TableArn == null) throw new Exception("Table ARN not found");
-
+        if (table.TableStreamArn == null) throw new Exception("Table Stream ARN not found");
+        
         var lambdaExecutionRole = new Role(this, "SubmissionsApiLambdaExecutionRole", new RoleProps
         {
             AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
