@@ -27,9 +27,6 @@ public class RegionalStack : Stack
         Amazon.CDK.Tags.Of(this).Add("Billing", "Treefort");
 
         var s3Bucket = Bucket.FromBucketName(this, "SubmissionsBucket", props.EnvironmentName == "Production" ? "sbmt-api-1" : "development-sbmt-api-1");
-        if (s3Bucket == null) throw new Exception("Bucket not found");
-        if (s3Bucket.BucketArn == null) throw new Exception("Bucket ARN not found");
-
 
         var accountId = (string)scope.Node.TryGetContext("accountid");
         var domain = (string)scope.Node.TryGetContext("domain");
@@ -52,10 +49,6 @@ public class RegionalStack : Stack
             table = Table.FromTableArn(this, "SubmissionsDynamoTable", $"arn:aws:dynamodb:{props.PrimaryRegion}:{accountId}:table/Submissions{props.EnvironmentSuffix}");
         }
 
-        if (table == null) throw new Exception("Table not found");
-        if (table.TableArn == null) throw new Exception("Table ARN not found");
-        if (table.TableStreamArn == null) throw new Exception("Table Stream ARN not found");
-        
         var lambdaExecutionRole = new Role(this, "SubmissionsApiLambdaExecutionRole", new RoleProps
         {
             AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
@@ -98,7 +91,7 @@ public class RegionalStack : Stack
                                 {
                                     table.TableArn,
                                     table.TableArn + "/index/*",
-                                    //table.TableStreamArn
+                                    table.TableStreamArn!
                                     //props.TestTable.TableArn,
                                     //props.TestTable.TableArn + "/index/*"
                                 }
