@@ -29,7 +29,7 @@ namespace TrfrtSbmt.Cdk.Constructs
                     Type = AttributeType.STRING
                 },
                 RemovalPolicy = props.RemovalPolicy,
-                TableName = $"{props.EnvironmentName}-{props.TableName}",
+                TableName = $"{props.TableName}-{props.EnvironmentName}",
                 Stream = StreamViewType.NEW_AND_OLD_IMAGES,
                 ReplicationRegions = new[] { props.ReplicationRegion }
             });
