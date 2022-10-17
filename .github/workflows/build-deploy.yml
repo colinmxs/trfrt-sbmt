@@ -18,7 +18,7 @@ jobs:
         name: TrfrtSbmt.Tests
     - name: Run Tests
       run: |
-        dotnet test TrfrtSbmt.Tests
+        dotnet test --no-build TrfrtSbmt.Tests
   deploy:
     needs: run-tests        
     strategy:
