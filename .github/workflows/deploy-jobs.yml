@@ -27,8 +27,12 @@ jobs:
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
         DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
         ASPNETENVIRONMENT: ${{ inputs.env}}    
-    - name: Deploy
+    - name: Deploy Oregon
       run: |      
         cd TrfrtSbmt.Cdk
-        cdk deploy * --require-approval never
+        cdk deploy TrfrtSbmt-ApiStack-us-west-2-${{ inputs.env}}
+    - name: Deploy California
+      run: |      
+        cd TrfrtSbmt.Cdk
+        cdk deploy TrfrtSbmt-ApiStack-us-west-1-${{ inputs.env}}
   
