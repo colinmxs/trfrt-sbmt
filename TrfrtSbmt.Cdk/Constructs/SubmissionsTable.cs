@@ -8,6 +8,7 @@ namespace TrfrtSbmt.Cdk.Constructs
         public string EnvironmentName { get; set; } = "Development";
         public string TableName { get; set; } = "Submissions";
         public RemovalPolicy RemovalPolicy { get; set; }
+        public string ReplicationRegion { get; internal set; }
     }
     public class SubmissionsTable : Construct
     {
@@ -29,7 +30,8 @@ namespace TrfrtSbmt.Cdk.Constructs
                 },
                 RemovalPolicy = props.RemovalPolicy,
                 TableName = $"{props.EnvironmentName}-{props.TableName}",
-                Stream = StreamViewType.NEW_IMAGE                
+                Stream = StreamViewType.NEW_IMAGE,
+                ReplicationRegions = new[] { props.ReplicationRegion }
             });
 
             Tags.Of(Table).Add("Name", $"{props.EnvironmentName}-{props.TableName}");

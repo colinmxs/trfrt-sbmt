@@ -21,6 +21,7 @@ jobs:
         ACCOUNTID: ${{ secrets.AWS_ACCOUNT_ID }}
         USWEST1SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_1 }}
         USWEST2SSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
+        GLOBALSSLCERTID: ${{ secrets.AWS_SSL_CERT_ID_GLOBAL }}
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
         DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}

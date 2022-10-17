@@ -10,6 +10,9 @@
     "us-west-2": {
       "sslcertid": "#{USWEST2SSLCERTID}#"
     },
+    "global": {
+      "sslcertid": "#{GLOBALSSLCERTID}#"
+    },
     "asp_env": "#{ASPNETENVIRONMENT}#"
   }
 }

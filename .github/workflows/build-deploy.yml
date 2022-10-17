@@ -26,4 +26,4 @@ jobs:
         env: [ Development ]
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev
     with:
-      env: $${{ matrix.env }}
+      env: ${{ matrix.env }}
