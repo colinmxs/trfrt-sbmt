@@ -9,7 +9,7 @@ var envSuffix = $"-{env}";
 var globalConfig = (Dictionary<string, object>)app.Node.TryGetContext("global");
 var globalCertId = (string)globalConfig["sslcertid"];
 
-foreach (var region in new[] {"us-west-2", "us-west-1" })
+foreach (var region in new[] {"us-west-2" })
 {
     var regionConfig = (Dictionary<string, object>)app.Node.TryGetContext(region);
     var regionCertId = (string)regionConfig["sslcertid"];
