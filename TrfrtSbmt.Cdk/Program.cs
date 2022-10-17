@@ -13,7 +13,7 @@ foreach (var region in new[] {"us-west-2", "us-west-1" })
 {
     var regionConfig = (Dictionary<string, object>)app.Node.TryGetContext(region);
     var regionCertId = (string)regionConfig["sslcertid"];
-    var api = new RegionalStack(app, $"TrfrtSbmt-ApiStack{envSuffix}", new RegionalStack.RegionalStackProps
+    var api = new RegionalStack(app, $"TrfrtSbmt-ApiStack-{region}{envSuffix}", new RegionalStack.RegionalStackProps
     {
         Env = new Amazon.CDK.Environment { Region = region, Account = accountId },
         RegionalCertId = regionCertId,
