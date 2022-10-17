@@ -22,3 +22,10 @@ jobs:
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev
     with:
       env: ${{ matrix.env }}
+      AWS_ACCOUNT_ID: ${{ secrets.AWS_ACCOUNT_ID }}
+      AWS_SSL_CERT_ID_US_WEST_1: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_1 }}
+      AWS_SSL_CERT_ID_US_WEST_2: ${{ secrets.AWS_SSL_CERT_ID_US_WEST_2 }}
+      AWS_SSL_CERT_ID_GLOBAL: ${{ secrets.AWS_SSL_CERT_ID_GLOBAL }}
+      DOMAIN: ${{ secrets.DOMAIN }}
+      SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
+      DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL}}
