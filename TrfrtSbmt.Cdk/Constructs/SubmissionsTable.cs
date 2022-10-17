@@ -30,7 +30,7 @@ namespace TrfrtSbmt.Cdk.Constructs
                 },
                 RemovalPolicy = props.RemovalPolicy,
                 TableName = $"{props.EnvironmentName}-{props.TableName}",
-                Stream = StreamViewType.NEW_IMAGE,
+                Stream = StreamViewType.NEW_AND_OLD_IMAGES,
                 ReplicationRegions = new[] { props.ReplicationRegion }
             });
 
