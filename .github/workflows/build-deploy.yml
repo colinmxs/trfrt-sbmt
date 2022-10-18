@@ -13,7 +13,26 @@ jobs:
   #    run: |
   #      dotnet test TrfrtSbmt.Tests
   build-assets:
-    uses: colinmxs/trfrt-sbmt-api/.github/workflows/build-assets.yml@tempdev  
+    runs-on: 'self-hosted'
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build
+        run: |
+          dotnet publish trfrt-sbmt.sln --configuration Release
+      - name: Zip Release
+        run: |
+          mkdir trfrt-sbmt
+          Xcopy /E /I TrfrtSbmt.Api/bin/Release/net6.0/publish trfrt-sbmt/TrfrtSbmt.Api
+          Xcopy /E /I TrfrtSbmt.Cdk/bin/Release/net6.0/publish trfrt-sbmt/TrfrtSbmt.Cdk
+          Xcopy /E /I TrfrtSbmt.VoteStreamProcessor/bin/Release/net6.0/publish trfrt-sbmt/TrfrtSbmt.VoteStreamProcessor
+          tar.exe -a -c -f trfrt-sbmt.zip trfrt-sbmt
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3.1.0
+        with:
+          name: trfrt-sbmt.zip
+          path: trfrt-sbmt.zip
+          retention-days: 1        
+    #uses: colinmxs/trfrt-sbmt-api/.github/workflows/build-assets.yml@tempdev  
   deploy:
     needs: [ build-assets ]        
     strategy:
