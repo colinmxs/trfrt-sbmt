@@ -180,7 +180,7 @@ public class RegionalStack : Stack
             DomainName = new DomainNameOptions
             {
                 Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:{props.Region}:{accountId}:certificate/{props.RegionalCertId}"),
-                DomainName = $"{props.EnvironmentSuffix.ToLower()}{subdomain}.{domain}",
+                DomainName = $"{subdomain}{props.EnvironmentSuffix.ToLower()}.{domain}",
                 EndpointType = EndpointType.REGIONAL,
                 SecurityPolicy = SecurityPolicy.TLS_1_2
             }
@@ -206,7 +206,7 @@ public class RegionalStack : Stack
                 DomainName = domain
             }),
             Target = RecordTarget.FromAlias(new ApiGateway(restApi)),
-            RecordName = $"{props.EnvironmentSuffix.ToLower()}{subdomain}.{domain}"
+            RecordName = $"{subdomain}{props.EnvironmentSuffix.ToLower()}.{domain}"
         });
         Amazon.CDK.Tags.Of(route53).Add("Name", domain);
         Amazon.CDK.Tags.Of(route53).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
