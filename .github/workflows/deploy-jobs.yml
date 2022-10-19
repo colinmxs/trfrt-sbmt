@@ -11,10 +11,7 @@ jobs:
     runs-on: self-hosted
     steps:
     - name: Download Artifacts
-      uses: actions/download-artifact@v3
-    - name: Unzip Artifacts with PowerShell
-      run: |
-        tar -xzvf trfrt-sbmt.zip
+      uses: actions/download-artifact@v3    
     - name: Replace tokens
       uses: cschleiden/replace-tokens@v1.1
       with:

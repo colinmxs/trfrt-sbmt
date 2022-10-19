@@ -19,19 +19,17 @@ jobs:
       - name: Build
         run: |
           dotnet publish trfrt-sbmt.sln --configuration Release
-      - name: Zip Release
+      - name: Organize Release
         run: |
-          dir
           mkdir trfrt-sbmt 
           Xcopy /E /I "TrfrtSbmt.Api\bin\Release\net6.0\publish" "trfrt-sbmt\TrfrtSbmt.Api" 
           Xcopy /E /I "TrfrtSbmt.Cdk\bin\Release\net6.0\publish" "trfrt-sbmt\TrfrtSbmt.Cdk" 
-          Xcopy /E /I "TrfrtSbmt.VoteStreamProcessor\bin\Release\net6.0\publish" "trfrt-sbmt\TrfrtSbmt.VoteStreamProcessor" 
-          tar.exe -a -c -f trfrt-sbmt.zip trfrt-sbmt
+          Xcopy /E /I "TrfrtSbmt.VoteStreamProcessor\bin\Release\net6.0\publish" "trfrt-sbmt\TrfrtSbmt.VoteStreamProcessor"           
       - name: Upload Artifact
         uses: actions/upload-artifact@v3.1.0
         with:
-          name: trfrt-sbmt.zip
-          path: trfrt-sbmt.zip
+          name: trfrt-sbmt
+          path: trfrt-sbmt
           retention-days: 1      
     #uses: colinmxs/trfrt-sbmt-api/.github/workflows/build-assets.yml@tempdev  
   deploy:
