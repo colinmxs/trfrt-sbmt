@@ -12,9 +12,9 @@ jobs:
     steps:
     - name: Download Artifacts
       uses: actions/download-artifact@v3
-    - name: Unzip Artifacts
+    - name: Unzip Artifacts with PowerShell
       run: |
-        Expand-Archive -LiteralPath "C:\actions-runner-1\_work\trfrt-sbmt-api\trfrt-sbmt-api\trfrt-sbmt.zip" -Destination _artifacts
+        Expand-Archive .\trfrt-sbmt.zip -DestinationPath .
     - name: Replace tokens
       uses: cschleiden/replace-tokens@v1.1
       with:
