@@ -12,6 +12,9 @@ jobs:
     steps:
     - name: Download Artifacts
       uses: actions/download-artifact@v3
+    - name: Unzip Artifacts
+      run: |
+        tar.exe -a -x -f trfrt-sbmt.zip
     - name: Replace tokens
       uses: cschleiden/replace-tokens@v1.1
       with:
