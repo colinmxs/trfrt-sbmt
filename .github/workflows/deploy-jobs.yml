@@ -14,8 +14,6 @@ jobs:
       uses: actions/download-artifact@v3
     - name: Unzip Artifacts with PowerShell
       run: |
-        dir
-
         Expand-Archive .\trfrt-sbmt.zip -DestinationPath .
     - name: Replace tokens
       uses: cschleiden/replace-tokens@v1.1
