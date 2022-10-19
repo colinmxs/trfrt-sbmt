@@ -14,7 +14,7 @@ jobs:
       uses: actions/download-artifact@v3
     - name: Unzip Artifacts
       run: |
-        Expand-Archive -LiteralPath trfrt-sbmt.zip -Destination _artifacts
+        Expand-Archive -LiteralPath "C:\actions-runner-1\_work\trfrt-sbmt-api\trfrt-sbmt-api\trfrt-sbmt.zip" -Destination _artifacts
     - name: Replace tokens
       uses: cschleiden/replace-tokens@v1.1
       with:
