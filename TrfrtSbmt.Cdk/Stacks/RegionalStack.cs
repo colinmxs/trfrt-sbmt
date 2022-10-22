@@ -210,56 +210,48 @@ public class RegionalStack : Stack
         recordSet.Region = props.Region;
         recordSet.HealthCheckId = healthCheck.AttrHealthCheckId;
         recordSet.SetIdentifier = $"{props.Region}-Endpoint";
-
-
-
-        //lambdaExecutionRole = new Role(this, "ApiLambdaExecutionRole", new RoleProps
-        //{
-        //    AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
-        //    RoleName = $"{props.EnvironmentSuffix}{props.Name}LambdaExecutionRole",
-        //    InlinePolicies = new Dictionary<string, PolicyDocument>
-        //    {
-        //        {
-        //            "cloudwatch-policy",
-        //            new PolicyDocument(
-        //                new PolicyDocumentProps {
-        //                    AssignSids = true,
-        //                    Statements = new [] {
-        //                        new PolicyStatement(new PolicyStatementProps {
-        //                            Effect = Effect.ALLOW,
-        //                            Actions = new string[] {
-        //                                "logs:CreateLogStream",
-        //                                "logs:PutLogEvents",
-        //                                "logs:CreateLogGroup"
-        //                            },
-        //                            Resources = new string[] {
-        //                                "arn:aws:logs:*:*:*"
-        //                            }
-        //                        })
-        //                    }
-        //                })
-        //        }
-        //    }
-        //});
-        //Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Name", $"{props.EnvironmentSuffix}{props.Name}LambdaExecutionRole");
-        //Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
-
-        //var targetFunction = new Function(this, "VoteStream.Function", new FunctionProps
-        //{
-        //    Runtime = Runtime.DOTNET_6,
-        //    Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.VoteStreamProcessor")}"),
-        //    Handler = "TrfrtSbmt.VoteStreamProcessor",
-        //    Timeout = Duration.Seconds(10),
-        //    FunctionName = $"{props.EnvironmentSuffix}{props.Name}LambdaFunction",
-        //    MemorySize = 2048,
-        //    RetryAttempts = 1,
-        //    Role = lambdaExecutionRole,
-        //    Environment = new Dictionary<string, string>
-        //    {
-        //        ["ASPNETCORE_ENVIRONMENT"] = props.EnvironmentName
-        //    }
-        //});
-        //Amazon.CDK.Tags.Of(targetFunction).Add("Name", $"{props.EnvironmentSuffix}{props.Name}LambdaFunction");
-        //Amazon.CDK.Tags.Of(targetFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+        
+        var targetFunction = new Function(this, "VoteStream.Function", new FunctionProps
+        {
+            Runtime = Runtime.DOTNET_6,
+            Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.VoteStreamProcessor")}"),
+            Handler = "TrfrtSbmt.VoteStreamProcessor",
+            Timeout = Duration.Seconds(10),
+            FunctionName = $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}",
+            MemorySize = 2048,
+            RetryAttempts = 1,
+            Role = new Role(this, "ApiLambdaExecutionRole", new RoleProps
+            {
+                AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
+                RoleName = $"SubmissionsVoteProcessorExecutionRole-{props.Region}{props.EnvironmentSuffix}",
+                InlinePolicies = new Dictionary<string, PolicyDocument>
+                {
+                    ["cloudwatch-policy"] =
+                    new PolicyDocument(
+                        new PolicyDocumentProps {
+                            AssignSids = true,
+                            Statements = new [] {
+                                new PolicyStatement(new PolicyStatementProps {
+                                    Effect = Effect.ALLOW,
+                                    Actions = new string[] {
+                                        "logs:CreateLogStream",
+                                        "logs:PutLogEvents",
+                                        "logs:CreateLogGroup"
+                                    },
+                                    Resources = new string[] {
+                                        "arn:aws:logs:*:*:*"
+                                    }
+                                })
+                            }
+                        })
+                }
+            }),
+            Environment = new Dictionary<string, string>
+            {
+                ["ASPNETCORE_ENVIRONMENT"] = props.EnvironmentName
+            }
+        });
+        Amazon.CDK.Tags.Of(targetFunction).Add("Name", $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}");
+        Amazon.CDK.Tags.Of(targetFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
     }
 }
