@@ -40,7 +40,7 @@ jobs:
       github_env: dev
     secrets: inherit
   deploy-prod:
-    needs:  build-assets         
+    needs:  deploy-dev
     uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev    
     with:
       env: Production
