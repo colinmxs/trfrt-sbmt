@@ -5,10 +5,14 @@ on:
       env:
         type: string
         required: true
+      github_env:
+        type: string
+        required: true
     
 jobs:
-  deploy:
+  deploy:    
     runs-on: self-hosted
+    environment: ${{ inputs.github_env }}
     steps:
     - name: Download Artifacts
       uses: actions/download-artifact@v3    

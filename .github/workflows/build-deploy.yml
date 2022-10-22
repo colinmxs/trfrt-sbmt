@@ -34,7 +34,15 @@ jobs:
           retention-days: 1      
   deploy-dev:
     needs:  build-assets         
-    uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev
+    uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev    
     with:
       env: Development
+      github_env: dev
+    secrets: inherit
+  deploy-prod:
+    needs:  build-assets         
+    uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev    
+    with:
+      env: Production
+      github_env: prod
     secrets: inherit

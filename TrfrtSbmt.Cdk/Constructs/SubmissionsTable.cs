@@ -5,7 +5,6 @@ namespace TrfrtSbmt.Cdk.Constructs
 {
     public class SubmissionsTableProps
     {
-        public string EnvironmentName { get; set; } = "Development";
         public string TableName { get; set; } = "Submissions";
         public RemovalPolicy RemovalPolicy { get; set; }
         public string ReplicationRegion { get; internal set; }
@@ -33,9 +32,6 @@ namespace TrfrtSbmt.Cdk.Constructs
                 Stream = StreamViewType.NEW_AND_OLD_IMAGES,
                 ReplicationRegions = new[] { props.ReplicationRegion }
             });
-
-            Tags.Of(Table).Add("Name", $"{props.EnvironmentName}-{props.TableName}");
-            Tags.Of(Table).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
             Table.AddLocalSecondaryIndex(new LocalSecondaryIndexProps
             {

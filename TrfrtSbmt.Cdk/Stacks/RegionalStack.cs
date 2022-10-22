@@ -36,7 +36,6 @@ public class RegionalStack : Stack
         {
             table = new SubmissionsTable(this, "SubmissionsDynamoTable", new SubmissionsTableProps
             {
-                EnvironmentName = props.EnvironmentName,
                 RemovalPolicy = props.EnvironmentName == "Production" ? RemovalPolicy.RETAIN : RemovalPolicy.DESTROY,
                 TableName = $"Submissions{props.EnvironmentSuffix}",
                 ReplicationRegion = "us-west-1"
@@ -55,86 +54,78 @@ public class RegionalStack : Stack
             RoleName = $"SubmissionsApiLambdaExecutionRole-{props.Region}{props.EnvironmentSuffix}",
             InlinePolicies = new Dictionary<string, PolicyDocument>
             {
+                ["cloudwatch-policy"] =
+                new PolicyDocument(new PolicyDocumentProps
                 {
-                    "cloudwatch-policy",
-                    new PolicyDocument(new PolicyDocumentProps
+                    AssignSids = true,
+                    Statements = new []
                     {
-                        AssignSids = true,
-                        Statements = new []
+                        new PolicyStatement(new PolicyStatementProps {
+                            Effect = Effect.ALLOW,
+                            Actions = new string[] {
+                                "logs:CreateLogStream",
+                                "logs:PutLogEvents",
+                                "logs:CreateLogGroup"
+                            },
+                            Resources = new string[] {
+                                "arn:aws:logs:*:*:*"
+                            }
+                        })
+                    }
+                }),
+                ["dynamodb-policy"] =
+                new PolicyDocument(new PolicyDocumentProps
+                {
+                    AssignSids = true,
+                    Statements = new []
+                    {
+                        new PolicyStatement(new PolicyStatementProps
                         {
-                            new PolicyStatement(new PolicyStatementProps {
-                                Effect = Effect.ALLOW,
-                                Actions = new string[] {
-                                    "logs:CreateLogStream",
-                                    "logs:PutLogEvents",
-                                    "logs:CreateLogGroup"
-                                },
-                                Resources = new string[] {
-                                    "arn:aws:logs:*:*:*"
-                                }
-                            })
-                        }
-                    })
-                },
+                            Effect = Effect.ALLOW,
+                            Actions = new string[] { "dynamodb:*" },
+                            Resources = new string[]
+                            {
+                                table.TableArn,
+                                table.TableArn + "/index/*"
+                                //props.TestTable.TableArn,
+                                //props.TestTable.TableArn + "/index/*"
+                            }
+                        })
+                    }
+                }),
+                ["s3-policy"] =
+                new PolicyDocument(new PolicyDocumentProps
                 {
-                    "dynamodb-policy",
-                    new PolicyDocument(new PolicyDocumentProps
-                    {
-                        AssignSids = true,
-                        Statements = new []
+                    AssignSids = true,
+                    Statements = new []
+                    {                            
+                        new PolicyStatement(new PolicyStatementProps
                         {
-                            new PolicyStatement(new PolicyStatementProps
+                            Effect = Effect.ALLOW,
+                            Actions = new string[] { "s3:*" },
+                            Resources = new string[]
                             {
-                                Effect = Effect.ALLOW,
-                                Actions = new string[] { "dynamodb:*" },
-                                Resources = new string[]
-                                {
-                                    table.TableArn,
-                                    table.TableArn + "/index/*"
-                                    //props.TestTable.TableArn,
-                                    //props.TestTable.TableArn + "/index/*"
-                                }
-                            })
-                        }
-                    })
-                },
+                                s3Bucket.BucketArn,
+                                s3Bucket.BucketArn + "/*"
+                            }
+                        })
+                    }
+                }),                
+                ["ses-policy"] =
+                new PolicyDocument(new PolicyDocumentProps
                 {
-                    "s3-policy",
-                    new PolicyDocument(new PolicyDocumentProps
+                    AssignSids = true,
+                    Statements = new []
                     {
-                        AssignSids = true,
-                        Statements = new []
-                        {                            
-                            new PolicyStatement(new PolicyStatementProps
-                            {
-                                Effect = Effect.ALLOW,
-                                Actions = new string[] { "s3:*" },
-                                Resources = new string[]
-                                {
-                                    s3Bucket.BucketArn,
-                                    s3Bucket.BucketArn + "/*"
-                                }
-                            })
-                        }
-                    })
-                },
-                {
-                    "ses-policy",
-                    new PolicyDocument(new PolicyDocumentProps
-                    {
-                        AssignSids = true,
-                        Statements = new []
+                        new PolicyStatement(new PolicyStatementProps
                         {
-                            new PolicyStatement(new PolicyStatementProps
-                            {
-                                Effect = Effect.ALLOW,
-                                Actions = new string[] { "ses:SendEmail", "ses:VerifyEmailIdentity" },
-                                Resources = new string[] { "*" }
-                            })
-                        }
-                    })
-                }
-            }
+                            Effect = Effect.ALLOW,
+                            Actions = new string[] { "ses:SendEmail", "ses:VerifyEmailIdentity" },
+                            Resources = new string[] { "*" }
+                        })
+                    }
+                })
+            }           
         });
         Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Name", $"SubmissionsApiLambdaExecutionRole{props.EnvironmentSuffix}");
         Amazon.CDK.Tags.Of(lambdaExecutionRole).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
