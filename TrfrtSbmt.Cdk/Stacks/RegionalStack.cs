@@ -135,7 +135,7 @@ public class RegionalStack : Stack
             Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.Api")}"),
             Handler = "TrfrtSbmt.Api",
             Runtime = Runtime.DOTNET_6,
-            Timeout = Duration.Seconds(10),
+            Timeout = Duration.Seconds(60),
             FunctionName = $"SubmissionsApiLambdaFunction{props.EnvironmentSuffix}",
             MemorySize = 2048,
             RetryAttempts = 1,
