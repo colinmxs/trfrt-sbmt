@@ -116,22 +116,7 @@ namespace TrfrtSbmt.Cdk.Constructs
                     Type = AttributeType.STRING
                 }
             });
-
-            Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
-            {
-                IndexName = "CreatedByIndex",
-                PartitionKey = new Attribute
-                {
-                    Name = "CreatedBy",
-                    Type = AttributeType.STRING
-                },
-                SortKey = new Attribute
-                {
-                    Name = "EntityType",
-                    Type = AttributeType.STRING
-                }
-            });
-
+            
             Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
             {
                 IndexName = "Rank",
