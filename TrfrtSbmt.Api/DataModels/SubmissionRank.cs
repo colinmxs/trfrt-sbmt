@@ -8,7 +8,7 @@ public class SubmissionRank : BaseEntity
 
     public SubmissionRank(Dictionary<string, AttributeValue> values) : base(values) { }
     
-    public SubmissionRank(Submission submission, decimal rank, decimal count) : base(submission.EntityId, submission.Name, nameof(SubmissionRank), "SYSTEM")
+    public SubmissionRank(Submission submission, decimal rank, decimal count) : base(submission.EntityId, submission.EntityId, submission.Name, nameof(SubmissionRank), "SYSTEM")
     {
         _attributes[nameof(AverageScore)] = new AttributeValue { N = rank.ToString() };
         _attributes[nameof(NumberOfVotes)] = new AttributeValue { N = count.ToString() };

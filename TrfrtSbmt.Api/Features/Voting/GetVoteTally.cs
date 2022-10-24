@@ -20,8 +20,15 @@ namespace TrfrtSbmt.Api.Features.Voting
             
             public async Task<List<VoteTallyResult>> Handle(GetVoteTallyQuery request, CancellationToken cancellationToken)
             {
-                var queryResult = await new DynamoDbQueries.VoteTallyQuery(_db, _settings).ExecuteAsync(request.FortId);
-                var ranks = queryResult.Items.Select(i => new SubmissionRank(i));
+                var queryResult = await new DynamoDbQueries.VoteTallyQuery(_db, _settings).ExecuteAsync(request.FortId, new Dictionary<string, Amazon.DynamoDBv2.Model.AttributeValue>());
+                var ranks = queryResult.Items.Select(i => new SubmissionRank(i)).ToList();
+
+                if (queryResult.LastEvaluatedKey.Any())
+                {
+                    queryResult = await new DynamoDbQueries.VoteTallyQuery(_db, _settings).ExecuteAsync(request.FortId, queryResult.LastEvaluatedKey);
+                    ranks.AddRange(queryResult.Items.Select(i => new SubmissionRank(i)));
+                }
+
                 return ranks.Select(r => new VoteTallyResult(r.SubmissionEntityId, r.Name, r.State, r.City, r.Country, r.Image, r.FortId, r.Rank, r.NumberOfVotes)).ToList();
             }
         }
