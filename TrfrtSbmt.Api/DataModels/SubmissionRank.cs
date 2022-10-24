@@ -32,6 +32,6 @@ public class SubmissionRank : BaseEntity
     public string Image => _attributes[nameof(Image)].S;
     public string FortId => _attributes[nameof(FortId)].S;
     public string Location => _attributes[nameof(Location)].S;
-    public string Rank => _attributes[nameof(Rank)].N.ToString();
+    public string Rank => _attributes[nameof(Rank)].S.ToString();
     public string LocationRank => _attributes[nameof(LocationRank)].S;
 }
