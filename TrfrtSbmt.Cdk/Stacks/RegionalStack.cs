@@ -210,27 +210,30 @@ public class RegionalStack : Stack
         recordSet.Region = props.Region;
         recordSet.HealthCheckId = healthCheck.AttrHealthCheckId;
         recordSet.SetIdentifier = $"{props.Region}-Endpoint";
-        
-        var targetFunction = new Function(this, "VoteStream.Function", new FunctionProps
+
+        if (props.Region == props.PrimaryRegion)
         {
-            Runtime = Runtime.DOTNET_6,
-            Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.VoteStreamProcessor")}"),
-            Handler = "TrfrtSbmt.VoteStreamProcessor",
-            Timeout = Duration.Seconds(10),
-            FunctionName = $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}",
-            MemorySize = 2048,
-            RetryAttempts = 1,
-            Role = new Role(this, "ApiLambdaExecutionRole", new RoleProps
+            var targetFunction = new Function(this, "VoteStream.Function", new FunctionProps
             {
-                AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
-                RoleName = $"SubmissionsVoteProcessorExecutionRole-{props.Region}{props.EnvironmentSuffix}",
-                InlinePolicies = new Dictionary<string, PolicyDocument>
+                Runtime = Runtime.DOTNET_6,
+                Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.VoteStreamProcessor")}"),
+                Handler = "TrfrtSbmt.VoteStreamProcessor",
+                Timeout = Duration.Seconds(10),
+                FunctionName = $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}",
+                MemorySize = 2048,
+                RetryAttempts = 1,
+                Role = new Role(this, "ApiLambdaExecutionRole", new RoleProps
                 {
-                    ["cloudwatch-policy"] =
+                    AssumedBy = new ServicePrincipal("lambda.amazonaws.com"),
+                    RoleName = $"SubmissionsVoteProcessorExecutionRole-{props.Region}{props.EnvironmentSuffix}",
+                    InlinePolicies = new Dictionary<string, PolicyDocument>
+                    {
+                        ["cloudwatch-policy"] =
                     new PolicyDocument(
-                        new PolicyDocumentProps {
+                        new PolicyDocumentProps
+                        {
                             AssignSids = true,
-                            Statements = new [] {
+                            Statements = new[] {
                                 new PolicyStatement(new PolicyStatementProps {
                                     Effect = Effect.ALLOW,
                                     Actions = new string[] {
@@ -244,14 +247,23 @@ public class RegionalStack : Stack
                                 })
                             }
                         })
+                    }
+                }),
+                Environment = new Dictionary<string, string>
+                {
+                    ["ASPNETCORE_ENVIRONMENT"] = props.EnvironmentName
                 }
-            }),
-            Environment = new Dictionary<string, string>
+            });
+            Amazon.CDK.Tags.Of(targetFunction).Add("Name", $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}");
+            Amazon.CDK.Tags.Of(targetFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+
+            var eventSourceMapping = new CfnEventSourceMapping(this, "VoteStream.EventSourceMapping", new CfnEventSourceMappingProps
             {
-                ["ASPNETCORE_ENVIRONMENT"] = props.EnvironmentName
-            }
-        });
-        Amazon.CDK.Tags.Of(targetFunction).Add("Name", $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}");
-        Amazon.CDK.Tags.Of(targetFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
+                BatchSize = 1,
+                EventSourceArn = $"arn:aws:kinesis:{props.Region}:{accountId}:stream/SubmissionsVoteStream{props.EnvironmentSuffix}",
+                FunctionName = targetFunction.FunctionName,
+                StartingPosition = "LATEST"
+            });
+        }
     }
 }
