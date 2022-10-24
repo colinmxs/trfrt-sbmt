@@ -23,7 +23,7 @@ public class UpdateVoteTally
             // scan table get all data
             var scanResult = await _db.ScanAsync(new ScanRequest(_settings.TableName), cancellationToken);
             var items = scanResult.Items;
-            while (scanResult.LastEvaluatedKey != null)
+            while (!scanResult.LastEvaluatedKey.Any())
             {
                 scanResult = await _db.ScanAsync(new ScanRequest(_settings.TableName)
                 {
