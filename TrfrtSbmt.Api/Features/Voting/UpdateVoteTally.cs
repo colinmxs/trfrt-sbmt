@@ -41,7 +41,7 @@ public class UpdateVoteTally
                 if (submission == null) continue;
                 var submissionModel = new Submission(submission);
                 var submissionVotes = group.ToList();
-                var rank = submissionVotes.Sum(v => v.Value) / group.Count();
+                decimal rank = submissionVotes.Sum(v => v.Value) / group.Count();
                 var submissionRank = new SubmissionRank(submissionModel, rank, group.Count());
                 await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submissionRank.ToDictionary()), cancellationToken);
             }

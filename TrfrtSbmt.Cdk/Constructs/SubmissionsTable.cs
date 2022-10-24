@@ -119,7 +119,7 @@ namespace TrfrtSbmt.Cdk.Constructs
 
             Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
             {
-                IndexName = "Rank",
+                IndexName = "AverageScoreIndex",
                 PartitionKey = new Attribute
                 {
                     Name = "FortId",
@@ -127,7 +127,7 @@ namespace TrfrtSbmt.Cdk.Constructs
                 },
                 SortKey = new Attribute
                 {
-                    Name = "Rank",
+                    Name = "AverageScore",
                     Type = AttributeType.NUMBER
                 }
             });

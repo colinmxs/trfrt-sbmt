@@ -10,6 +10,7 @@ public class SubmissionRank : BaseEntity
     
     public SubmissionRank(Submission submission, decimal rank, decimal count) : base(submission.EntityId, submission.Name, nameof(SubmissionRank), "SYSTEM")
     {
+        _attributes[nameof(AverageScore)] = new AttributeValue { N = rank.ToString() };
         _attributes[nameof(NumberOfVotes)] = new AttributeValue { N = count.ToString() };
         _attributes[nameof(SubmissionEntityId)] = new AttributeValue(submission.EntityId);
         _attributes[nameof(State)] = new AttributeValue(submission.State);
@@ -18,10 +19,11 @@ public class SubmissionRank : BaseEntity
         _attributes[nameof(Image)] = new AttributeValue(submission.Image);
         _attributes[nameof(FortId)] = new AttributeValue(submission.FortId);
         _attributes[nameof(Location)] = new AttributeValue { S = $"{Country}{State}{City}" };
-        _attributes[nameof(Rank)] = new AttributeValue { N = rank.ToString() };
+        _attributes[nameof(Rank)] = new AttributeValue { S = rank.ToString() };
         _attributes[nameof(LocationRank)] = new AttributeValue { S = $"{Country}{State}{City}-{rank.ToString()}" };
     }
 
+    public string AverageScore => _attributes[nameof(AverageScore)].N.ToString();
     public string NumberOfVotes => _attributes[nameof(NumberOfVotes)].N.ToString();
     public string SubmissionEntityId => _attributes[nameof(SubmissionEntityId)].S;
     public string State => _attributes[nameof(State)].S;

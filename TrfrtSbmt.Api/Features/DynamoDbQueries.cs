@@ -170,7 +170,7 @@ public class DynamoDbQueries
                 {
                     {":pk", new AttributeValue(fortId)}
                 },
-                IndexName = "Rank"
+                IndexName = "AverageScoreIndex"
             });
         }
     }
