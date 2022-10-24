@@ -33,7 +33,10 @@ builder.Services.AddTransient(s =>
     return user ?? throw new System.Exception("User not resolved");
 });
 builder.Services.AddAWSService<IAmazonDynamoDB>();
-builder.Services.AddAWSService<IAmazonS3>();
+builder.Services.AddAWSService<IAmazonS3>(new AWSOptions
+{
+    Region = RegionEndpoint.USWest2
+});
 builder.Services.AddAWSService<IAmazonSimpleEmailServiceV2>(new AWSOptions
 {
     Region = RegionEndpoint.USWest2
