@@ -116,21 +116,21 @@ namespace TrfrtSbmt.Cdk.Constructs
                     Type = AttributeType.STRING
                 }
             });
-            
-            //Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
-            //{
-            //    IndexName = "Rank",
-            //    PartitionKey = new Attribute
-            //    {
-            //        Name = "FortId",
-            //        Type = AttributeType.STRING
-            //    },
-            //    SortKey = new Attribute
-            //    {
-            //        Name = "Rank",
-            //        Type = AttributeType.NUMBER
-            //    }
-            //});
+
+            Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+            {
+                IndexName = "Rank",
+                PartitionKey = new Attribute
+                {
+                    Name = "FortId",
+                    Type = AttributeType.STRING
+                },
+                SortKey = new Attribute
+                {
+                    Name = "Rank",
+                    Type = AttributeType.NUMBER
+                }
+            });
         }
     }
 }
