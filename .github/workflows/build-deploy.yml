@@ -1,8 +1,6 @@
 name: Regional Api Pipeline
 on:
   push:
-    branches: [ tempdev ]
-  pull_request:
     branches: [ main ]
 
 jobs:
@@ -34,14 +32,14 @@ jobs:
           retention-days: 1      
   deploy-dev:
     needs:  build-assets         
-    uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev    
+    uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@main    
     with:
       env: Development
       github_env: dev
     secrets: inherit
   deploy-prod:
     needs:  deploy-dev
-    uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@tempdev    
+    uses: colinmxs/trfrt-sbmt-api/.github/workflows/deploy-jobs.yml@main    
     with:
       env: Production
       github_env: prod
