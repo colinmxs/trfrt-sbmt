@@ -240,9 +240,9 @@ app.MapGet("/festivals/{festivalId}/forts/{fortId}/vote-tally", async (string fe
     return await mediator.Send(new GetVoteTally.GetVoteTallyQuery(festivalId, fortId));
 }).RequireAuthorization("admin");
 
-app.MapPost("/vote-tally", async (string festivalId, string fortId, [FromServices] IMediator mediator) =>
+app.MapPost("/vote-tally", async ([FromServices] IMediator mediator) =>
 {
-    return await mediator.Send(new GetVoteTally.GetVoteTallyQuery(festivalId, fortId));
+    return await mediator.Send(new UpdateVoteTally.UpdateVoteTallyCommand());
 }).RequireAuthorization("admin");
 
 app.Run();
