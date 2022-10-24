@@ -1,6 +1,8 @@
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
+using Amazon;
 using Amazon.DynamoDBv2;
+using Amazon.Extensions.NETCore.Setup;
 using Amazon.S3;
 using Amazon.SimpleEmailV2;
 using MediatR;
@@ -32,7 +34,10 @@ builder.Services.AddTransient(s =>
 });
 builder.Services.AddAWSService<IAmazonDynamoDB>();
 builder.Services.AddAWSService<IAmazonS3>();
-builder.Services.AddAWSService<IAmazonSimpleEmailServiceV2>();
+builder.Services.AddAWSService<IAmazonSimpleEmailServiceV2>(new AWSOptions
+{
+    Region = RegionEndpoint.USWest2
+});
 builder.Services.AddScoped<IDiscordWebhookClient>(sp => {
     var uri = appSettings.DiscordWebhookUrl;
 if (string.IsNullOrEmpty(uri) || uri == "#{DISCORDWEBHOOKURL}#")
