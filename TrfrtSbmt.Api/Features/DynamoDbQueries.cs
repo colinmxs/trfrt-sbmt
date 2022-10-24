@@ -157,6 +157,26 @@ public class DynamoDbQueries
         }
     }
 
+    public class VoteTallyQuery : BaseDynamoQuery
+    {
+        public VoteTallyQuery(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
+
+        public async Task<QueryResponse> ExecuteAsync(string fortId)
+        {
+            return await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            {
+                KeyConditionExpression = $"{nameof(SubmissionRank.FortId)} = :pk",
+                ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+                {
+                    {":pk", new AttributeValue(fortId)}
+                },
+                IndexName = "Rank"
+            });
+        }
+    }
+
+
+
     public class DeleteBatch : BaseDynamoQuery
     {
         public DeleteBatch(IAmazonDynamoDB db, AppSettings settings) : base(db, settings)

@@ -235,4 +235,14 @@ app.MapPost("/votes", async (VoteOnSubmission.VoteOnSubmissionCommand command, [
     await mediator.Send(command);
 }).RequireAuthorization("voter");
 
+app.MapGet("/festivals/{festivalId}/forts/{fortId}/vote-tally", async (string festivalId, string fortId, [FromServices] IMediator mediator) =>
+{
+    return await mediator.Send(new GetVoteTally.GetVoteTallyQuery(festivalId, fortId));
+}).RequireAuthorization("admin");
+
+app.MapPost("/vote-tally", async (string festivalId, string fortId, [FromServices] IMediator mediator) =>
+{
+    return await mediator.Send(new GetVoteTally.GetVoteTallyQuery(festivalId, fortId));
+}).RequireAuthorization("admin");
+
 app.Run();
