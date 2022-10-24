@@ -62,6 +62,7 @@ public class AddSubmission
                 {
                     await _db.PutItemAsync(new PutItemRequest(_settings.TableName, new SubmissionLabel(label, submission).ToDictionary()));
                 }
+                await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
             }
             // add new 
             else
@@ -90,43 +91,49 @@ public class AddSubmission
                 request.Statement ?? string.Empty,
                 JsonSerializer.Serialize(request.Links),
                 JsonSerializer.Serialize(request.ContactInfo));
-
+                await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
                 if (_settings.EnvironmentName == "Production")
                 {
-                    await _emailer.SendEmailAsync(new SendEmailRequest
+                    try
                     {
-                        FromEmailAddress = _settings.FromEmailAddress,
-                        Destination = new Destination
+                        await _emailer.SendEmailAsync(new SendEmailRequest
                         {
-                            ToAddresses =
-                            new List<string> { request.ContactInfo.Email }
-                        },
-                        Content = new EmailContent
-                        {
-                            Simple = new Message()
+                            FromEmailAddress = _settings.FromEmailAddress,
+                            Destination = new Destination
                             {
-                                Subject = new Content
+                                ToAddresses =
+                            new List<string> { request.ContactInfo.Email }
+                            },
+                            Content = new EmailContent
+                            {
+                                Simple = new Message()
                                 {
-                                    Data = "New Submission"
-                                },
-                                Body = new Body
-                                {
-                                    Text = new Content
+                                    Subject = new Content
                                     {
-                                        Charset = "UTF-8",
-                                        Data = @"Thank you for submitting to perform at Treefort Music Fest 2023. Our Artist & Fort Committees are currently reviewing all submissions, please stay tuned for a response. All submitted artists will be notified no later than January 15th, 2023 regarding your status to play at Treefort Music Fest. Submissions can be edited within the Treefort Submissions App, if needed.
+                                        Data = "New Submission"
+                                    },
+                                    Body = new Body
+                                    {
+                                        Text = new Content
+                                        {
+                                            Charset = "UTF-8",
+                                            Data = @"Thank you for submitting to perform at Treefort Music Fest 2023. Our Artist & Fort Committees are currently reviewing all submissions, please stay tuned for a response. All submitted artists will be notified no later than January 15th, 2023 regarding your status to play at Treefort Music Fest. Submissions can be edited within the Treefort Submissions App, if needed.
 
 Until then, please follow us on our socials and sign up to receive our emails: http://eepurl.com/FO5tT
 @treefortfest
 #treefort11"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    });
+                        });
+                    }
+                    catch
+                    {
+                        throw;
+                    }                    
                 }
             }
-            await _db.PutItemAsync(new PutItemRequest(_settings.TableName, submission.ToDictionary()), cancellationToken);
             return new SubmissionViewModel(submission);
         }
     }
