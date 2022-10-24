@@ -229,24 +229,42 @@ public class RegionalStack : Stack
                     InlinePolicies = new Dictionary<string, PolicyDocument>
                     {
                         ["cloudwatch-policy"] =
-                    new PolicyDocument(
-                        new PolicyDocumentProps
-                        {
-                            AssignSids = true,
-                            Statements = new[] {
-                                new PolicyStatement(new PolicyStatementProps {
-                                    Effect = Effect.ALLOW,
-                                    Actions = new string[] {
-                                        "logs:CreateLogStream",
-                                        "logs:PutLogEvents",
-                                        "logs:CreateLogGroup"
-                                    },
-                                    Resources = new string[] {
-                                        "arn:aws:logs:*:*:*"
-                                    }
-                                })
-                            }
-                        })
+                        new PolicyDocument(
+                            new PolicyDocumentProps
+                            {
+                                AssignSids = true,
+                                Statements = new[] {
+                                    new PolicyStatement(new PolicyStatementProps {
+                                        Effect = Effect.ALLOW,
+                                        Actions = new string[] {
+                                            "logs:CreateLogStream",
+                                            "logs:PutLogEvents",
+                                            "logs:CreateLogGroup"
+                                        },
+                                        Resources = new string[] {
+                                            "arn:aws:logs:*:*:*"
+                                        }
+                                    })
+                                }
+                            }),
+                        ["dynamo-policy"] = new PolicyDocument(
+                            new PolicyDocumentProps
+                            {
+                                AssignSids = true,
+                                Statements = new[] {
+                                    new PolicyStatement(new PolicyStatementProps {
+                                        Effect = Effect.ALLOW,
+                                        Actions = new string[] { "dynamodb:*" },
+                                        Resources = new string[]
+                                        {
+                                            table.TableArn,
+                                            table.TableStreamArn!
+                                            //props.TestTable.TableArn,
+                                            //props.TestTable.TableArn + "/index/*"
+                                        }
+                                    })
+                                }
+                            })
                     }
                 }),
                 Environment = new Dictionary<string, string>
@@ -257,12 +275,14 @@ public class RegionalStack : Stack
             Amazon.CDK.Tags.Of(targetFunction).Add("Name", $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}");
             Amazon.CDK.Tags.Of(targetFunction).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
 
-            var eventSourceMapping = new CfnEventSourceMapping(this, "VoteStream.EventSourceMapping", new CfnEventSourceMappingProps
+            var eventSourceMapping = new EventSourceMapping(this, "VoteStream.EventSourceMapping", new EventSourceMappingProps
             {
+                EventSourceArn = table.TableStreamArn!,
                 BatchSize = 1,
-                EventSourceArn = $"arn:aws:kinesis:{props.Region}:{accountId}:stream/SubmissionsVoteStream{props.EnvironmentSuffix}",
-                FunctionName = targetFunction.FunctionName,
-                StartingPosition = "LATEST"
+                BisectBatchOnError = true,
+                RetryAttempts = 1,
+                Target = targetFunction,
+                StartingPosition = StartingPosition.LATEST
             });
         }
     }
