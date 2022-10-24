@@ -128,7 +128,7 @@ namespace TrfrtSbmt.Cdk.Constructs
                 SortKey = new Attribute
                 {
                     Name = "Rank",
-                    Type = AttributeType.STRING
+                    Type = AttributeType.NUMBER
                 }
             });
         }

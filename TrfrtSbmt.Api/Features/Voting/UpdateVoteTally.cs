@@ -23,7 +23,7 @@ public class UpdateVoteTally
             // scan table get all data
             var scanResult = await _db.ScanAsync(new ScanRequest(_settings.TableName), cancellationToken);
             var items = scanResult.Items;
-            while (!scanResult.LastEvaluatedKey.Any())
+            while (scanResult.LastEvaluatedKey.Any())
             {
                 scanResult = await _db.ScanAsync(new ScanRequest(_settings.TableName)
                 {
@@ -37,7 +37,7 @@ public class UpdateVoteTally
             var voteGrouping = votes.GroupBy(v => v.PartitionKey);
             foreach (var group in voteGrouping)
             {
-                var submission = items.SingleOrDefault(i => i["PartitionKey"].S == group.Key && i["SortKey"].S.StartsWith(nameof(Submission) + "-"));
+                var submission = items.SingleOrDefault(i => i["EntityId"].S == group.Key && i["SortKey"].S.StartsWith(nameof(Submission) + "-"));
                 if (submission == null) continue;
                 var submissionModel = new Submission(submission);
                 var submissionVotes = group.ToList();
