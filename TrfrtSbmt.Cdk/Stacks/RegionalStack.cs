@@ -173,22 +173,23 @@ public class RegionalStack : Stack
                 Certificate = Certificate.FromCertificateArn(this, "cert", $"arn:aws:acm:{props.Region}:{accountId}:certificate/{props.RegionalCertId}"),
                 DomainName = $"{subdomain}{props.EnvironmentSuffix.ToLower()}.{domain}",
                 EndpointType = EndpointType.REGIONAL,
-                SecurityPolicy = SecurityPolicy.TLS_1_2
+                SecurityPolicy = SecurityPolicy.TLS_1_2                
             }
         });
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.EnvironmentSuffix.ToLower()}{subdomain}.{domain}");
         Amazon.CDK.Tags.Of(restApi).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
-
-        var healthCheck = new CfnHealthCheck(this, $"{props.Region}-HealthCheck", new CfnHealthCheckProps
-        {
-            HealthCheckConfig = new HealthCheckConfigProperty
-            {
-                Type = "HTTPS",
-                FullyQualifiedDomainName = $"{restApi.RestApiId}.execute-api.{props.Region}.amazonaws.com",
-                Port = 443,
-                ResourcePath = $"/{restApi.DeploymentStage.StageName}/health-check"
-            }
-        });
+        
+        //var healthCheck = new CfnHealthCheck(this, $"{props.Region}-HealthCheck", new CfnHealthCheckProps
+        //{
+        //    HealthCheckConfig = new HealthCheckConfigProperty
+        //    {
+        //        Type = "HTTPS",
+        //        FullyQualifiedDomainName = $"{restApi.RestApiId}.execute-api.{props.Region}.amazonaws.com",
+        //        Port = 443,
+        //        ResourcePath = $"/{restApi.DeploymentStage.StageName}/health-check",
+        //        Regions = new string[] { props.Region }
+        //    }
+        //});
 
         var route53 = new ARecord(this, $"SubmissionsARecord", new ARecordProps
         {
@@ -208,7 +209,7 @@ public class RegionalStack : Stack
         }
 
         recordSet.Region = props.Region;
-        recordSet.HealthCheckId = healthCheck.AttrHealthCheckId;
+        //recordSet.HealthCheckId = healthCheck.AttrHealthCheckId;
         recordSet.SetIdentifier = $"{props.Region}-Endpoint";
 
         if (props.Region == props.PrimaryRegion)
