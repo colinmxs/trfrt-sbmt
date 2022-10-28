@@ -179,18 +179,6 @@ public class RegionalStack : Stack
         Amazon.CDK.Tags.Of(restApi).Add("Name", $"{props.EnvironmentSuffix.ToLower()}{subdomain}.{domain}");
         Amazon.CDK.Tags.Of(restApi).Add("Last Updated", DateTimeOffset.UtcNow.ToString());
         
-        //var healthCheck = new CfnHealthCheck(this, $"{props.Region}-HealthCheck", new CfnHealthCheckProps
-        //{
-        //    HealthCheckConfig = new HealthCheckConfigProperty
-        //    {
-        //        Type = "HTTPS",
-        //        FullyQualifiedDomainName = $"{restApi.RestApiId}.execute-api.{props.Region}.amazonaws.com",
-        //        Port = 443,
-        //        ResourcePath = $"/{restApi.DeploymentStage.StageName}/health-check",
-        //        Regions = new string[] { props.Region }
-        //    }
-        //});
-
         var route53 = new ARecord(this, $"SubmissionsARecord", new ARecordProps
         {
             Zone = HostedZone.FromLookup(this, $"{props.Region}-HostedZone", new HostedZoneProviderProps
@@ -209,7 +197,6 @@ public class RegionalStack : Stack
         }
 
         recordSet.Region = props.Region;
-        //recordSet.HealthCheckId = healthCheck.AttrHealthCheckId;
         recordSet.SetIdentifier = $"{props.Region}-Endpoint";
 
         if (props.Region == props.PrimaryRegion)
