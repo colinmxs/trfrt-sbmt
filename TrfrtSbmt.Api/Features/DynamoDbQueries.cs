@@ -161,7 +161,7 @@ public class DynamoDbQueries
     {
         public VoteTallyQuery(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
 
-        public async Task<QueryResponse> ExecuteAsync(string fortId, Dictionary<string, AttributeValue> lastEvaluatedKey)
+        public async Task<QueryResponse> ExecuteAsync(string fortId, bool forward, int pageSize, Dictionary<string, AttributeValue>? lastEvaluatedKey)
         {
             return await _db.QueryAsync(new QueryRequest(_settings.TableName)
             {
@@ -171,6 +171,8 @@ public class DynamoDbQueries
                     {":pk", new AttributeValue(fortId)}
                 },
                 IndexName = "AverageScoreIndex",
+                ScanIndexForward = forward,
+                Limit = pageSize,
                 ExclusiveStartKey = lastEvaluatedKey
             });
         }
