@@ -22,9 +22,9 @@ namespace TrfrtSbmt.Api.Features.Voting
                 return new Dictionary<string, AttributeValue>
                 {
                     [nameof(SubmissionRank.PartitionKey)] = new AttributeValue { S = paginationKey?.Split('|')[0] },
-                    [nameof(SubmissionRank.SortKey)] = new AttributeValue { S = paginationKey?.Split('|')[1] },
-                    [nameof(SubmissionRank.FortId)] = new AttributeValue { S = paginationKey?.Split('|')[2] },
-                    [nameof(SubmissionRank.AverageScore)] = new AttributeValue { S = paginationKey?.Split('|')[3] }
+                    [nameof(SubmissionRank.FortId)] = new AttributeValue { S = paginationKey?.Split('|')[1] },
+                    [nameof(SubmissionRank.SortKey)] = new AttributeValue { S = paginationKey?.Split('|')[2] },
+                    [nameof(SubmissionRank.AverageScore)] = new AttributeValue { N = paginationKey?.Split('|')[3] }
                 };
             }
         }
@@ -40,7 +40,7 @@ namespace TrfrtSbmt.Api.Features.Voting
                 if (!lastEvaluatedKey.ContainsKey(nameof(BaseEntity.SortKey))) return null;
                 if (!lastEvaluatedKey.ContainsKey(nameof(SubmissionRank.FortId))) return null;
                 if (!lastEvaluatedKey.ContainsKey(nameof(SubmissionRank.AverageScore))) return null;
-                var paginationKey = $"{lastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{lastEvaluatedKey[nameof(BaseEntity.SortKey)].S}|{lastEvaluatedKey[nameof(Submission.FortId)].S}|{lastEvaluatedKey[nameof(SubmissionRank.AverageScore)].S}";
+                var paginationKey = $"{lastEvaluatedKey[nameof(BaseEntity.PartitionKey)].S}|{lastEvaluatedKey[nameof(SubmissionRank.FortId)].S}|{lastEvaluatedKey[nameof(BaseEntity.SortKey)].S}|{lastEvaluatedKey[nameof(SubmissionRank.AverageScore)].N}";
                 return Convert.ToBase64String(Encoding.UTF8.GetBytes(paginationKey));
             }
         }
