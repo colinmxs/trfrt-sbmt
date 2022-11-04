@@ -1,7 +1,7 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System.Text;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 
 namespace TrfrtSbmt.Api.Features.Voting
 {

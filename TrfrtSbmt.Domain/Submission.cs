@@ -1,10 +1,10 @@
-namespace TrfrtSbmt.Api.DataModels;
+namespace TrfrtSbmt.Domain;
 
 using Amazon.DynamoDBv2.Model;
 
-public class Submission : BaseEntity
+public sealed class Submission : BaseEntity
 {
-    protected override string SortKeyPrefix => $"{nameof(Submission)}-";
+    public override string SortKeyPrefix => $"{nameof(Submission)}-";
     public string FortId => PartitionKey;
     public string Statement => _attributes[nameof(Statement)].S;
     public string SubmissionDate => _attributes[nameof(SubmissionDate)].S;
@@ -63,7 +63,7 @@ public class Submission : BaseEntity
     {
         _attributes[nameof(PartitionKey)] = new AttributeValue { S = labelId };
     }
-    
+
     public void Approve(string approver)
     {
         _attributes[nameof(ReviewedBy)] = new AttributeValue { S = approver };
@@ -77,7 +77,7 @@ public class Submission : BaseEntity
         _attributes.Remove(nameof(NeedsReview));
         _attributes[nameof(Approved)] = new AttributeValue { BOOL = false };
     }
-    
+
     public void RescindReview()
     {
         _attributes.Remove(nameof(ReviewedBy));
@@ -91,12 +91,12 @@ public class Submission : BaseEntity
         {
             _attributes.Add(nameof(Labels), new AttributeValue { L = new List<AttributeValue> { new AttributeValue { M = label.ToDictionary() } } });
         }
-        else if(!Labels.Any(l => l.Id == label.Id))
+        else if (!Labels.Any(l => l.Id == label.Id))
         {
             _attributes[nameof(Labels)].L.Add(new AttributeValue { M = label.ToDictionary() });
         }
     }
-    
+
     public void RemoveLabel(Label? label)
     {
         if (label != null)
@@ -114,11 +114,11 @@ public class Submission : BaseEntity
         }
     }
 
-    internal void Update(string name, string state, string city, string country, string description, string image, string website, IEnumerable<string>? genres, string statement, string links, string contact)
+    public void Update(string name, string state, string city, string country, string description, string image, string website, IEnumerable<string>? genres, string statement, string links, string contact)
     {
         if (genres != null && genres.Any())
             _attributes[nameof(Genres)] = new AttributeValue { SS = genres.ToList() };
-        
+
         _attributes[nameof(Name)] = new AttributeValue { S = name };
         _attributes[nameof(State)] = new AttributeValue { S = state };
         _attributes[nameof(City)] = new AttributeValue { S = city };
@@ -134,7 +134,7 @@ public class Submission : BaseEntity
 
     private bool GetNeedsReview()
     {
-        if(_attributes.TryGetValue(nameof(NeedsReview), out var _))
+        if (_attributes.TryGetValue(nameof(NeedsReview), out var _))
             return true;
         return false;
     }
@@ -162,7 +162,7 @@ public class Submission : BaseEntity
             return labels.L.Select(av => new Label(av.M)).ToList();
         return new List<Label>();
     }
-    
+
     private List<string> GetGenres()
     {
         if (_attributes.TryGetValue(nameof(Genres), out var genres))

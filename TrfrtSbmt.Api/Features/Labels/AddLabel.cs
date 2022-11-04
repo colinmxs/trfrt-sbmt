@@ -2,7 +2,7 @@
 
 using Amazon.DynamoDBv2;
 using System.Security.Claims;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 
 public class AddLabel
 {

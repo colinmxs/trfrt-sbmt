@@ -18,6 +18,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github actions", "github ac
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TrfrtSbmt.VoteStreamProcessor", "TrfrtSbmt.VoteStreamProcessor\TrfrtSbmt.VoteStreamProcessor.csproj", "{CE354BCA-1F51-4C36-BF81-3C7E2AEEA806}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TrfrtSbmt.Domain", "TrfrtSbmt.Domain\TrfrtSbmt.Domain.csproj", "{ECDE6E12-2E8C-49DF-B8BC-811230C50AED}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{CE354BCA-1F51-4C36-BF81-3C7E2AEEA806}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CE354BCA-1F51-4C36-BF81-3C7E2AEEA806}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{CE354BCA-1F51-4C36-BF81-3C7E2AEEA806}.Release|Any CPU.Build.0 = Release|Any CPU
+		{ECDE6E12-2E8C-49DF-B8BC-811230C50AED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{ECDE6E12-2E8C-49DF-B8BC-811230C50AED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{ECDE6E12-2E8C-49DF-B8BC-811230C50AED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{ECDE6E12-2E8C-49DF-B8BC-811230C50AED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

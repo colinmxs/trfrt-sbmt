@@ -2,7 +2,7 @@ namespace TrfrtSbmt.Api.Features.Festivals;
 
 using Amazon.DynamoDBv2;
 using System.Security.Claims;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 using TrfrtSbmt.Api.Features;
 
 /// <summary>

@@ -3,7 +3,7 @@ namespace TrfrtSbmt.Api.Features.Festivals;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System.Text;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 using TrfrtSbmt.Api.Features;
 
 public record ListFestivalsQuery(bool ActiveOnly = false, bool SubmissionsOpen = false, int PageSize = 20, string? PaginationKey = null) : IRequest<ListFestivalsResult>

@@ -4,7 +4,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System.Security.Claims;
 using System.Text;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 public class ListSubmissions
 {
     public record ListSubmissionsQuery(string FestivalId, string? FortId, int PageSize = 20, string? CreatedBy = null, string? PaginationKey = null) : IRequest<ListSubmissionsResult>

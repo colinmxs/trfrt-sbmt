@@ -1,7 +1,7 @@
 ﻿namespace TrfrtSbmt.Api.Features.Submissions;
 
 using Amazon.DynamoDBv2;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 
 public class GetSubmission
 {

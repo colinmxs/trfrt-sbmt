@@ -1,13 +1,13 @@
-﻿using Amazon.DynamoDBv2.Model;
+﻿namespace TrfrtSbmt.Domain;
 
-namespace TrfrtSbmt.Api.DataModels;
+using Amazon.DynamoDBv2.Model;
 
-public class SubmissionLabel : BaseEntity
+public sealed class SubmissionLabel : BaseEntity
 {
-    protected override string SortKeyPrefix => $"{nameof(SubmissionLabel)}-";
+    public override string SortKeyPrefix => $"{nameof(SubmissionLabel)}-";
 
     public SubmissionLabel(Dictionary<string, AttributeValue> values) : base(values) { }
-    public SubmissionLabel(Label label, Submission submission, string createdBy) : base(label.EntityId, submission.EntityId, label.Name, label.Name, createdBy) 
+    public SubmissionLabel(Label label, Submission submission, string createdBy) : base(label.EntityId, submission.EntityId, label.Name, label.Name, createdBy)
     {
         _attributes[nameof(SubmissionEntityId)] = new AttributeValue(submission.EntityId);
         _attributes[nameof(Name)] = new AttributeValue(submission.Name);

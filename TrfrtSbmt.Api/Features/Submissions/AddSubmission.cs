@@ -6,7 +6,7 @@ using Amazon.SimpleEmailV2;
 using Amazon.SimpleEmailV2.Model;
 using System.Security.Claims;
 using System.Text.Json;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 using TrfrtSbmt.Api.Utils.DiscordWebhooks;
 
 public class AddSubmission

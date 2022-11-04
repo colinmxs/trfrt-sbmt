@@ -1,13 +1,13 @@
-﻿namespace TrfrtSbmt.Api.DataModels;
+﻿namespace TrfrtSbmt.Domain;
 
 using Amazon.DynamoDBv2.Model;
 
-public class SubmissionRank : BaseEntity
+public sealed class SubmissionRank : BaseEntity
 {
-    protected override string SortKeyPrefix => $"{nameof(SubmissionRank)}-";
+    public override string SortKeyPrefix => $"{nameof(SubmissionRank)}-";
 
     public SubmissionRank(Dictionary<string, AttributeValue> values) : base(values) { }
-    
+
     public SubmissionRank(Submission submission, decimal rank, decimal count) : base(submission.EntityId, submission.EntityId, submission.Name, nameof(SubmissionRank), "SYSTEM")
     {
         _attributes[nameof(AverageScore)] = new AttributeValue { N = rank.ToString() };

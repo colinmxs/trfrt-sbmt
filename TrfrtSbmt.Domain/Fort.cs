@@ -1,13 +1,13 @@
-﻿using Amazon.DynamoDBv2.Model;
+﻿namespace TrfrtSbmt.Domain;
 
-namespace TrfrtSbmt.Api.DataModels;
+using Amazon.DynamoDBv2.Model;
 
-public class Fort : BaseEntity
+public sealed class Fort : BaseEntity
 {
-    protected override string SortKeyPrefix => $"{nameof(Fort)}-";
-        
+    public override string SortKeyPrefix => $"{nameof(Fort)}-";
+
     public Fort(Dictionary<string, AttributeValue> dictionary) : base(dictionary) { }
-    public Fort(string festivalId, string name, string description, string createdBy) : base(festivalId, name, name, createdBy) 
+    public Fort(string festivalId, string name, string description, string createdBy) : base(festivalId, name, name, createdBy)
     {
         _attributes[nameof(Description)] = new AttributeValue(description);
     }

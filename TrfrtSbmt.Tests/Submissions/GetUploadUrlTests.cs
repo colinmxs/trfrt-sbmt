@@ -10,7 +10,6 @@ using static TrfrtSbmt.Api.Features.Submissions.ListSubmissions;
 using TrfrtSbmt.Api.Features.Submissions;
 using TrfrtSbmt.Api.Features.Forts;
 using CodenameGenerator;
-using TrfrtSbmt.Api.DataModels;
 
 namespace TrfrtSbmt.Tests.Submissions;
 

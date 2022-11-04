@@ -4,7 +4,7 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using System.Threading;
 using System.Threading.Tasks;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 using TrfrtSbmt.Api.Features;
 
 public record DeleteFestivalCommand(string Id) : IRequest;

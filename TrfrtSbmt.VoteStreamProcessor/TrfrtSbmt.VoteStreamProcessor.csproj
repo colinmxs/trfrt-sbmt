@@ -16,4 +16,7 @@
     <PackageReference Include="Amazon.Lambda.DynamoDBEvents" Version="2.1.1" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.7.3.35" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\TrfrtSbmt.Domain\TrfrtSbmt.Domain.csproj" />
+  </ItemGroup>
 </Project>

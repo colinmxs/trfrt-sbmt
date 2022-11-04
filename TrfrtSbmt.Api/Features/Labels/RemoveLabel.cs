@@ -3,7 +3,7 @@
 using Amazon.DynamoDBv2;
 using System.Threading;
 using System.Threading.Tasks;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 
 public class RemoveLabel
 {

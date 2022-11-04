@@ -1,6 +1,6 @@
 ﻿using Amazon.DynamoDBv2;
 using System.Security.Claims;
-using TrfrtSbmt.Api.DataModels;
+using TrfrtSbmt.Domain;
 
 namespace TrfrtSbmt.Api.Features.Submissions;
 

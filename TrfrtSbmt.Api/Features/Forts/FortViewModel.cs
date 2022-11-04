@@ -1,4 +1,4 @@
-﻿using TrfrtSbmt.Api.DataModels;
+﻿using TrfrtSbmt.Domain;
 
 namespace TrfrtSbmt.Api.Features.Forts;
 
