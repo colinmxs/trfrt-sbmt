@@ -246,9 +246,8 @@ public class RegionalStack : Stack
                                         Resources = new string[]
                                         {
                                             table.TableArn,
-                                            table.TableStreamArn!
-                                            //props.TestTable.TableArn,
-                                            //props.TestTable.TableArn + "/index/*"
+                                            table.TableStreamArn!,
+                                            table.TableArn + "/index/*"
                                         }
                                     })
                                 }
