@@ -205,8 +205,8 @@ public class RegionalStack : Stack
             {
                 Runtime = Runtime.DOTNET_6,
                 Code = new AssetCode($"{Utilities.GetDirectory("TrfrtSbmt.VoteStreamProcessor")}"),
-                Handler = "TrfrtSbmt.VoteStreamProcessor",
-                Timeout = Duration.Seconds(10),
+                Handler = "TrfrtSbmt.VoteStreamProcessor::TrfrtSbmt.VoteStreamProcessor.Function::FunctionHandler",
+                Timeout = Duration.Seconds(30),
                 FunctionName = $"SubmissionsVoteProcessorLambdaFunction{props.EnvironmentSuffix}",
                 MemorySize = 2048,
                 RetryAttempts = 1,
