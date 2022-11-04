@@ -38,23 +38,31 @@ public class Function
                     ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
                     {
                         {":id", new AttributeValue(submissionId)}
-                    },
-                    Limit = 5000
+                    }
                 });
 
+                var submission = queryResponse.Items.SingleOrDefault(i => i["EntityId"].S == submissionId && i["SortKey"].S.StartsWith(nameof(Submission) + "-"));
+
+
+                queryResponse = await dbClient.QueryAsync(new QueryRequest(tableName)
+                {
+                    KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = :pk",
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
+                    {
+                        {":pk", new AttributeValue(submissionId)}
+                    }
+                });
                 items.AddRange(queryResponse.Items);
 
                 while (queryResponse.LastEvaluatedKey.Any())
                 {
                     queryResponse = await dbClient.QueryAsync(new QueryRequest(tableName)
                     {
-                        IndexName = BaseEntity.EntityIdIndex,
-                        KeyConditionExpression = $"{nameof(BaseEntity.EntityId)} = :id",
+                        KeyConditionExpression = $"{nameof(BaseEntity.PartitionKey)} = :pk",
                         ExpressionAttributeValues = new Dictionary<string, AttributeValue>()
                         {
-                            {":id", new AttributeValue(submissionId)}
+                            {":pk", new AttributeValue(submissionId)}
                         },
-                        Limit = 5000,
                         ExclusiveStartKey = queryResponse.LastEvaluatedKey
                     }); 
                     items.AddRange(queryResponse.Items);
@@ -62,11 +70,9 @@ public class Function
                 
                 var votes = items.Where(i => i["SortKey"].S.StartsWith(nameof(Vote) + "-")).Select(i => new Vote(i)).ToList();
 
-                var submission = items.SingleOrDefault(i => i["EntityId"].S == submissionId && i["SortKey"].S.StartsWith(nameof(Submission) + "-"));
                 if (submission == null) continue;
                 var submissionModel = new Submission(submission);
-                var submissionVotes = votes.ToList();
-                decimal rank = Decimal.Divide(submissionVotes.Sum(v => v.Value), votes.Count());
+                decimal rank = Decimal.Divide(votes.Sum(v => v.Value), votes.Count());
                 var submissionRank = new SubmissionRank(submissionModel, Math.Round(rank, 2), votes.Count());
                 await dbClient.PutItemAsync(new PutItemRequest(tableName, submissionRank.ToDictionary()));
             }
