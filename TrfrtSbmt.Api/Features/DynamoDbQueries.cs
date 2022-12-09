@@ -16,23 +16,21 @@ public class DynamoDbQueries
             _db = db;
             _settings = settings;
         }
-
-
     }
 
-    public class SearchTermQuery : BaseDynamoQuery
+    public class SearchTermScan : BaseDynamoQuery
     {
         private const string SearchTermIndex = "SearchTermIndex";
 
-        public SearchTermQuery(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
+        public SearchTermScan(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
 
-        public async Task<QueryResponse> ExecuteAsync(string searchTerm, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)
+        public async Task<ScanResponse> ExecuteAsync(string searchTerm, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)
         {
             var pkSymbol = ":partitionKey";
-            return await _db.QueryAsync(new QueryRequest(_settings.TableName)
+            return await _db.ScanAsync(new ScanRequest(_settings.TableName)
             {
                 IndexName = SearchTermIndex,
-                KeyConditionExpression = $"{nameof(BaseEntity.SearchTerm)} = {pkSymbol}",
+                FilterExpression = $"contains({nameof(BaseEntity.SearchTerm)}, {pkSymbol})",
                 ExpressionAttributeValues = new Dictionary<string, AttributeValue>
                 {
                     [pkSymbol] = new AttributeValue { S = searchTerm.ToUpperInvariant() }
@@ -41,7 +39,30 @@ public class DynamoDbQueries
                 ExclusiveStartKey = exclusiveStartKey
             });
         }
+    }
 
+        public class SearchTermQuery : BaseDynamoQuery
+        {
+            private const string SearchTermIndex = "SearchTermIndex";
+
+            public SearchTermQuery(IAmazonDynamoDB db, AppSettings settings) : base(db, settings) { }
+
+            public async Task<QueryResponse> ExecuteAsync(string searchTerm, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)
+            {
+                var pkSymbol = ":partitionKey";
+                return await _db.QueryAsync(new QueryRequest(_settings.TableName)
+                {
+                    IndexName = SearchTermIndex,
+                    KeyConditionExpression = $"{nameof(BaseEntity.SearchTerm)} = {pkSymbol}",
+                    ExpressionAttributeValues = new Dictionary<string, AttributeValue>
+                    {
+                        [pkSymbol] = new AttributeValue { S = searchTerm.ToUpperInvariant() }
+                    },
+                    Limit = pageSize,
+                    ExclusiveStartKey = exclusiveStartKey
+                });
+        }
+        
         public async Task<QueryResponse> ExecuteAsync(string searchTerm, string type, int pageSize, Dictionary<string, AttributeValue>? exclusiveStartKey)
         {
             // $"{nameof(BaseEntity.PartitionKey)} = :pk AND {nameof(BaseEntity.SortKey)} = :sk"

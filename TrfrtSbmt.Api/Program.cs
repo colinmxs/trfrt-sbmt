@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using TrfrtSbmt.Api.Features.Festivals;
 using TrfrtSbmt.Api.Features.Forts;
 using TrfrtSbmt.Api.Features.Labels;
+using TrfrtSbmt.Api.Features.Search;
 using TrfrtSbmt.Api.Features.Submissions;
 using TrfrtSbmt.Api.Features.Voting;
 using TrfrtSbmt.Api.Utilities;
@@ -23,7 +24,7 @@ builder.Services.AddCors();
 // add typed appsettings file
 var appSettings = new AppSettings(builder.Configuration);
 builder.Services.AddSingleton(appSettings);
-
+builder.Services.AddSingleton<ResultCache>();
 // Add other services to the container.
 builder.Services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
 builder.Services.AddTransient(s =>

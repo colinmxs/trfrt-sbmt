@@ -94,6 +94,21 @@ namespace TrfrtSbmt.Cdk.Constructs
 
             Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
             {
+                IndexName = "SearchTermSparseIndex",
+                PartitionKey = new Attribute
+                {
+                    Name = "SearchTerm",
+                    Type = AttributeType.STRING
+                },
+                SortKey = new Attribute
+                {
+                    Name = "SubmissionDate",
+                    Type = AttributeType.STRING
+                }
+            });
+
+            Table.AddGlobalSecondaryIndex(new GlobalSecondaryIndexProps
+            {
                 IndexName = "EntityIdIndex",
                 PartitionKey = new Attribute
                 {
