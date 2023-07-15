@@ -13,12 +13,7 @@ jobs:
   deploy:    
     runs-on: self-hosted
     environment: ${{ inputs.github_env }}
-    steps:
-    - name: configure aws credentials
-      uses: aws-actions/configure-aws-credentials@v1.7.0
-      with:
-        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/GitHubAction-AssumeRoleWithAction
-        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+    steps:    
     - name: Download Artifacts
       uses: actions/download-artifact@v3    
     - name: Replace tokens
@@ -35,11 +30,23 @@ jobs:
         DOMAIN: ${{ secrets.DOMAIN }}
         SUBDOMAIN: ${{ secrets.SUBDOMAIN }}
         DISCORDWEBHOOKURL: ${{ secrets.DISCORD_WEBHOOK_URL}}
-        ASPNETENVIRONMENT: ${{ inputs.env}}    
+        ASPNETENVIRONMENT: ${{ inputs.env}}   
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1.7.0
+      with:
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/GitHubAction-AssumeRoleWithAction
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: us-west-2
     - name: Deploy Oregon
       run: |      
         cd trfrt-sbmt/TrfrtSbmt.Cdk
         cdk deploy TrfrtSbmt-ApiStack-us-west-2-${{ inputs.env}} --require-approval never
+    - name: configure aws credentials
+      uses: aws-actions/configure-aws-credentials@v1.7.0
+      with:
+        role-to-assume: arn:aws:iam::${{ env.AWS_ACCOUNT_ID }}:role/GitHubAction-AssumeRoleWithAction
+        role-session-name: GitHub_to_AWS_via_FederatedOIDC
+        aws-region: us-west-1
     - name: Deploy California
       run: |      
         cd trfrt-sbmt/TrfrtSbmt.Cdk
