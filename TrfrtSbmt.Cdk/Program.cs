@@ -1,6 +1,6 @@
 ﻿var app = new App(null);
 Tags.Of(app).Add("Owner", "smith.colin00@gmail.com");
-Tags.Of(app).Add("Application", "Submit Api");
+Tags.Of(app).Add("Application", "Treefort Submit Api");
 Tags.Of(app).Add("Billing", "Treefort");
 
 var accountId = (string)app.Node.TryGetContext("accountid");
